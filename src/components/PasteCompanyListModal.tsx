@@ -128,7 +128,7 @@ export const PasteCompanyListModal: React.FC<PasteCompanyListModalProps> = ({
 
     try {
       // Pass the data to parent for processing
-      await onImportCompanies(companiesToImport as any);
+      await onImportCompanies(companiesToImport as unknown as Company[]);
     } catch (error) {
       console.error('Error importing companies:', error);
       toast.error('Failed to import companies', {

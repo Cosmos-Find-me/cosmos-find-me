@@ -5,7 +5,7 @@ import { NextRequest, NextResponse } from 'next/server';
  */
 export async function POST(request: NextRequest) {
   try {
-    const { companyName, websiteUrl } = await request.json();
+    const { companyName, websiteUrl } = await request.json() as { companyName: string; websiteUrl?: string };
 
     if (!companyName) {
       return NextResponse.json(
@@ -88,12 +88,12 @@ async function searchPerplexity(
     });
 
     if (!response.ok) {
-      const errorData = await response.json().catch(() => ({}));
+      const errorData = await response.json().catch(() => ({})) as { error?: { message?: string } };
       console.error(`❌ Perplexity API error for ${platformName}:`, response.status, errorData);
       return null;
     }
 
-    const data = await response.json();
+    const data = await response.json() as { results: Array<{ url: string }> };
 
     // Extract the first matching URL from results
     if (data.results && data.results.length > 0) {

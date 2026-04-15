@@ -29,7 +29,7 @@ export async function POST(_request: Request, { params }: { params: Promise<{ to
     }
 
     // Analytics: Track invitation accepted
-    const invitedEmail = data[0]?.email || 'unknown'
+    const invitedEmail = (data as Array<{ email?: string }>)[0]?.email ?? 'unknown'
     await trackServerEvent('invitation_accepted', invitedEmail, { invitation_token: token })
 
     return NextResponse.json({ message: 'Invitation accepted successfully' })

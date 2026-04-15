@@ -40,17 +40,18 @@ export async function GET() {
   }
 
   try {
+    type UpdatedAt = { updated_at: string }
     const [companyResult, preferencesResult] = await Promise.all([
       supabase
         .from('user_company_data')
         .select('updated_at')
         .eq('user_id', user.id)
-        .maybeSingle(),
+        .maybeSingle<UpdatedAt>(),
       supabase
         .from('user_preferences')
         .select('updated_at')
         .eq('user_id', user.id)
-        .maybeSingle(),
+        .maybeSingle<UpdatedAt>(),
     ])
 
     return NextResponse.json({

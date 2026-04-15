@@ -50,9 +50,9 @@ const ImportDataModal: React.FC<ImportDataModalProps> = ({
       const fileContent = await importFile.text();
 
       // Try to parse as JSON
-      let companiesData;
+      let companiesData: unknown;
       try {
-        companiesData = JSON.parse(fileContent);
+        companiesData = JSON.parse(fileContent) as unknown;
       } catch (parseError) {
         setError('Invalid JSON format. Please provide a valid JSON file with userProfile and companies fields.');
         setImporting(false);
@@ -68,14 +68,14 @@ const ImportDataModal: React.FC<ImportDataModalProps> = ({
         })
       });
 
-      const data = await response.json();
+      const data = await response.json() as { error?: string };
 
       if (response.ok) {
         onImportSuccess();
         onClose();
         setImportFile(null);
       } else {
-        setError(data.error || 'Failed to import data');
+        setError(data.error ?? 'Failed to import data');
       }
     } catch (error) {
       setError('Failed to import companies data: ' + (error instanceof Error ? error.message : 'Unknown error'));

@@ -49,7 +49,7 @@ export async function writeStateToDisk(
       throw new Error(`HTTP ${response.status}: ${response.statusText}`);
     }
 
-    const result = await response.json();
+    const result = await response.json() as FileWriteResponse;
     return result;
   } catch (error) {
     // Only log errors in non-test environments to avoid cluttering test output
@@ -127,7 +127,7 @@ export async function backupCompaniesFile(): Promise<FileWriteResponse> {
       throw new Error(`HTTP ${response.status}: ${response.statusText}`);
     }
 
-    return await response.json();
+    return await response.json() as FileWriteResponse;
   } catch (error) {
     return {
       success: false,

@@ -1,9 +1,53 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { getModelForTask } from '@/utils/llm/config';
 
+interface AnalysisUserCMF {
+  targetRole: string;
+  mustHaves: string[];
+  wantToHave?: string[];
+  experience?: string[];
+  targetCompanies?: string;
+}
+
+interface AnalysisRequest {
+  companyName: string;
+  userCMF: AnalysisUserCMF;
+}
+
+interface AnthropicContent {
+  text: string;
+}
+
+interface AnthropicUsage {
+  input_tokens: number;
+  output_tokens: number;
+}
+
+interface AnthropicResponse {
+  content: AnthropicContent[];
+  stop_reason: string;
+  usage: AnthropicUsage;
+}
+
+interface AnthropicErrorResponse {
+  error?: { message?: string };
+}
+
+interface CompanyData {
+  connections?: string[];
+  connectionTypes?: Record<string, string>;
+  externalLinks?: Record<string, string>;
+  [key: string]: unknown;
+}
+
+interface SearchUrlsResult {
+  success: boolean;
+  data?: Record<string, string>;
+}
+
 export async function POST(request: NextRequest) {
   try {
-    const { request: analysisRequest } = await request.json();
+    const { request: analysisRequest } = await request.json() as { request: AnalysisRequest };
     const apiKey = process.env.ANTHROPIC_API_KEY;
 
     if (!apiKey) {
@@ -69,11 +113,11 @@ export async function POST(request: NextRequest) {
     });
 
     if (!response.ok) {
-      const errorData = await response.json().catch(() => ({}));
+      const errorData = await response.json().catch(() => ({})) as AnthropicErrorResponse;
       throw new Error(`Claude API error: ${response.status} - ${errorData.error?.message || 'Unknown error'}`);
     }
 
-    const data = await response.json();
+    const data = await response.json() as AnthropicResponse;
     const responseText = data.content[0]?.text;
 
     if (!responseText) {
@@ -90,7 +134,7 @@ export async function POST(request: NextRequest) {
     }
 
     // Parse the JSON response
-    const companyData = parseAnthropicResponse(responseText);
+    const companyData = parseAnthropicResponse(responseText) as CompanyData;
 
     // Generate connectionTypes if connections exist (structured outputs doesn't support dynamic object keys)
     if (companyData.connections && companyData.connections.length > 0) {
@@ -131,7 +175,7 @@ export async function POST(request: NextRequest) {
 }
 
 // Helper function to build Anthropic prompt
-function buildAnthropicPrompt(request: any) {
+function buildAnthropicPrompt(request: AnalysisRequest) {
   return `Analyze "${request.companyName}" and provide comprehensive company information based on the user's career criteria.
 
 User's Candidate Market Fit (CMF) Criteria:
@@ -166,10 +210,10 @@ Be accurate and base analysis on real company information.`;
 }
 
 // Helper function to parse Anthropic response with structured outputs
-function parseAnthropicResponse(responseText: string) {
+function parseAnthropicResponse(responseText: string): CompanyData {
   try {
     // With structured outputs, response is guaranteed valid JSON
-    const parsed = JSON.parse(responseText);
+    const parsed = JSON.parse(responseText) as CompanyData;
 
     // Remove any externalLinks that Claude might have added (we generate these separately)
     if (parsed.externalLinks) {
@@ -217,7 +261,7 @@ async function searchCompanyUrls(companyName: string, websiteUrl?: string): Prom
       return null;
     }
 
-    const result = await response.json();
+    const result = await response.json() as SearchUrlsResult;
 
     if (result.success && result.data) {
       console.log('✅ Generated URLs:', result.data);

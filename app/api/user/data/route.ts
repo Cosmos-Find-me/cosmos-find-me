@@ -67,11 +67,12 @@ export async function GET(request: NextRequest) {
 
   // Fetch user profile with role included to avoid separate admin check query
   // Following async-parallel: combine profile_status, onboarding, and role in one query
-  const { data: userProfile } = await supabase
+  const { data: rawUserProfile } = await supabase
     .from('profiles')
     .select('profile_status, onboarding_completed_at, role')
     .eq('id', user.id)
     .single();
+  const userProfile = rawUserProfile as { profile_status?: string; onboarding_completed_at?: string; role?: string } | null;
 
   let targetUserId = user.id;
   let isViewingAsUser = false;
@@ -85,6 +86,25 @@ export async function GET(request: NextRequest) {
     } else {
       console.warn('⚠️ Non-admin user attempted to view as another user');
     }
+  }
+
+  interface CompanyDataRow {
+    user_id: string;
+    updated_at?: string;
+    user_profile?: {
+      watchlistCompanyIds?: number[];
+      [key: string]: unknown;
+    };
+    [key: string]: unknown;
+  }
+
+  interface PreferencesRow {
+    user_id?: string;
+    watchlist_company_ids?: number[];
+    removed_company_ids?: number[];
+    view_mode?: string;
+    updated_at?: string;
+    [key: string]: unknown;
   }
 
   try {
@@ -119,8 +139,10 @@ export async function GET(request: NextRequest) {
         : Promise.resolve({ data: null, error: null })
     ]);
 
-    const { data: companyData, error: companyError } = companyResult;
-    const { data: preferences, error: prefError } = preferencesResult;
+    const { data: rawCompanyData, error: companyError } = companyResult;
+    const companyData = rawCompanyData as CompanyDataRow[] | null;
+    const { error: prefError } = preferencesResult;
+    const preferences = preferencesResult.data as PreferencesRow | null;
     const viewedUserInfo = viewedProfileResult.data;
 
     if (companyError) {
@@ -250,8 +272,20 @@ export async function POST(request: Request) {
     process.env.SUPABASE_SERVICE_ROLE_KEY!
   )
 
+  interface UserDataBody {
+    userId: string
+    userProfile?: unknown
+    companies?: unknown[]
+    preferences?: {
+      watchlist_company_ids?: number[]
+      removed_company_ids?: number[]
+      view_mode?: string
+    }
+    profileStatus?: string
+  }
+
   try {
-    const body = await request.json()
+    const body = await request.json() as UserDataBody
     const { userId, userProfile, companies, preferences, profileStatus } = body
 
     console.log('💾 Saving user data for user:', userId)

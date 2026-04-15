@@ -92,21 +92,17 @@ export function useCompanyDetection({
             // Store the original company name from LLM
             const companyName = extracted.name;
 
-            // Store careerUrl and LLM-inferred URL on the preview
-            if (extracted.careerUrl) {
-              (preview as any).careerUrl = extracted.careerUrl;
-            }
-            if (extracted.url) {
-              (preview as any).inferredUrl = extracted.url;
-            }
-
             const isDuplicate = existingCompanies.some(
               (c) => c.name.toLowerCase() === companyName.toLowerCase()
             );
 
             return {
               name: companyName,
-              preview,
+              preview: {
+                ...preview,
+                careerUrl: extracted.careerUrl,
+                inferredUrl: extracted.url,
+              },
               selected: !isDuplicate, // Don't select duplicates by default
               isDuplicate,
             };
@@ -161,8 +157,8 @@ export function useCompanyDetection({
     return selectedCompanies.map((detected) => ({
       name: detected.name,
       logo: detected.preview.logo,
-      careerUrl: (detected.preview as any).careerUrl || '',
-      domain: (detected.preview as any).inferredUrl || detected.preview.domain,
+      careerUrl: detected.preview.careerUrl ?? '',
+      domain: detected.preview.inferredUrl ?? detected.preview.domain,
     }));
   }, [detectedCompanies]);
 

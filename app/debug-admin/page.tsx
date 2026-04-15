@@ -5,8 +5,18 @@ import { createClientComponentClient } from '../../src/lib/supabase'
 // Force dynamic rendering for debug pages
 export const dynamic = 'force-dynamic'
 
+interface DebugInfo {
+  error?: string
+  user?: { id: string; email: string | undefined; role: string | undefined } | null
+  userError?: unknown
+  profile?: { role: string; email: string } | null
+  profileError?: unknown
+  isAuthenticated?: boolean
+  isAdmin?: boolean
+}
+
 export default function DebugAdminPage() {
-  const [debugInfo, setDebugInfo] = useState<any>({})
+  const [debugInfo, setDebugInfo] = useState<DebugInfo>({})
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
@@ -25,8 +35,8 @@ export default function DebugAdminPage() {
         console.log('Current user:', user)
         console.log('User error:', userError)
 
-        let profile = null
-        let profileError = null
+        let profile: { role: string; email: string } | null = null
+        let profileError: unknown = null
 
         if (user) {
           // Get user profile
@@ -34,11 +44,11 @@ export default function DebugAdminPage() {
             .from('profiles')
             .select('*')
             .eq('id', user.id)
-            .single()
+            .single<{ role: string; email: string }>()
 
           profile = data
           profileError = error
-          
+
           console.log('Profile data:', profile)
           console.log('Profile error:', profileError)
         }

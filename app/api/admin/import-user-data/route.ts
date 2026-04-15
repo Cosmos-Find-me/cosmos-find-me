@@ -11,8 +11,13 @@ export async function POST(request: Request) {
 
   const { user, adminClient } = auth
 
+  interface UserDataBody {
+    userId: string
+    userData: { userProfile: unknown; companies: unknown[] }
+  }
+
   try {
-    const { userId, userData } = await request.json()
+    const { userId, userData } = await request.json() as UserDataBody
 
     if (!userId || !userData) {
       return NextResponse.json({ error: 'Missing userId or userData' }, { status: 400 })

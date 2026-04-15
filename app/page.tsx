@@ -38,8 +38,8 @@ export default function LandingPage() {
       })
 
       if (!response.ok) {
-        const data = await response.json()
-        throw new Error(data.error || 'Failed to join waitlist')
+        const data = await response.json() as { error?: string }
+        throw new Error(data.error ?? 'Failed to join waitlist')
       }
 
       setSubmitted(true)

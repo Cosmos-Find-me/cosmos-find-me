@@ -2,9 +2,9 @@ name: CI
 
 on:
   push:
-    branches: [ main, develop ]
+    branches: [ main, develop, feature/oauth ]
   pull_request:
-    branches: [ main ]
+    branches: [ main, feature/oauth ]
 
 jobs:
   test:
@@ -23,33 +23,17 @@ jobs:
     - name: Install dependencies
       run: npm ci
 
-    - name: Run type check
-      run: npm run build
+    - name: Type check
+      run: npm run typecheck
+
+    - name: Lint (no-any enforcement)
+      run: npm run lint
 
     - name: Validate test setup
       run: npm run test:validate
 
-    # IMPORTANT: Use 'npm test' NOT 'npm run test:run' 
-    # npm test uses "vitest run --no-coverage || exit 0" to handle vitest snapshot bug
-    # Direct vitest commands will fail CI due to snapshot bug
-    - name: Run tests
+    - name: Run unit tests
       run: npm test
-
-    # E2E tests disabled in CI due to cross-platform screenshot differences
-    # Local E2E tests work perfectly - run 'npm run test:e2e' locally to verify
-    # - name: Install Playwright browsers
-    #   run: npx playwright install --with-deps
-    # - name: Run E2E visual regression tests  
-    #   run: npm run test:e2e
-
-    # E2E test upload disabled since E2E tests are disabled in CI
-    # - name: Upload E2E test results
-    #   uses: actions/upload-artifact@v4
-    #   if: always()
-    #   with:
-    #     name: playwright-report
-    #     path: tests/reports/
-    #     retention-days: 7
 
     - name: Upload coverage reports
       uses: codecov/codecov-action@v3
@@ -58,10 +42,3 @@ jobs:
         files: ./coverage/coverage-final.json
         fail_ci_if_error: false
       continue-on-error: true
-
-    - name: Build and test summary
-      run: |
-        echo "✅ Unit Tests: All 206 tests passed (vitest snapshot error handled)"
-        echo "✅ Build: TypeScript compilation successful" 
-        echo "ℹ️  E2E Tests: Disabled in CI (run 'npm run test:e2e' locally)"
-        echo "🎉 Core functionality validation complete!"

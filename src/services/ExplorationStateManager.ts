@@ -558,7 +558,7 @@ export class ExplorationStateManager {
    * Deep clone state object
    */
   private cloneState(state: UserExplorationState): UserExplorationState {
-    return JSON.parse(JSON.stringify(state));
+    return JSON.parse(JSON.stringify(state)) as UserExplorationState;
   }
 
   /**

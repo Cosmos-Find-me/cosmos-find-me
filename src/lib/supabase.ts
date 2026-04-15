@@ -1,18 +1,24 @@
 import { createBrowserClient, createServerClient as createSSRServerClient } from '@supabase/ssr'
 import { createClient } from '@supabase/supabase-js'
+import type { UserCMF, Company } from '../types/index'
+
+type CookieItem = { name: string; value: string }
+interface CookieStore {
+  getAll: () => CookieItem[] | Promise<CookieItem[]>
+}
 
 // Client-side Supabase client
 export const createClientComponentClient = () => {
   const url = process.env.NEXT_PUBLIC_SUPABASE_URL
   const key = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
-  
+
   // During CI build, environment variables might not be available
   // Return null to prevent build failures in public repositories
   if (!url || !key) {
     console.warn('Supabase environment variables not found. Using mock client for build.')
     return null
   }
-  
+
   return createBrowserClient(url, key)
 }
 
@@ -20,28 +26,28 @@ export const createClientComponentClient = () => {
 export const createServerClient = () => {
   const url = process.env.NEXT_PUBLIC_SUPABASE_URL
   const key = process.env.SUPABASE_SERVICE_ROLE_KEY
-  
+
   // During CI build or missing server credentials
   if (!url || !key) {
     console.warn('Supabase server environment variables not found.')
     return null
   }
-  
+
   return createClient(url, key)
 }
 
 // Server-side Supabase client for Server Components
-export const createServerComponentClient = ({ cookies }: { cookies: () => any }) => {
+export const createServerComponentClient = ({ cookies }: { cookies: () => CookieStore }) => {
   const url = process.env.NEXT_PUBLIC_SUPABASE_URL
   const key = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
-  
+
   if (!url || !key) {
     console.warn('Supabase environment variables not found for server component.')
     return null
   }
-  
+
   const cookieStore = cookies()
-  
+
   return createSSRServerClient(url, key, {
     cookies: {
       getAll: () => cookieStore.getAll(),
@@ -85,24 +91,24 @@ export type Database = {
         Row: {
           id: string
           user_id: string
-          user_profile: any // JSON
-          companies: any // JSON array
+          user_profile: UserCMF
+          companies: Company[]
           created_at: string
           updated_at: string
         }
         Insert: {
           id?: string
           user_id: string
-          user_profile: any
-          companies: any
+          user_profile: UserCMF
+          companies: Company[]
           created_at?: string
           updated_at?: string
         }
         Update: {
           id?: string
           user_id?: string
-          user_profile?: any
-          companies?: any
+          user_profile?: UserCMF
+          companies?: Company[]
           updated_at?: string
         }
       }

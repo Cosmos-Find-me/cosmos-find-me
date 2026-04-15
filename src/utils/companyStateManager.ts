@@ -9,10 +9,19 @@ import { Company } from '../types';
 import { getColorForScore } from './companyPositioning';
 
 interface CompanyStateData {
-  companies: Company[];
+  companies: Partial<Company>[];
   lastUpdated: string;
   version: number;
 }
+
+interface ImportData {
+  companies: Partial<Company>[];
+}
+
+interface CompaniesUpdatedEvent extends CustomEvent {
+  detail: { companies: Company[] };
+}
+
 
 const STORAGE_KEY = 'cmf-custom-companies';
 const STORAGE_VERSION = 1;
@@ -80,7 +89,7 @@ export const loadCustomCompanies = (): {
       return { companies: [] };
     }
     
-    const stateData: CompanyStateData = JSON.parse(stored);
+    const stateData = JSON.parse(stored) as CompanyStateData;
     
     // Version compatibility check
     if (stateData.version !== STORAGE_VERSION) {
@@ -213,7 +222,7 @@ export const removeCustomCompany = async (
 /**
  * Validate company data structure and fix common issues
  */
-const validateCompaniesData = (companies: any[]): Company[] => {
+const validateCompaniesData = (companies: Partial<Company>[]): Company[] => {
   if (!Array.isArray(companies)) {
     return [];
   }
@@ -315,13 +324,13 @@ export const setupCrossTabSync = (
     }
   };
   
-  const handleCustomEvent = (event: CustomEvent) => {
+  const handleCustomEvent = (event: CompaniesUpdatedEvent) => {
     onCompaniesUpdated(event.detail.companies);
   };
-  
+
   window.addEventListener('storage', handleStorageChange);
   window.addEventListener('customCompaniesUpdated', handleCustomEvent as EventListener);
-  
+
   // Return cleanup function
   return () => {
     window.removeEventListener('storage', handleStorageChange);
@@ -352,8 +361,8 @@ export const importCompaniesData = async (jsonData: string): Promise<{
   error?: string;
 }> => {
   try {
-    const importData = JSON.parse(jsonData);
-    
+    const importData = JSON.parse(jsonData) as ImportData;
+
     if (!importData.companies || !Array.isArray(importData.companies)) {
       return {
         success: false,

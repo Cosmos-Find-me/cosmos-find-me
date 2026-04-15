@@ -1,6 +1,44 @@
-import { UserCMF, Company, getCMFCombinedText } from '../types';
+import type { UserCMF, Company, UserExplorationState } from '../types';
+import { getCMFCombinedText } from '../types';
 import { findSmartPositioningSolution } from './smartPositioning';
 import { getColorForScore } from './companyPositioning';
+
+// ---------------------------------------------------------------------------
+// Response-shape interfaces for fetch calls
+// ---------------------------------------------------------------------------
+
+interface ExtractProfileCMF {
+  name?: string;
+  targetRole?: string;
+  mustHaves: (string | import('../types').CMFItem)[];
+  wantToHave: (string | import('../types').CMFItem)[];
+  experience: string[];
+  targetCompanies?: string;
+}
+
+interface ExtractProfileResponse {
+  success: boolean;
+  error?: string;
+  cmf: ExtractProfileCMF;
+  usage?: {
+    inputTokens: number;
+    outputTokens: number;
+    totalCost: number;
+  };
+}
+
+/** The company list shape returned inside DiscoverCompaniesResponse.data */
+export interface DiscoveryResult {
+  baseCompanies: Company[];
+  [key: string]: unknown;
+}
+
+interface DiscoverCompaniesResponse {
+  success: boolean;
+  error?: string;
+  warning?: string;
+  data: DiscoveryResult;
+}
 
 /**
  * Read file content as text
@@ -74,11 +112,11 @@ async function extractProfileWithClaude(
   });
 
   if (!response.ok) {
-    const errorData = await response.json().catch(() => ({}));
+    const errorData = await response.json().catch(() => ({})) as { error?: string };
     throw new Error(errorData.error || `Profile extraction failed: ${response.status}`);
   }
 
-  const result = await response.json();
+  const result = await response.json() as ExtractProfileResponse;
 
   if (!result.success) {
     throw new Error(result.error || 'Profile extraction failed');
@@ -105,7 +143,7 @@ async function extractProfileWithClaude(
  */
 export async function discoverCompaniesWithPerplexity(
   extractedCMF: Partial<UserCMF>
-): Promise<any> {
+): Promise<DiscoveryResult & { _warning?: string }> {
   console.log('🔍 Calling Perplexity company discovery API...');
 
   // Convert CMFItem arrays to combined "Short: Detailed" format for Perplexity matching
@@ -130,11 +168,11 @@ export async function discoverCompaniesWithPerplexity(
   });
 
   if (!response.ok) {
-    const errorData = await response.json().catch(() => ({}));
+    const errorData = await response.json().catch(() => ({})) as { error?: string };
     throw new Error(errorData.error || `Perplexity API error: ${response.status}`);
   }
 
-  const result = await response.json();
+  const result = await response.json() as DiscoverCompaniesResponse;
 
   if (!result.success) {
     throw new Error(result.error || 'Failed to discover companies');
@@ -474,7 +512,7 @@ export const createUserProfileFromFiles = async (
   resumeFile: File,
   cmfFile: File,
   baseId: string = 'user'
-): Promise<any> => {
+): Promise<UserExplorationState> => {
   console.log(`📁 Files received for processing: ${resumeFile.name}, ${cmfFile.name}`);
 
   try {

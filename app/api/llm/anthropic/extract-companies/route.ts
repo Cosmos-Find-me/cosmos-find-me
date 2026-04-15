@@ -10,7 +10,7 @@ interface ExtractedCompany {
 
 export async function POST(request: NextRequest) {
   try {
-    const { text, html } = await request.json();
+    const { text, html } = await request.json() as { text?: string; html?: string };
     const apiKey = process.env.ANTHROPIC_API_KEY;
 
     if (!apiKey) {
@@ -179,11 +179,11 @@ ${contentToAnalyze}${extractedLinks.length > 0 ? `\n\nHyperlinks found in the te
     });
 
     if (!response.ok) {
-      const errorData = await response.json().catch(() => ({}));
-      throw new Error(errorData.error?.message || `HTTP ${response.status}`);
+      const errorData = await response.json().catch(() => ({})) as { error?: { message?: string } };
+      throw new Error(errorData.error?.message ?? `HTTP ${response.status}`);
     }
 
-    const data = await response.json();
+    const data = await response.json() as { content?: Array<{ text?: string }> };
     const content = data.content?.[0]?.text;
 
     if (!content) {
@@ -193,7 +193,7 @@ ${contentToAnalyze}${extractedLinks.length > 0 ? `\n\nHyperlinks found in the te
     // Parse the JSON response (with structured outputs, it's guaranteed valid JSON)
     let result: { companies: ExtractedCompany[] };
     try {
-      result = JSON.parse(content);
+      result = JSON.parse(content) as { companies: ExtractedCompany[] };
     } catch (parseError) {
       console.error('Failed to parse LLM response:', content);
       throw new Error('Failed to parse company list from LLM response');

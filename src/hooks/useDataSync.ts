@@ -57,7 +57,7 @@ export function useDataSync({
         return
       }
 
-      const serverVersions: DataVersionTimestamps = await response.json()
+      const serverVersions = await response.json() as DataVersionTimestamps
       const known = knownVersionsRef.current
       if (!known) return
 

@@ -11,12 +11,13 @@ export async function GET(_request: Request, { params }: { params: Promise<{ tok
   )
 
   try {
+    type InvitationRow = { email: string; full_name: string | null; expires_at: string; invite_token: string; used: boolean }
     const { data: invitation, error } = await supabase
       .from('user_invitations')
       .select('*')
       .eq('invite_token', token)
       .eq('used', false)
-      .single()
+      .single<InvitationRow>()
 
     if (error || !invitation) {
       return NextResponse.json({ error: 'Invalid or expired invitation' }, { status: 404 })
@@ -25,7 +26,7 @@ export async function GET(_request: Request, { params }: { params: Promise<{ tok
     // Check if invitation has expired
     const now = new Date()
     const expiresAt = new Date(invitation.expires_at)
-    
+
     if (now > expiresAt) {
       return NextResponse.json({ error: 'Invitation has expired' }, { status: 400 })
     }

@@ -15,6 +15,24 @@
 import { createClient } from '@supabase/supabase-js';
 import { NextRequest, NextResponse } from 'next/server';
 
+interface CompanyRecord {
+  logo: string;
+  careerUrl?: string;
+  name?: string;
+  [key: string]: unknown;
+}
+
+interface UserCompanyRow {
+  user_id: string;
+  companies?: CompanyRecord[];
+  user_profile?: {
+    baseCompanies?: CompanyRecord[];
+    addedCompanies?: CompanyRecord[];
+    [key: string]: unknown;
+  };
+  [key: string]: unknown;
+}
+
 export async function POST(request: NextRequest) {
   // Safety check - require confirmation header to prevent accidental runs
   const confirmHeader = request.headers.get('X-Confirm-Migration');
@@ -48,9 +66,10 @@ export async function POST(request: NextRequest) {
 
   try {
     // Get all user_company_data records
-    const { data: allUserData, error: fetchError } = await supabase
+    const { data: rawUserData, error: fetchError } = await supabase
       .from('user_company_data')
       .select('*');
+    const allUserData = rawUserData as UserCompanyRow[] | null;
 
     if (fetchError) {
       return NextResponse.json(
@@ -70,50 +89,32 @@ export async function POST(request: NextRequest) {
     const results = [];
 
     // Process each user's data
-    for (const userData of allUserData) {
+    for (const userData of allUserData as UserCompanyRow[]) {
       const companies = userData.companies || [];
       const userProfile = userData.user_profile || {};
 
       let hasChanges = false;
 
-      // Migrate companies array
-      const migratedCompanies = companies.map((company: any) => {
+      const migrateCompany = (company: CompanyRecord): CompanyRecord => {
         const oldLogo = company.logo;
         const newLogo = migrateLogoURL(company.logo, company.careerUrl, company.name);
-
-        if (oldLogo !== newLogo) {
-          hasChanges = true;
-          console.log(`Migrating ${company.name}: ${oldLogo} -> ${newLogo}`);
-        }
-
+        if (oldLogo !== newLogo) hasChanges = true;
         return { ...company, logo: newLogo };
-      });
+      };
+
+      // Migrate companies array
+      const migratedCompanies = companies.map(migrateCompany);
+      if (migratedCompanies.some((c, i) => c.logo !== companies[i].logo)) {
+        console.log(`Migrating companies for user ${userData.user_id}`);
+      }
 
       // Migrate baseCompanies in user_profile
-      const baseCompanies = userProfile.baseCompanies || [];
-      const migratedBaseCompanies = baseCompanies.map((company: any) => {
-        const oldLogo = company.logo;
-        const newLogo = migrateLogoURL(company.logo, company.careerUrl, company.name);
-
-        if (oldLogo !== newLogo) {
-          hasChanges = true;
-        }
-
-        return { ...company, logo: newLogo };
-      });
+      const baseCompanies = userProfile.baseCompanies ?? [];
+      const migratedBaseCompanies = baseCompanies.map(migrateCompany);
 
       // Migrate addedCompanies in user_profile
-      const addedCompanies = userProfile.addedCompanies || [];
-      const migratedAddedCompanies = addedCompanies.map((company: any) => {
-        const oldLogo = company.logo;
-        const newLogo = migrateLogoURL(company.logo, company.careerUrl, company.name);
-
-        if (oldLogo !== newLogo) {
-          hasChanges = true;
-        }
-
-        return { ...company, logo: newLogo };
-      });
+      const addedCompanies = userProfile.addedCompanies ?? [];
+      const migratedAddedCompanies = addedCompanies.map(migrateCompany);
 
       // Update database if there are changes
       if (hasChanges) {

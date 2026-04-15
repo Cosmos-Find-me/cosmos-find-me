@@ -52,7 +52,7 @@ export default function AuthWrapper({
           .from('profiles')
           .select('role')
           .eq('id', user.id)
-          .single()
+          .single<{ role: string }>()
 
         if (profileError) {
           console.error('Profile error:', profileError)

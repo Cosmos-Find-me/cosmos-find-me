@@ -1,6 +1,67 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { getCompanyLogo } from '@/utils/logoProvider';
 
+interface RawCompany {
+  id?: unknown;
+  name?: unknown;
+  logo?: unknown;
+  careerUrl?: unknown;
+  matchScore?: unknown;
+  industry?: unknown;
+  stage?: unknown;
+  location?: unknown;
+  employees?: unknown;
+  remote?: unknown;
+  openRoles?: unknown;
+  connections?: unknown;
+  connectionTypes?: unknown;
+  matchReasons?: unknown;
+  externalLinks?: {
+    website?: unknown;
+    linkedin?: unknown;
+    glassdoor?: unknown;
+    crunchbase?: unknown;
+  };
+}
+
+interface PerplexityResponse {
+  choices?: Array<{ message?: { content?: string }; finish_reason?: string }>;
+  citations?: string[];
+  model?: string;
+  usage?: { total_tokens?: number };
+}
+
+interface PerplexityErrorResponse {
+  error?: { message?: string };
+}
+
+interface ParsedDiscoveryData {
+  baseCompanies?: unknown[];
+}
+
+interface SanitizedCompany {
+  id: number;
+  name: string;
+  logo: string;
+  careerUrl: string;
+  matchScore: number;
+  industry: string;
+  stage: string;
+  location: string;
+  employees: string;
+  remote: string;
+  openRoles: number;
+  connections: number[];
+  connectionTypes: Record<string, string>;
+  matchReasons: string[];
+  externalLinks: {
+    website: string;
+    linkedin: string;
+    glassdoor: string;
+    crunchbase: string;
+  };
+}
+
 interface CompanyDiscoveryRequest {
   candidateName: string;
   targetRole: string;
@@ -64,7 +125,7 @@ function sanitizeArray(arr: string[], maxLength: number = 200): string[] {
 /**
  * Validate and sanitize the discovery request
  */
-function validateAndSanitizeRequest(raw: any): CompanyDiscoveryRequest | null {
+function validateAndSanitizeRequest(raw: Record<string, unknown>): CompanyDiscoveryRequest | null {
   try {
     // Validate required fields exist
     if (!raw.candidateName || !raw.targetRole) {
@@ -72,12 +133,12 @@ function validateAndSanitizeRequest(raw: any): CompanyDiscoveryRequest | null {
     }
 
     return {
-      candidateName: sanitizeString(raw.candidateName, 100),
-      targetRole: sanitizeString(raw.targetRole, 200),
-      experience: sanitizeArray(raw.experience || [], 150),
-      targetCompanies: sanitizeString(raw.targetCompanies, 300),
-      mustHaves: sanitizeArray(raw.mustHaves || [], 200),
-      wantToHave: sanitizeArray(raw.wantToHave || [], 200)
+      candidateName: sanitizeString(String(raw.candidateName), 100),
+      targetRole: sanitizeString(String(raw.targetRole), 200),
+      experience: sanitizeArray(Array.isArray(raw.experience) ? raw.experience as string[] : [], 150),
+      targetCompanies: sanitizeString(String(raw.targetCompanies ?? ''), 300),
+      mustHaves: sanitizeArray(Array.isArray(raw.mustHaves) ? raw.mustHaves as string[] : [], 200),
+      wantToHave: sanitizeArray(Array.isArray(raw.wantToHave) ? raw.wantToHave as string[] : [], 200)
     };
   } catch (error) {
     console.error('Validation error:', error);
@@ -91,7 +152,7 @@ function validateAndSanitizeRequest(raw: any): CompanyDiscoveryRequest | null {
  */
 export async function POST(request: NextRequest) {
   try {
-    const rawRequest = await request.json();
+    const rawRequest = await request.json() as Record<string, unknown>;
 
     // Validate and sanitize all input
     const discoveryRequest = validateAndSanitizeRequest(rawRequest);
@@ -164,7 +225,7 @@ export async function POST(request: NextRequest) {
     });
 
     if (!response.ok) {
-      const errorData = await response.json().catch(() => ({}));
+      const errorData = await response.json().catch(() => ({})) as PerplexityErrorResponse;
       const errorMessage = errorData.error?.message || 'Unknown error';
       console.error('❌ Perplexity API error:', response.status, errorData);
 
@@ -190,10 +251,10 @@ export async function POST(request: NextRequest) {
       throw new Error(`Perplexity API error: ${response.status} - ${errorMessage}`);
     }
 
-    const data = await response.json();
+    const data = await response.json() as PerplexityResponse;
     const responseText = data.choices?.[0]?.message?.content;
     const finishReason = data.choices?.[0]?.finish_reason;
-    const citations = data.citations || [];
+    const citations = data.citations ?? [];
 
     if (!responseText) {
       throw new Error('No response content from Perplexity API');
@@ -219,8 +280,8 @@ export async function POST(request: NextRequest) {
       data: discoveredData,
       citations,
       usage: {
-        model: data.model,
-        tokensUsed: data.usage?.total_tokens || 0
+        model: data.model ?? 'unknown',
+        tokensUsed: data.usage?.total_tokens ?? 0
       }
     });
 
@@ -240,7 +301,7 @@ export async function POST(request: NextRequest) {
  * Generate JSON Schema for structured output
  * This ensures Perplexity returns valid JSON matching our expected structure
  */
-function getDiscoveryResponseSchema(): any {
+function getDiscoveryResponseSchema(): Record<string, unknown> {
   return {
     type: 'object',
     required: ['baseCompanies'],
@@ -397,10 +458,11 @@ Return ONLY the JSON object, no additional text.`;
  * Extract domain from various URL formats
  * Tries to extract from careerUrl, website, or logo URL
  */
-function extractDomain(company: any): string | undefined {
+function extractDomain(company: RawCompany): string | undefined {
+  const extLinks = company.externalLinks;
   const urlSources = [
     company.careerUrl,
-    company.externalLinks?.website,
+    extLinks?.website,
     company.logo
   ];
 
@@ -425,9 +487,9 @@ function extractDomain(company: any): string | undefined {
 /**
  * Sanitize a single company object from Perplexity response
  */
-function sanitizeCompany(company: any, index: number): any {
+function sanitizeCompany(company: RawCompany, index: number): SanitizedCompany {
   // Validate URL format (must be valid HTTPS URLs)
-  const sanitizeUrl = (url: string | undefined): string => {
+  const sanitizeUrl = (url: unknown): string => {
     if (!url || typeof url !== 'string') return '';
 
     try {
@@ -443,7 +505,7 @@ function sanitizeCompany(company: any, index: number): any {
   };
 
   // Validate and clamp numeric values
-  const sanitizeNumber = (val: any, min: number, max: number, defaultVal: number): number => {
+  const sanitizeNumber = (val: unknown, min: number, max: number, defaultVal: number): number => {
     const num = Number(val);
     if (isNaN(num)) return defaultVal;
     return Math.max(min, Math.min(max, num));
@@ -451,8 +513,40 @@ function sanitizeCompany(company: any, index: number): any {
 
   // Extract domain and generate logo URL using our logo provider
   const domain = extractDomain(company);
-  const companyName = sanitizeString(company.name || 'Unknown Company', 100);
+  const companyName = sanitizeString(typeof company.name === 'string' ? company.name : 'Unknown Company', 100);
   const logoUrl = getCompanyLogo(domain, companyName);
+
+  const connections = Array.isArray(company.connections)
+    ? company.connections.filter((c): c is number => typeof c === 'number').slice(0, 10)
+    : [];
+
+  const connectionTypes: Record<string, string> = {};
+  if (typeof company.connectionTypes === 'object' && company.connectionTypes !== null) {
+    let count = 0;
+    for (const [key, val] of Object.entries(company.connectionTypes as Record<string, unknown>)) {
+      if (typeof key === 'string' && typeof val === 'string' && count < 10) {
+        connectionTypes[sanitizeString(key, 20)] = sanitizeString(val, 100);
+        count++;
+      }
+    }
+  }
+
+  const matchReasons = Array.isArray(company.matchReasons)
+    ? company.matchReasons
+        .filter((r): r is string => typeof r === 'string')
+        .map(r => sanitizeString(r, 500))
+        .slice(0, 10)
+    : [];
+
+  const extLinks = company.externalLinks;
+  const externalLinks = typeof extLinks === 'object' && extLinks !== null
+    ? {
+        website: sanitizeUrl(extLinks.website),
+        linkedin: sanitizeUrl(extLinks.linkedin),
+        glassdoor: sanitizeUrl(extLinks.glassdoor),
+        crunchbase: sanitizeUrl(extLinks.crunchbase)
+      }
+    : { website: '', linkedin: '', glassdoor: '', crunchbase: '' };
 
   return {
     id: sanitizeNumber(company.id, 1, 10000, index + 1),
@@ -460,37 +554,16 @@ function sanitizeCompany(company: any, index: number): any {
     logo: logoUrl,
     careerUrl: sanitizeUrl(company.careerUrl),
     matchScore: sanitizeNumber(company.matchScore, 0, 100, 50),
-    industry: sanitizeString(company.industry || '', 100),
-    stage: sanitizeString(company.stage || '', 100),
-    location: sanitizeString(company.location || '', 150),
-    employees: sanitizeString(company.employees || '', 50),
-    remote: sanitizeString(company.remote || '', 100),
+    industry: sanitizeString(typeof company.industry === 'string' ? company.industry : '', 100),
+    stage: sanitizeString(typeof company.stage === 'string' ? company.stage : '', 100),
+    location: sanitizeString(typeof company.location === 'string' ? company.location : '', 150),
+    employees: sanitizeString(typeof company.employees === 'string' ? company.employees : '', 50),
+    remote: sanitizeString(typeof company.remote === 'string' ? company.remote : '', 100),
     openRoles: sanitizeNumber(company.openRoles, 0, 1000, 0),
-    connections: Array.isArray(company.connections)
-      ? company.connections.filter((c: any) => typeof c === 'number').slice(0, 10)
-      : [],
-    connectionTypes: typeof company.connectionTypes === 'object' && company.connectionTypes !== null
-      ? Object.fromEntries(
-          Object.entries(company.connectionTypes)
-            .filter(([key, val]) => typeof key === 'string' && typeof val === 'string')
-            .map(([key, val]) => [sanitizeString(key, 20), sanitizeString(val as string, 100)])
-            .slice(0, 10)
-        )
-      : {},
-    matchReasons: Array.isArray(company.matchReasons)
-      ? company.matchReasons
-          .filter((r: any) => typeof r === 'string')
-          .map((r: string) => sanitizeString(r, 500))
-          .slice(0, 10)
-      : [],
-    externalLinks: typeof company.externalLinks === 'object' && company.externalLinks !== null
-      ? {
-          website: sanitizeUrl(company.externalLinks.website),
-          linkedin: sanitizeUrl(company.externalLinks.linkedin),
-          glassdoor: sanitizeUrl(company.externalLinks.glassdoor),
-          crunchbase: sanitizeUrl(company.externalLinks.crunchbase)
-        }
-      : {}
+    connections,
+    connectionTypes,
+    matchReasons,
+    externalLinks
   };
 }
 
@@ -601,14 +674,14 @@ function extractJSON(text: string): string {
  * Parse and sanitize the Perplexity response
  * IMPORTANT: This validates and sanitizes ALL data from the LLM before database storage
  */
-function parseDiscoveryResponse(responseText: string): any {
+function parseDiscoveryResponse(responseText: string): { baseCompanies: SanitizedCompany[] } {
   try {
     // Extract JSON from response (handles conversational text before/after)
     const jsonText = extractJSON(responseText);
-    
+
     // Log JSON length for debugging
     console.log(`📋 Extracted JSON length: ${jsonText.length} characters`);
-    
+
     // Validate JSON structure before parsing
     // Check if JSON might be truncated (common issue with large responses)
     const openBraces = (jsonText.match(/{/g) || []).length;
@@ -619,7 +692,7 @@ function parseDiscoveryResponse(responseText: string): any {
       console.error('Last 500 chars of JSON:', jsonText.substring(Math.max(0, jsonText.length - 500)));
       throw new Error(`JSON appears to be truncated or malformed. Brace mismatch: ${openBraces} open vs ${closeBraces} close.`);
     }
-    
+
     // Check for common JSON syntax issues
     // Look for unclosed strings or arrays
     const openBrackets = (jsonText.match(/\[/g) || []).length;
@@ -628,8 +701,8 @@ function parseDiscoveryResponse(responseText: string): any {
       console.error(`❌ JSON bracket mismatch: ${openBrackets} open, ${closeBrackets} close`);
       throw new Error(`JSON appears to be truncated or malformed. Bracket mismatch: ${openBrackets} open vs ${closeBrackets} close.`);
     }
-    
-    const parsed = JSON.parse(jsonText);
+
+    const parsed = JSON.parse(jsonText) as ParsedDiscoveryData;
 
     // Validate the structure
     if (!parsed.baseCompanies || !Array.isArray(parsed.baseCompanies)) {
@@ -637,10 +710,10 @@ function parseDiscoveryResponse(responseText: string): any {
     }
 
     // Sanitize each company
-    const sanitizedCompanies = parsed.baseCompanies
-      .filter((c: any) => c && typeof c === 'object')
-      .map((company: any, index: number) => sanitizeCompany(company, index))
-      .filter((c: any) => c.name && c.name !== 'Unknown Company')
+    const sanitizedCompanies = (parsed.baseCompanies as unknown[])
+      .filter((c): c is RawCompany => !!c && typeof c === 'object')
+      .map((company, index) => sanitizeCompany(company, index))
+      .filter(c => c.name && c.name !== 'Unknown Company')
       .slice(0, 50); // Limit to 50 companies max
 
     console.log(`✅ Parsed and sanitized ${sanitizedCompanies.length} companies successfully`);

@@ -1,6 +1,37 @@
 import { NextResponse } from 'next/server'
 import { verifyAdminAccess, isAdminAuthError } from '../../../../src/lib/admin-auth'
 import { auditLog } from '../../../../src/lib/audit-log'
+import type { UserCMF, Company } from '../../../../src/types/index'
+
+interface UserExplorationStateBody {
+  id?: string
+  name?: string
+  cmf: UserCMF
+  baseCompanies?: Company[]
+  addedCompanies?: Company[]
+  removedCompanyIds?: number[]
+  watchlistCompanyIds?: number[]
+  lastSelectedCompanyId?: number
+  viewMode?: string
+  userProfile?: never
+  companies?: never
+}
+
+interface LegacyFormatBody {
+  userProfile: unknown
+  companies: Company[]
+  watchlistCompanyIds?: number[]
+  removedCompanyIds?: number[]
+  viewMode?: string
+  cmf?: never
+}
+
+type CompaniesDataBody = UserExplorationStateBody | LegacyFormatBody
+
+interface ImportBody {
+  userId: string
+  companiesData: CompaniesDataBody
+}
 
 // Import companies.ts data for a specific user (admin only)
 export async function POST(request: Request) {
@@ -12,7 +43,7 @@ export async function POST(request: Request) {
   const { user, adminClient } = auth
 
   try {
-    const body = await request.json()
+    const body = await request.json() as ImportBody
     const { userId, companiesData } = body
 
     if (!userId || !companiesData) {
@@ -35,7 +66,7 @@ export async function POST(request: Request) {
       .from('profiles')
       .select('id, email')
       .eq('id', userId)
-      .single()
+      .single<{ id: string; email: string }>()
 
     if (userError || !profileData) {
       return NextResponse.json(
@@ -44,11 +75,10 @@ export async function POST(request: Request) {
       )
     }
 
-    const userProfile = profileData as { id: string; email: string }
-    console.log(`📥 Admin ${user.email} importing companies for user: ${userProfile.email}`)
+    console.log(`📥 Admin ${user.email} importing companies for user: ${profileData.email}`)
 
     // Support both formats: legacy userProfile/companies and new UserExplorationState
-    const isUserExplorationState = companiesData.cmf && (companiesData.baseCompanies || companiesData.addedCompanies);
+    const isUserExplorationState = !!companiesData.cmf && ('baseCompanies' in companiesData || 'addedCompanies' in companiesData)
 
     if (isUserExplorationState) {
       // Validate UserExplorationState structure
@@ -69,46 +99,48 @@ export async function POST(request: Request) {
     }
 
     // Process data based on format
-    let processedUserProfile, processedCompanies;
+    let processedUserProfile: Record<string, unknown>
+    let processedCompanies: Company[]
 
     if (isUserExplorationState) {
+      const uesData = companiesData as UserExplorationStateBody
       console.log('📊 Importing UserExplorationState format:', {
-        userName: companiesData.name || companiesData.cmf?.name,
-        baseCompanyCount: companiesData.baseCompanies?.length || 0,
-        addedCompanyCount: companiesData.addedCompanies?.length || 0,
-        hasWatchlist: companiesData.watchlistCompanyIds?.length > 0
+        userName: uesData.name ?? uesData.cmf?.name,
+        baseCompanyCount: uesData.baseCompanies?.length ?? 0,
+        addedCompanyCount: uesData.addedCompanies?.length ?? 0,
+        hasWatchlist: (uesData.watchlistCompanyIds?.length ?? 0) > 0
       });
 
       // Preserve the UserExplorationState structure
       processedUserProfile = {
-        id: companiesData.id || userId,
-        name: companiesData.name || companiesData.cmf?.name || 'User',
-        cmf: companiesData.cmf,
-        baseCompanies: companiesData.baseCompanies || [],
-        addedCompanies: companiesData.addedCompanies || [],
-        removedCompanyIds: companiesData.removedCompanyIds || [],
-        watchlistCompanyIds: companiesData.watchlistCompanyIds || [],
-        lastSelectedCompanyId: companiesData.lastSelectedCompanyId,
-        viewMode: companiesData.viewMode || 'explore'
+        id: uesData.id ?? userId,
+        name: uesData.name ?? uesData.cmf?.name ?? 'User',
+        cmf: uesData.cmf,
+        baseCompanies: uesData.baseCompanies ?? [],
+        addedCompanies: uesData.addedCompanies ?? [],
+        removedCompanyIds: uesData.removedCompanyIds ?? [],
+        watchlistCompanyIds: uesData.watchlistCompanyIds ?? [],
+        lastSelectedCompanyId: uesData.lastSelectedCompanyId,
+        viewMode: uesData.viewMode ?? 'explore'
       };
 
       // Combine baseCompanies + addedCompanies for database storage
-      // But preserve the structure in user_profile
       processedCompanies = [
-        ...(companiesData.baseCompanies || []),
-        ...(companiesData.addedCompanies || [])
+        ...(uesData.baseCompanies ?? []),
+        ...(uesData.addedCompanies ?? [])
       ];
 
     } else {
+      const legacyData = companiesData as LegacyFormatBody
       console.log('📊 Importing legacy format:', {
-        userProfileName: companiesData.userProfile?.name,
-        companyCount: companiesData.companies?.length || 0,
-        hasWatchlist: companiesData.watchlistCompanyIds?.length > 0
+        userProfileName: (legacyData.userProfile as Record<string, unknown> | undefined)?.name,
+        companyCount: legacyData.companies?.length ?? 0,
+        hasWatchlist: (legacyData.watchlistCompanyIds?.length ?? 0) > 0
       });
 
       // Legacy format - convert to structured format
-      processedUserProfile = companiesData.userProfile;
-      processedCompanies = companiesData.companies || [];
+      processedUserProfile = legacyData.userProfile as Record<string, unknown>
+      processedCompanies = legacyData.companies ?? []
     }
 
     // Upsert user company data
@@ -133,9 +165,9 @@ export async function POST(request: Request) {
 
     // Update user preferences if provided
     const preferences = {
-      watchlist_company_ids: companiesData.watchlistCompanyIds || [],
-      removed_company_ids: companiesData.removedCompanyIds || [],
-      view_mode: companiesData.viewMode || 'explore'
+      watchlist_company_ids: companiesData.watchlistCompanyIds ?? [],
+      removed_company_ids: companiesData.removedCompanyIds ?? [],
+      view_mode: companiesData.viewMode ?? 'explore'
     }
 
     const { error: prefError } = await adminClient
@@ -169,10 +201,12 @@ export async function POST(request: Request) {
       // Don't fail the entire import for profile status errors
       console.warn('Profile status update failed, but company data was imported successfully')
     } else {
-      console.log('✅ Updated profile_status to complete for user:', userProfile.email)
+      console.log('✅ Updated profile_status to complete for user:', profileData.email)
     }
 
-    console.log('✅ Successfully imported companies data for user:', userProfile.email)
+    console.log('✅ Successfully imported companies data for user:', profileData.email)
+
+    const processedUserProfileName = (processedUserProfile.name as string | undefined) ?? 'User'
 
     // Audit log
     await auditLog({
@@ -181,21 +215,23 @@ export async function POST(request: Request) {
       adminId: user.id,
       targetUserId: userId,
       details: {
-        email: userProfile.email,
+        email: profileData.email,
         companyCount: processedCompanies.length,
         format: isUserExplorationState ? 'UserExplorationState' : 'legacy'
       },
       request
     })
 
+    const uesData = isUserExplorationState ? companiesData as UserExplorationStateBody : null
+
     return NextResponse.json({
-      message: `Successfully imported ${processedCompanies.length} companies for user ${userProfile.email}`,
+      message: `Successfully imported ${processedCompanies.length} companies for user ${profileData.email}`,
       success: true,
       importedData: {
-        userProfile: processedUserProfile.name || 'User',
+        userProfile: processedUserProfileName,
         companyCount: processedCompanies.length,
-        baseCompanyCount: isUserExplorationState ? (companiesData.baseCompanies?.length || 0) : null,
-        addedCompanyCount: isUserExplorationState ? (companiesData.addedCompanies?.length || 0) : null,
+        baseCompanyCount: uesData ? (uesData.baseCompanies?.length ?? 0) : null,
+        addedCompanyCount: uesData ? (uesData.addedCompanies?.length ?? 0) : null,
         format: isUserExplorationState ? 'UserExplorationState' : 'legacy',
         preferences: preferences
       }

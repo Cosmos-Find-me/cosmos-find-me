@@ -16,7 +16,7 @@ function getSupabaseClient() {
 
 export async function POST(request: NextRequest) {
   try {
-    const { email } = await request.json()
+    const { email } = await request.json() as { email?: string }
 
     if (!email || !email.includes('@')) {
       return NextResponse.json(
@@ -27,7 +27,7 @@ export async function POST(request: NextRequest) {
 
     // Insert email into waitlist
     const supabase = getSupabaseClient()
-    const { data, error } = await supabase
+    const { error } = await supabase
       .from('waitlist')
       .insert([{ email: email.toLowerCase().trim() }])
       .select()
@@ -53,7 +53,7 @@ export async function POST(request: NextRequest) {
     const normalizedEmail = email.toLowerCase().trim()
     await trackServerEvent('waitlist_signup', normalizedEmail, { email: normalizedEmail })
 
-    return NextResponse.json({ success: true, data })
+    return NextResponse.json({ success: true })
   } catch (error) {
     console.error('Waitlist API error:', error)
     return NextResponse.json(

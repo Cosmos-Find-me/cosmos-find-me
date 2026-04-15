@@ -1,5 +1,11 @@
 import { UserCMF, Company, GraphData } from '../types';
 
+// Cytoscape style sheet entry — mirrors cytoscape.StylesheetStyle
+interface CytoscapeStylesheet {
+  selector: string;
+  style: Record<string, string | number | ((ele: { data: (key: string) => unknown }) => string)>;
+}
+
 /**
  * Graph Data Transformation Utilities
  * 
@@ -153,7 +159,7 @@ export const getMatchScoreColor = (matchScore: number): string => {
   return '#6B7280'; // Gray - moderate match
 };
 
-export const getCytoscapeStyles = (): any[] => [
+export const getCytoscapeStyles = (): CytoscapeStylesheet[] => [
   // Disable the default selection overlay (the dark square) on ALL elements
   {
     selector: 'node',
@@ -354,8 +360,8 @@ export const getCytoscapeStyles = (): any[] => [
     style: {
       'width': 25,
       'height': 25,
-      'background-image': (ele: any) => {
-        const company = ele.data('company');
+      'background-image': (ele: { data: (key: string) => unknown }) => {
+        const company = ele.data('company') as { logo?: string } | undefined;
         return company?.logo ? `url(${company.logo})` : 'none';
       },
       'background-fit': 'contain',

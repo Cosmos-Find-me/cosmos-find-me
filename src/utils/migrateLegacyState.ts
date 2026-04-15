@@ -1,4 +1,5 @@
 import { UserExplorationState } from '../types';
+import type { Company } from '../types';
 import { activeUserProfile } from '../data/companies';
 
 /**
@@ -50,13 +51,13 @@ export const migrateLegacyState = (): LegacyMigrationResult => {
     }
 
     // Parse legacy data
-    const watchlistIds = watchlistData ? JSON.parse(watchlistData) : [];
-    const removedIds = removedData ? JSON.parse(removedData) : [];
-    const customCompanies = customCompaniesData ? JSON.parse(customCompaniesData) : [];
+    const watchlistIds = watchlistData ? JSON.parse(watchlistData) as number[] : [];
+    const removedIds = removedData ? JSON.parse(removedData) as number[] : [];
+    const customCompanies = customCompaniesData ? JSON.parse(customCompaniesData) as Company[] : [];
     
     // Convert Sets to Arrays if needed
-    const watchlistArray = Array.isArray(watchlistIds) ? watchlistIds : Array.from(watchlistIds);
-    const removedArray = Array.isArray(removedIds) ? removedIds : Array.from(removedIds);
+    const watchlistArray: number[] = Array.isArray(watchlistIds) ? watchlistIds : Array.from(watchlistIds) as number[];
+    const removedArray: number[] = Array.isArray(removedIds) ? removedIds : Array.from(removedIds) as number[];
     
     // Create migrated state
     const migratedState: Partial<UserExplorationState> = {
@@ -145,9 +146,9 @@ function generateCompaniesCodeSnippet(migratedState: Partial<UserExplorationStat
  * Create human-readable migration summary
  */
 function createMigrationSummary(
-  watchlistIds: number[], 
-  removedIds: number[], 
-  customCompanies: any[]
+  watchlistIds: number[],
+  removedIds: number[],
+  customCompanies: Company[]
 ): string {
   const parts = [];
   
@@ -212,7 +213,7 @@ export const autoMigrate = (): boolean => {
 
 // Export utility functions for console usage
 if (process.env.NODE_ENV === 'development' && typeof window !== 'undefined') {
-  (window as any).migrationUtils = {
+  (window as unknown as Window & { migrationUtils: Record<string, unknown> }).migrationUtils = {
     hasLegacyState,
     migrateLegacyState,
     applyMigratedState,

@@ -5,6 +5,18 @@
  */
 
 import { LLMSettings, LLMResponse, CompanyAnalysisRequest, BaseLLMProvider } from './types';
+import type { UserCMF } from '../../types';
+
+interface ErrorResponse {
+  error?: string;
+}
+
+interface ExtractCompaniesResponse {
+  success: boolean;
+  error?: string;
+  companies?: { name: string; url?: string; careerUrl?: string }[];
+  warning?: string;
+}
 import { DEFAULT_LLM_SETTINGS } from './config';
 import { AnthropicProvider } from './providers/anthropic';
 import { OpenAIProvider } from './providers/openai';
@@ -116,18 +128,18 @@ export class LLMService {
       });
 
       if (!response.ok) {
-        const errorData = await response.json().catch(() => ({}));
+        const errorData = await response.json().catch(() => ({})) as ErrorResponse;
         throw new Error(errorData.error || `HTTP ${response.status}`);
       }
 
-      const data = await response.json();
+      const data = await response.json() as ExtractCompaniesResponse;
 
       if (!data.success) {
         throw new Error(data.error || 'Failed to extract companies');
       }
 
       return {
-        companies: data.companies || [],
+        companies: data.companies ?? [],
         warning: data.warning
       };
     } catch (error) {
@@ -139,7 +151,7 @@ export class LLMService {
   /**
    * Estimate cost for a company analysis
    */
-  async estimateCost(companyName: string, userCMF: any): Promise<number> {
+  async estimateCost(companyName: string, userCMF: UserCMF): Promise<number> {
     if (!this.provider) {
       return 0;
     }
@@ -182,7 +194,7 @@ export class LLMService {
 
       const stored = localStorage.getItem(LLMService.STORAGE_KEY);
       if (stored) {
-        const parsedSettings = JSON.parse(stored);
+        const parsedSettings = JSON.parse(stored) as Partial<LLMSettings>;
         this.settings = { ...DEFAULT_LLM_SETTINGS, ...parsedSettings };
       } else {
         // First time loading - initialize with default Anthropic settings

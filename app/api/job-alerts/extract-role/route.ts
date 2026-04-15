@@ -3,8 +3,8 @@ import { NextRequest, NextResponse } from 'next/server';
 export async function POST(request: NextRequest) {
   let targetRole = '';
   try {
-    const body = await request.json();
-    targetRole = body.targetRole;
+    const body = await request.json() as { targetRole?: string };
+    targetRole = body.targetRole ?? '';
 
     if (!targetRole) {
       return NextResponse.json({ keyTerms: ['engineer'] });
@@ -66,13 +66,13 @@ Job role: "${targetRole}"`
       });
     }
 
-    const data = await response.json();
-    const responseText = data.content[0]?.text?.trim() || '';
+    const data = await response.json() as { content?: Array<{ text?: string }> };
+    const responseText = data.content?.[0]?.text?.trim() ?? '';
 
     // With structured outputs, parse JSON response directly
     try {
-      const parsed = JSON.parse(responseText);
-      const keyTerms = parsed.keyTerms || [];
+      const parsed = JSON.parse(responseText) as { keyTerms?: string[] };
+      const keyTerms = parsed.keyTerms ?? [];
 
       // Fallback if no valid terms extracted
       if (keyTerms.length === 0) {

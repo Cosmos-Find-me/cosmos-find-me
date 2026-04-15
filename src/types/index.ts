@@ -99,11 +99,12 @@ export interface UserExplorationState {
   name: string;
   cmf: UserCMF;
   baseCompanies: Company[];           // Original dataset
-  addedCompanies: Company[];          // Manually added companies  
+  addedCompanies: Company[];          // Manually added companies
   removedCompanyIds: number[];        // IDs of removed companies
   watchlistCompanyIds: number[];      // IDs of watchlisted companies
   lastSelectedCompanyId?: number;     // Last selected company
   viewMode: 'explore' | 'watchlist';  // Current view mode
+  _warning?: string;                  // Optional warning from file-processing/discovery pipeline
 }
 
 // CMF Component Props

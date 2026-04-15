@@ -65,7 +65,7 @@ export interface ProfileCreationContext {
   resumeFile?: File;
   cmfFile?: File;
   linkedinProfile?: string;
-  preferences?: any;
+  preferences?: Record<string, unknown>;
 }
 
 /**

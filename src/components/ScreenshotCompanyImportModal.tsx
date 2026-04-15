@@ -259,7 +259,7 @@ export const ScreenshotCompanyImportModal: React.FC<ScreenshotCompanyImportModal
     );
 
     try {
-      await onImportCompanies(companiesToImport as any);
+      await onImportCompanies(companiesToImport as unknown as Company[]);
     } catch (error) {
       console.error('Error importing companies:', error);
       toast.error('Failed to import companies', {

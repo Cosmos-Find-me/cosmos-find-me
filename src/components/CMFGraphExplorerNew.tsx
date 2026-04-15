@@ -34,6 +34,9 @@ import CollapsibleCMFPanel from './CollapsibleCMFPanel';
 import { useKeyboardShortcuts } from '../hooks/useKeyboardShortcuts';
 import { useSwipeGesture } from '../hooks/useSwipeGesture';
 import { track } from '../lib/analytics';
+import { findSmartPositioningSolution } from '../utils/smartPositioning';
+import { calculateDistanceFromScore, mapConnectionsToExistingCompanies, resolveCareerUrl } from '../utils/companyPositioning';
+import { toast } from 'sonner';
 // Using inline SVG icons instead of lucide-react
 const SearchIcon = () => (
   <svg className="w-4 h-4 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -323,8 +326,6 @@ const CMFGraphExplorer: React.FC<CMFGraphExplorerProps> = ({ userProfile }) => {
 
   // Helper to recalculate position for a company when moving to a different view
   const recalculatePositionForView = useCallback((company: Company, targetView: 'explore' | 'watchlist'): Company => {
-    const { findSmartPositioningSolution } = require('../utils/smartPositioning');
-    const { calculateDistanceFromScore } = require('../utils/companyPositioning');
 
     // Get companies in the target view
     const viewFilteredCompanies = targetView === 'watchlist'
@@ -428,7 +429,6 @@ const CMFGraphExplorer: React.FC<CMFGraphExplorerProps> = ({ userProfile }) => {
     // Show toast notification
     if (!wasInWatchlist && company) {
       // Added to watchlist
-      const { toast } = require('sonner');
       toast.success(`${company.name} moved to Watchlist`, {
         description: 'Switch to Watchlist tab to see all saved companies',
         duration: 3000,
@@ -452,7 +452,6 @@ const CMFGraphExplorer: React.FC<CMFGraphExplorerProps> = ({ userProfile }) => {
       }
     } else if (company) {
       // Removed from watchlist - fade out from Watchlist, reappear in Explore
-      const { toast } = require('sonner');
       toast(`${company.name} removed from Watchlist`, {
         description: 'Company is back in Explore tab',
         duration: 3000,
@@ -562,7 +561,6 @@ const CMFGraphExplorer: React.FC<CMFGraphExplorerProps> = ({ userProfile }) => {
             : currentCompanies.filter(c => !stateManager.isInWatchlist(c.id));
 
           // Map connection names to IDs
-          const { mapConnectionsToExistingCompanies, resolveCareerUrl } = require('../utils/companyPositioning');
           const connectionTypesForMapping = fullCompanyData.connectionTypes || {};
           const baseCompanyForMapping = {
             id: Date.now() + successCount,
@@ -603,7 +601,6 @@ const CMFGraphExplorer: React.FC<CMFGraphExplorerProps> = ({ userProfile }) => {
           };
 
           // Calculate smart position for this company
-          const { findSmartPositioningSolution } = require('../utils/smartPositioning');
           const positioningSolution = findSmartPositioningSolution(newCompany, viewFilteredCompanies, viewMode);
 
           // Apply position to company

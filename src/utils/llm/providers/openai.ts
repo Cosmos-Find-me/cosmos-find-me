@@ -1,10 +1,32 @@
 /**
  * OpenAI GPT Provider
- * 
+ *
  * Implementation for OpenAI GPT API integration
  */
 
-import { BaseLLMProvider, CompanyAnalysisRequest, LLMResponse, LLMSettings } from '../types';
+import { BaseLLMProvider, CompanyAnalysisRequest, LLMResponse, LLMSettings, CompanyAnalysisResponse } from '../types';
+
+interface OpenAIErrorResponse {
+  error?: { message?: string };
+}
+
+interface OpenAIMessage {
+  content: string;
+}
+
+interface OpenAIChoice {
+  message?: OpenAIMessage;
+}
+
+interface OpenAIUsage {
+  prompt_tokens: number;
+  completion_tokens: number;
+}
+
+interface OpenAIResponse {
+  choices: OpenAIChoice[];
+  usage?: OpenAIUsage;
+}
 
 export class OpenAIProvider extends BaseLLMProvider {
   private readonly baseUrl = 'http://localhost:3002/api/openai/chat/completions';
@@ -16,7 +38,7 @@ export class OpenAIProvider extends BaseLLMProvider {
   async analyzeCompany(request: CompanyAnalysisRequest): Promise<LLMResponse> {
     try {
       const prompt = this.buildCompanyAnalysisPrompt(request);
-      
+
       const response = await fetch(this.baseUrl, {
         method: 'POST',
         headers: {
@@ -42,11 +64,11 @@ export class OpenAIProvider extends BaseLLMProvider {
       });
 
       if (!response.ok) {
-        const errorData = await response.json().catch(() => ({}));
-        throw new Error(`OpenAI API error: ${response.status} - ${errorData.error?.message || 'Unknown error'}`);
+        const errorData = await response.json().catch(() => ({})) as OpenAIErrorResponse;
+        throw new Error(`OpenAI API error: ${response.status} - ${errorData.error?.message ?? 'Unknown error'}`);
       }
 
-      const data = await response.json();
+      const data = await response.json() as OpenAIResponse;
       const responseText = data.choices[0]?.message?.content;
 
       if (!responseText) {
@@ -60,9 +82,9 @@ export class OpenAIProvider extends BaseLLMProvider {
         success: true,
         data: companyData,
         usage: {
-          inputTokens: data.usage?.prompt_tokens || 0,
-          outputTokens: data.usage?.completion_tokens || 0,
-          totalCost: this.calculateCost(data.usage?.prompt_tokens || 0, data.usage?.completion_tokens || 0)
+          inputTokens: data.usage?.prompt_tokens ?? 0,
+          outputTokens: data.usage?.completion_tokens ?? 0,
+          totalCost: this.calculateCost(data.usage?.prompt_tokens ?? 0, data.usage?.completion_tokens ?? 0)
         }
       };
 
@@ -88,7 +110,7 @@ export class OpenAIProvider extends BaseLLMProvider {
       return true;
 
       // TODO: In production, this validation should be done through a proxy server
-      
+
     } catch (error) {
       console.error('OpenAI API validation error:', error);
       return false;
@@ -131,7 +153,7 @@ Respond with JSON using this exact structure:
   "connections": ["Company1", "Company2", "Company3"],
   "connectionTypes": {
     "Company1": "Direct Competitor",
-    "Company2": "Industry Partner", 
+    "Company2": "Industry Partner",
     "Company3": "Similar Stage"
   },
   "description": "Brief company description focusing on what they do and their mission"
@@ -146,9 +168,9 @@ Calculate matchScore (0-100) by evaluating:
 Base analysis on real company information.`;
   }
 
-  private parseCompanyResponse(responseText: string) {
+  private parseCompanyResponse(responseText: string): CompanyAnalysisResponse {
     try {
-      return JSON.parse(responseText);
+      return JSON.parse(responseText) as CompanyAnalysisResponse;
     } catch (error) {
       console.error('Failed to parse OpenAI response:', responseText);
       throw new Error('Invalid JSON response from OpenAI API');
@@ -159,7 +181,7 @@ Base analysis on real company information.`;
     // Dynamic pricing based on model
     let inputPrice = 2.5;
     let outputPrice = 10;
-    
+
     if (this.model === 'gpt-5') {
       inputPrice = 1.25;
       outputPrice = 10;
@@ -170,7 +192,7 @@ Base analysis on real company information.`;
       inputPrice = 0.15;
       outputPrice = 0.6;
     }
-    
+
     const inputCost = (inputTokens / 1000000) * inputPrice;
     const outputCost = (outputTokens / 1000000) * outputPrice;
     return inputCost + outputCost;

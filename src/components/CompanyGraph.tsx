@@ -28,8 +28,8 @@ const applySelectionHighlighting = (cy: cytoscape.Core, selectedCompany: Company
   const highlightedIds = new Set([selectedCompany.id, ...selectedCompany.connections]);
 
   // Selectively add/remove dimmed based on whether node should be highlighted
-  allCompanyNodes.forEach((node: any) => {
-    const companyId = node.data('company')?.id;
+  allCompanyNodes.forEach((node: cytoscape.NodeSingular) => {
+    const companyId = ((node.data('company') as { id?: number } | undefined)?.id) ?? NaN;
     const isDimmed = node.hasClass('dimmed');
     const isHidden = node.hasClass('view-hidden');
     const shouldBeDimmed = !highlightedIds.has(companyId) && !isHidden;
@@ -45,7 +45,7 @@ const applySelectionHighlighting = (cy: cytoscape.Core, selectedCompany: Company
   });
 
   // Same pattern for name labels
-  allNameLabelNodes.forEach((label: any) => {
+  allNameLabelNodes.forEach((label: cytoscape.NodeSingular) => {
     const companyId = parseInt(label.id().replace('name-label-', ''));
     const isDimmed = label.hasClass('dimmed');
     const shouldBeDimmed = !highlightedIds.has(companyId) && !label.hasClass('view-hidden');
@@ -60,7 +60,7 @@ const applySelectionHighlighting = (cy: cytoscape.Core, selectedCompany: Company
   });
 
   // Same pattern for percent labels
-  allPercentLabelNodes.forEach((label: any) => {
+  allPercentLabelNodes.forEach((label: cytoscape.NodeSingular) => {
     const companyId = parseInt(label.id().replace('percent-label-', ''));
     const isDimmed = label.hasClass('dimmed');
     const shouldBeDimmed = !highlightedIds.has(companyId) && !label.hasClass('view-hidden');
@@ -232,22 +232,23 @@ const CompanyGraph: React.FC<CompanyGraphProps> = ({
     let currentHoveredNode: cytoscape.NodeSingular | null = null;
     
     cy.on('mouseover', 'node[type="company"]', (event) => {
-      const company = event.target.data('company');
-      
+      const target = event.target as cytoscape.NodeSingular;
+      const company = target.data('company') as Company;
+
       // Clear any pending timeout
       if (hoverTimeout) {
         clearTimeout(hoverTimeout);
         hoverTimeout = null;
       }
-      
+
       // Reset previous hovered node's class (if it's not selected)
-      if (currentHoveredNode && currentHoveredNode !== event.target) {
+      if (currentHoveredNode && currentHoveredNode !== target) {
         currentHoveredNode.removeClass('hovered');
       }
-      
+
       // Add hovered class for CSS transition
-      event.target.addClass('hovered');
-      currentHoveredNode = event.target;
+      target.addClass('hovered');
+      currentHoveredNode = target;
       
       // Only update if this is a different company
       if (currentHoveredCompany?.id !== company.id) {
@@ -295,9 +296,9 @@ const CompanyGraph: React.FC<CompanyGraphProps> = ({
         currentHoveredNode = null;
         // Temporarily disable to test centering issue
         // onCompanyHover(null);
-        
+
         // Remove hovered class to return to default style
-        event.target.removeClass('hovered');
+        (event.target as cytoscape.NodeSingular).removeClass('hovered');
 
         if (!selectedCompanyRef.current) {
           cy.edges().removeClass('highlighted');
@@ -308,7 +309,7 @@ const CompanyGraph: React.FC<CompanyGraphProps> = ({
 
     // Company click events
     cy.on('tap', 'node[type="company"]', (event) => {
-      const company = event.target.data('company');
+      const company = (event.target as cytoscape.NodeSingular).data('company') as Company;
       onCompanySelectRef.current(company);
     });
 
@@ -321,11 +322,11 @@ const CompanyGraph: React.FC<CompanyGraphProps> = ({
 
     // CMF center node hover events - visual feedback for clickability
     cy.on('mouseover', 'node[type="cmf"]', (event) => {
-      event.target.addClass('hovered');
+      (event.target as cytoscape.NodeSingular).addClass('hovered');
     });
-    
+
     cy.on('mouseout', 'node[type="cmf"]', (event) => {
-      event.target.removeClass('hovered');
+      (event.target as cytoscape.NodeSingular).removeClass('hovered');
     });
 
     // CMF center node click - toggle CMF panel
@@ -484,22 +485,22 @@ const CompanyGraph: React.FC<CompanyGraphProps> = ({
     const allPercentLabels = cy.nodes('[type="company-percent-label"]');
 
     // Reset opacity for companies that are no longer in fading set
-    allCompanyNodes.forEach((node: any) => {
-      const companyId = node.data('company')?.id;
+    allCompanyNodes.forEach((node: cytoscape.NodeSingular) => {
+      const companyId = (node.data('company') as { id?: number } | undefined)?.id;
       if (companyId && !fadingCompanyIds.has(companyId)) {
         // Stop any ongoing animation and reset opacity
         node.stop(true, false).style('opacity', 1);
       }
     });
 
-    allNameLabels.forEach((label: any) => {
+    allNameLabels.forEach((label: cytoscape.NodeSingular) => {
       const companyId = parseInt(label.id().replace('name-label-', ''));
       if (companyId && !fadingCompanyIds.has(companyId)) {
         label.stop(true, false).style('opacity', 1);
       }
     });
 
-    allPercentLabels.forEach((label: any) => {
+    allPercentLabels.forEach((label: cytoscape.NodeSingular) => {
       const companyId = parseInt(label.id().replace('percent-label-', ''));
       if (companyId && !fadingCompanyIds.has(companyId)) {
         label.stop(true, false).style('opacity', 1);

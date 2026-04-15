@@ -38,13 +38,15 @@ export const viewport: Viewport = {
   userScalable: false,
 }
 
+const htmlStyle: React.CSSProperties = { height: '-webkit-fill-available', background: 'linear-gradient(to bottom right, #0f172a, #1e3a8a, #312e81)' }
+
 export default function RootLayout({
   children,
 }: {
   children: React.ReactNode
 }) {
   return (
-    <html lang="en" style={{ height: '-webkit-fill-available', background: 'linear-gradient(to bottom right, #0f172a, #1e3a8a, #312e81)' } as React.CSSProperties}>
+    <html lang="en" style={htmlStyle}>
       <head>
         <meta name="viewport" content="viewport-fit=cover" />
       </head>

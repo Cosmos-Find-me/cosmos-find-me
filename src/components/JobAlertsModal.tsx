@@ -29,8 +29,8 @@ async function extractKeyRoleVariations(targetRole: string): Promise<string[]> {
 
     if (!response.ok) throw new Error('Failed to extract role');
 
-    const { keyTerms } = await response.json();
-    return keyTerms || [targetRole];
+    const { keyTerms } = await response.json() as { keyTerms?: string[] };
+    return keyTerms ?? [targetRole];
   } catch (error) {
     console.error('Error extracting key role:', error);
     return [targetRole];

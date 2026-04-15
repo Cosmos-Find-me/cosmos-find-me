@@ -10,42 +10,49 @@ const LEGACY_WATCHLIST_KEY = 'cmf-explorer-watchlist';
 const STORAGE_VERSION = 1;
 const MAX_RETRIES = 3;
 
+function isWatchlistData(value: unknown): value is WatchlistData {
+  if (typeof value !== 'object' || value === null || !('companyIds' in value)) {
+    return false;
+  }
+  // value is narrowed to object with companyIds key — safe to index
+  return Array.isArray((value as Record<string, unknown>)['companyIds']);
+}
+
 /**
  * Detects QuotaExceededError across different browsers
  */
 const isQuotaExceededError = (error: Error): boolean => {
   return (
-    error.name === 'QuotaExceededError' || // Everything except Firefox
-    error.name === 'NS_ERROR_DOM_QUOTA_REACHED' || // Firefox
-    (error as any).code === 22 || // Everything except Firefox
-    (error as any).code === 1014 // Firefox
+    error.name === 'QuotaExceededError' || // Standard / Chrome / Safari
+    error.name === 'NS_ERROR_DOM_QUOTA_REACHED' // Firefox
   );
 };
 
 /**
  * Creates a typed StorageError from a generic Error
  */
-const createStorageError = (error: Error, operation: string): StorageError => {
-  if (isQuotaExceededError(error)) {
+const createStorageError = (error: unknown, operation: string): StorageError => {
+  const resolvedError = error instanceof Error ? error : new Error(String(error))
+  if (isQuotaExceededError(resolvedError)) {
     return {
       type: 'quota_exceeded',
       message: `Storage quota exceeded while ${operation}. Consider clearing some data.`,
-      originalError: error,
+      originalError: resolvedError,
     };
   }
 
-  if (error.name === 'SecurityError') {
+  if (resolvedError.name === 'SecurityError') {
     return {
       type: 'security',
       message: `Storage access denied (possibly private mode) while ${operation}.`,
-      originalError: error,
+      originalError: resolvedError,
     };
   }
 
   return {
     type: 'unknown',
-    message: `Unexpected error while ${operation}: ${error.message}`,
-    originalError: error,
+    message: `Unexpected error while ${operation}: ${resolvedError.message}`,
+    originalError: resolvedError,
   };
 };
 
@@ -142,7 +149,7 @@ export const saveWatchlistToStorage = async (
       return { success: true };
     } catch (error) {
       attempts++;
-      const storageError = createStorageError(error as Error, 'saving watchlist');
+      const storageError = createStorageError(error, 'saving watchlist');
       
       if (storageError.type === 'quota_exceeded' && attempts < MAX_RETRIES) {
         // Try to free up space by removing older data
@@ -211,28 +218,30 @@ export const loadWatchlistFromStorage = (userId?: string): {
       return { data: new Set() };
     }
 
-    const parsed = JSON.parse(stored) as WatchlistData;
-    
-    // Handle legacy data format (if it's just an array)
+    const parsed: unknown = JSON.parse(stored);
+
+    // Handle legacy data format (if it's just an array of IDs)
     if (Array.isArray(parsed)) {
+      // parsed is unknown[] — filter to only actual numbers to be safe
+      const numericIds = parsed.filter((item): item is number => typeof item === 'number');
       const migratedData: WatchlistData = {
         userId,
-        companyIds: parsed,
+        companyIds: numericIds,
         lastUpdated: new Date().toISOString(),
         version: STORAGE_VERSION,
       };
-      
+
       // Save migrated data
       localStorage.setItem(WATCHLIST_STORAGE_KEY, JSON.stringify(migratedData));
-      
+
       return {
-        data: new Set(parsed),
+        data: new Set(numericIds),
         migrated: true,
       };
     }
 
     // Validate data structure
-    if (!parsed.companyIds || !Array.isArray(parsed.companyIds)) {
+    if (!isWatchlistData(parsed)) {
       throw new Error('Invalid watchlist data structure');
     }
 
@@ -243,7 +252,7 @@ export const loadWatchlistFromStorage = (userId?: string): {
 
     return { data: new Set(parsed.companyIds) };
   } catch (error) {
-    const storageError = createStorageError(error as Error, 'loading watchlist');
+    const storageError = createStorageError(error, 'loading watchlist');
     
     // If data is corrupted, clear it and return empty set
     if (storageError.type === 'unknown') {
@@ -281,7 +290,7 @@ export const clearWatchlistFromStorage = (): { success: boolean; error?: Storage
   } catch (error) {
     return {
       success: false,
-      error: createStorageError(error as Error, 'clearing watchlist'),
+      error: createStorageError(error, 'clearing watchlist'),
     };
   }
 };

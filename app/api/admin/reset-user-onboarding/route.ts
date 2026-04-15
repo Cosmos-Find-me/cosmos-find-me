@@ -20,7 +20,7 @@ export async function POST(request: Request) {
   const { user, adminClient } = auth
 
   try {
-    const body = await request.json()
+    const body = await request.json() as { userId: string }
     const { userId } = body
 
     if (!userId) {

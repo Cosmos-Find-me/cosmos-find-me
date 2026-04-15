@@ -46,7 +46,7 @@ const DreamyFirstContact: React.FC<DreamyFirstContactProps> = ({ onComplete }) =
 
   const FloatingStars = () => (
     <div className="absolute inset-0 overflow-hidden pointer-events-none">
-      {[...Array(12)].map((_, i) => (
+      {Array.from({ length: 12 }).map((_, i) => (
         <div
           key={i}
           className="absolute animate-pulse opacity-30"
@@ -132,7 +132,7 @@ const DreamyFirstContact: React.FC<DreamyFirstContactProps> = ({ onComplete }) =
             )}
             
             {/* Explosion particles - shown on the same screen */}
-            {sparkClicked && [...Array(20)].map((_, i) => {
+            {sparkClicked && Array.from({ length: 20 }).map((_, i) => {
               const angle = Math.random() * 2 * Math.PI;
               const distance = 50 + Math.random() * 150;
               const x = Math.cos(angle) * distance;
@@ -241,7 +241,7 @@ const DreamyFirstContact: React.FC<DreamyFirstContactProps> = ({ onComplete }) =
             </div>
             
             {/* Explosion rings positioned exactly like sparkles - relative to the spark */}
-            {[...Array(8)].map((_, i) => {
+            {Array.from({ length: 8 }).map((_, i) => {
               const size = (i + 1) * 60;
               return (
                 <div
@@ -263,7 +263,7 @@ const DreamyFirstContact: React.FC<DreamyFirstContactProps> = ({ onComplete }) =
             })}
             
             {/* Particles positioned outside the hidden spark */}
-            {[...Array(20)].map((_, i) => {
+            {Array.from({ length: 20 }).map((_, i) => {
               const angle = Math.random() * 2 * Math.PI;
               const distance = 50 + Math.random() * 150;
               const x = Math.cos(angle) * distance;
@@ -335,7 +335,7 @@ const DreamyFirstContact: React.FC<DreamyFirstContactProps> = ({ onComplete }) =
            `bg-gradient-to-br ${colorClasses[color]} hover:border-opacity-60`}
         `}>
           <div className="absolute inset-0 overflow-hidden rounded-2xl pointer-events-none">
-            {[...Array(6)].map((_, i) => (
+            {Array.from({ length: 6 }).map((_, i) => (
               <div
                 key={i}
                 className="absolute w-1 h-1 bg-white rounded-full opacity-40 animate-pulse"
@@ -482,7 +482,7 @@ const DreamyFirstContact: React.FC<DreamyFirstContactProps> = ({ onComplete }) =
                   <Sparkles className="w-8 h-8 mr-3 animate-spin" />
                   <span>Generate My Universe</span>
                   <div className="ml-3 flex space-x-1">
-                    {[...Array(3)].map((_, i) => (
+                    {Array.from({ length: 3 }).map((_, i) => (
                       <Star key={i} className="w-4 h-4 animate-pulse" style={{ animationDelay: `${i * 0.2}s` }} />
                     ))}
                   </div>

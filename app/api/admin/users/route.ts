@@ -3,6 +3,23 @@ import { v4 as uuidv4 } from 'uuid'
 import { verifyAdminAccess, isAdminAuthError } from '../../../../src/lib/admin-auth'
 import { auditLog } from '../../../../src/lib/audit-log'
 
+interface ProfileRow {
+  id: string
+  email: string
+  [key: string]: unknown
+}
+
+interface CompanyDataRow {
+  user_id: string
+  companies?: unknown[]
+  company_data?: unknown[]
+  user_profile?: {
+    baseCompanies?: unknown[]
+    addedCompanies?: unknown[]
+  }
+  [key: string]: unknown
+}
+
 // Get all users (admin only)
 export async function GET() {
   const auth = await verifyAdminAccess()
@@ -26,8 +43,10 @@ export async function GET() {
       .select('*')
   ]);
 
-  const { data: profiles, error: profilesError } = profilesResult;
-  const { data: companyData, error: companyError } = companyDataResult;
+  const { data: rawProfiles, error: profilesError } = profilesResult;
+  const { data: rawCompanyData, error: companyError } = companyDataResult;
+  const profiles = rawProfiles as ProfileRow[] | null;
+  const companyData = rawCompanyData as CompanyDataRow[] | null;
 
   if (profilesError) {
     console.error('Error fetching users:', profilesError)
@@ -59,12 +78,12 @@ export async function GET() {
       }
       // Check if user_profile contains baseCompanies/addedCompanies (UserExplorationState format)
       else if (record.user_profile) {
-        const profile = record.user_profile
-        if (profile.baseCompanies && Array.isArray(profile.baseCompanies)) {
-          companyCount += profile.baseCompanies.length
+        const userProfile = record.user_profile
+        if (userProfile.baseCompanies && Array.isArray(userProfile.baseCompanies)) {
+          companyCount += userProfile.baseCompanies.length
         }
-        if (profile.addedCompanies && Array.isArray(profile.addedCompanies)) {
-          companyCount += profile.addedCompanies.length
+        if (userProfile.addedCompanies && Array.isArray(userProfile.addedCompanies)) {
+          companyCount += userProfile.addedCompanies.length
         }
       }
     })
@@ -96,7 +115,7 @@ export async function POST(request: Request) {
 
   const { user, adminClient } = auth
 
-  const { email, fullName } = await request.json()
+  const { email, fullName } = await request.json() as { email: string; fullName: string }
 
   // Check if user already exists
   const { data: existingProfile } = await adminClient
@@ -114,7 +133,7 @@ export async function POST(request: Request) {
   const inviteLink = `${process.env.NEXT_PUBLIC_SITE_URL}/invite/${inviteToken}`
 
   // Create the invitation
-  const { data, error } = await adminClient
+  const { error } = await adminClient
     .from('user_invitations')
     .insert({
       email,
@@ -140,7 +159,6 @@ export async function POST(request: Request) {
   })
 
   return NextResponse.json({
-    invitation: data,
     inviteLink,
     message: 'Invitation created successfully'
   })

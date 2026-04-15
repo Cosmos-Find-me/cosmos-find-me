@@ -9,6 +9,15 @@ import ImportDataModal from '../../src/components/ImportDataModal'
 import { DeleteUserConfirmationModal } from '../../src/components/DeleteUserConfirmationModal'
 import { llmService } from '../../src/utils/llm/service'
 
+interface AdminUser {
+  id: string
+  email: string
+  full_name: string | null
+  role: string
+  profile_status: ProfileStatus
+  company_count: number
+}
+
 // Force dynamic rendering for admin pages
 export const dynamic = 'force-dynamic'
 
@@ -62,7 +71,7 @@ function getOnboardingStatus(profileStatus: ProfileStatus, hasData: boolean): {
 }
 
 export default function AdminPage() {
-  const [users, setUsers] = useState([])
+  const [users, setUsers] = useState<AdminUser[]>([])
   const [loading, setLoading] = useState(true)
   const [inviteEmail, setInviteEmail] = useState('')
   const [inviteName, setInviteName] = useState('')
@@ -87,12 +96,12 @@ export default function AdminPage() {
   const fetchUsers = async () => {
     try {
       const response = await fetch('/api/admin/users')
-      const data = await response.json()
-      
+      const data = await response.json() as { users?: AdminUser[]; error?: string }
+
       if (response.ok) {
-        setUsers(data.users)
+        setUsers(data.users ?? [])
       } else {
-        setMessage(data.error)
+        setMessage(data.error ?? 'Failed to fetch users')
         setMessageType('error')
       }
     } catch (error) {
@@ -118,16 +127,16 @@ export default function AdminPage() {
         })
       })
 
-      const data = await response.json()
+      const data = await response.json() as { inviteLink?: string; error?: string }
 
-      if (response.ok) {
+      if (response.ok && data.inviteLink) {
         setMessage(`Invitation sent! Share this link: ${data.inviteLink}`)
         setMessageType('success')
         setInviteEmail('')
         setInviteName('')
         fetchUsers()
       } else {
-        setMessage(data.error)
+        setMessage(data.error ?? 'Failed to send invitation')
         setMessageType('error')
       }
     } catch (error) {
@@ -168,8 +177,8 @@ export default function AdminPage() {
         setMessage('Data exported successfully!')
         setMessageType('success')
       } else {
-        const data = await response.json()
-        setMessage(data.error || 'Failed to export data')
+        const data = await response.json() as { error?: string }
+        setMessage(data.error ?? 'Failed to export data')
         setMessageType('error')
       }
     } catch (error) {
@@ -200,14 +209,14 @@ export default function AdminPage() {
         body: JSON.stringify({ userId })
       })
 
-      const data = await response.json()
+      const data = await response.json() as { error?: string }
 
       if (response.ok) {
         setMessage(`Onboarding reset for ${userEmail}`)
         setMessageType('success')
         fetchUsers()
       } else {
-        setMessage(data.error || 'Failed to reset onboarding')
+        setMessage(data.error ?? 'Failed to reset onboarding')
         setMessageType('error')
       }
     } catch (error) {
@@ -227,7 +236,7 @@ export default function AdminPage() {
         method: 'DELETE'
       })
 
-      const data = await response.json()
+      const data = await response.json() as { error?: string }
 
       if (response.ok) {
         setMessage('User deleted successfully!')
@@ -236,7 +245,7 @@ export default function AdminPage() {
         setUserToDelete(null)
         fetchUsers()
       } else {
-        setMessage(data.error || 'Failed to delete user')
+        setMessage(data.error ?? 'Failed to delete user')
         setMessageType('error')
       }
     } catch (error) {
@@ -416,7 +425,7 @@ export default function AdminPage() {
                     </tr>
                   </thead>
                   <tbody>
-                    {users.map((user: any) => {
+                    {users.map((user) => {
                       // Use company_count from API (counts actual companies in JSON)
                       const companyCount = user.company_count || 0
                       const hasData = companyCount > 0

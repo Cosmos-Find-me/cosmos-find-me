@@ -1,10 +1,18 @@
 /**
  * Anthropic Claude Provider
- * 
+ *
  * Implementation for Anthropic Claude API integration
  */
 
 import { BaseLLMProvider, CompanyAnalysisRequest, LLMResponse, LLMSettings } from '../types';
+
+interface ErrorResponse {
+  error?: string;
+}
+
+interface ValidateResponse {
+  valid: boolean;
+}
 
 export class AnthropicProvider extends BaseLLMProvider {
   private readonly baseUrl = '/api/llm/anthropic';
@@ -17,22 +25,22 @@ export class AnthropicProvider extends BaseLLMProvider {
     try {
       const response = await fetch(`${this.baseUrl}/analyze`, {
         method: 'POST',
-        headers: { 
-          'Content-Type': 'application/json' 
+        headers: {
+          'Content-Type': 'application/json'
         },
         body: JSON.stringify({ request })
       });
 
       if (!response.ok) {
-        const errorData = await response.json().catch(() => ({}));
+        const errorData = await response.json().catch(() => ({})) as ErrorResponse;
         throw new Error(errorData.error || `HTTP ${response.status}`);
       }
 
-      return await response.json();
+      return await response.json() as LLMResponse;
 
     } catch (error) {
       console.error('Anthropic API error:', error);
-      
+
       // Handle connection refused or network errors gracefully
       const errorMessage = error instanceof Error ? error.message : 'Unknown error';
       if (errorMessage.includes('Failed to fetch') || errorMessage.includes('ECONNREFUSED')) {
@@ -41,7 +49,7 @@ export class AnthropicProvider extends BaseLLMProvider {
           error: 'LLM backend server not available - using fallback company data'
         };
       }
-      
+
       return {
         success: false,
         error: `Claude API error: ${errorMessage}`
@@ -53,8 +61,8 @@ export class AnthropicProvider extends BaseLLMProvider {
     try {
       const response = await fetch(`${this.baseUrl}/validate`, {
         method: 'POST',
-        headers: { 
-          'Content-Type': 'application/json' 
+        headers: {
+          'Content-Type': 'application/json'
         }
       });
 
@@ -62,7 +70,7 @@ export class AnthropicProvider extends BaseLLMProvider {
         return false;
       }
 
-      const result = await response.json();
+      const result = await response.json() as ValidateResponse;
       return result.valid;
 
     } catch (error) {
@@ -85,12 +93,12 @@ export class AnthropicProvider extends BaseLLMProvider {
     // Dynamic pricing based on model - default to Claude 4 Sonnet pricing
     let inputPrice = 3;
     let outputPrice = 15;
-    
+
     if (this.model.includes('haiku')) {
       inputPrice = 1;
       outputPrice = 5;
     }
-    
+
     const inputCost = (inputTokens / 1000000) * inputPrice;
     const outputCost = (outputTokens / 1000000) * outputPrice;
     return inputCost + outputCost;

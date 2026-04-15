@@ -7,9 +7,17 @@ import { UserPlus, CheckCircle, AlertCircle } from 'lucide-react'
 // Force dynamic rendering for invite pages
 export const dynamic = 'force-dynamic'
 
+interface Invitation {
+  email: string
+  full_name: string | null
+  expires_at: string
+  invite_token: string
+  used: boolean
+}
+
 export default function InvitePage() {
   const [loading, setLoading] = useState(true)
-  const [invitation, setInvitation] = useState<any>(null)
+  const [invitation, setInvitation] = useState<Invitation | null>(null)
   const [error, setError] = useState('')
   const [password, setPassword] = useState('')
   const [confirmPassword, setConfirmPassword] = useState('')
@@ -23,12 +31,12 @@ export default function InvitePage() {
   const checkInvitation = useCallback(async () => {
     try {
       const response = await fetch(`/api/invite/${token}`)
-      const data = await response.json()
+      const data = await response.json() as { invitation?: Invitation; error?: string }
 
       if (response.ok) {
-        setInvitation(data.invitation)
+        setInvitation(data.invitation ?? null)
       } else {
-        setError(data.error || 'Invalid or expired invitation')
+        setError(data.error ?? 'Invalid or expired invitation')
       }
     } catch (error) {
       setError('Failed to verify invitation')
@@ -45,6 +53,12 @@ export default function InvitePage() {
     e.preventDefault()
     setCreating(true)
     setError('')
+
+    if (!invitation) {
+      setError('Invitation not found')
+      setCreating(false)
+      return
+    }
 
     if (password !== confirmPassword) {
       setError('Passwords do not match')
@@ -86,7 +100,7 @@ export default function InvitePage() {
       })
 
       const result = await Promise.race([signupPromise, timeoutPromise])
-      const { data, error: signupError } = result as any
+      const { data, error: signupError } = result as Awaited<typeof signupPromise>
 
       console.log('Signup response:', { data, error: signupError })
 

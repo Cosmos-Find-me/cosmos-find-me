@@ -35,7 +35,7 @@ interface ExtractProfileRequest {
 
 export async function POST(request: NextRequest) {
   try {
-    const body: ExtractProfileRequest = await request.json();
+    const body = await request.json() as ExtractProfileRequest;
     const { resume, careerGoals } = body;
 
     if (!resume?.data || !careerGoals?.data) {
@@ -78,12 +78,12 @@ export async function POST(request: NextRequest) {
     });
 
     if (!response.ok) {
-      const errorData = await response.json().catch(() => ({}));
+      const errorData = await response.json().catch(() => ({})) as { error?: { message?: string } };
       console.error('Claude API error:', errorData);
-      throw new Error(`Claude API error: ${response.status} - ${errorData.error?.message || 'Unknown error'}`);
+      throw new Error(`Claude API error: ${response.status} - ${errorData.error?.message ?? 'Unknown error'}`);
     }
 
-    const data = await response.json();
+    const data = await response.json() as { content: Array<{ text?: string }>; stop_reason?: string; usage?: { input_tokens: number; output_tokens: number } };
     const responseText = data.content[0]?.text;
 
     if (!responseText) {
@@ -295,7 +295,7 @@ function parseProfileResponse(responseText: string): {
 } {
   try {
     // With structured outputs, response is guaranteed valid JSON
-    const parsed = JSON.parse(responseText);
+    const parsed = JSON.parse(responseText) as { name: string; targetRole: string; targetCompanies: string; mustHaves: CMFItem[]; wantToHave: CMFItem[]; experience: string[] };
 
     // Log extraction results
     console.log('✅ Profile extracted:', {

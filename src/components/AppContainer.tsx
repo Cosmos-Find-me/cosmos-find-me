@@ -2,14 +2,39 @@ import React, { useState, useEffect, useCallback } from 'react';
 import DreamyFirstContact from './DreamyFirstContact';
 import CMFGraphExplorerNew from './CMFGraphExplorerNew';
 import { createUserProfileFromFiles } from '../utils/fileProcessing';
-import { UserExplorationState } from '../types';
+import { UserExplorationState, UserCMF, Company } from '../types';
 import { ProfileStatus } from '../types/database';
 import { activeUserProfile } from '../data/companies';
 import { createProfileForUser } from '../utils/userProfileCreation';
 import { migrateCompanyLogos } from '../utils/logoMigration';
-import { mergeUserPreferences } from '../utils/userPreferencesMerger';
+import { mergeUserPreferences, UserPreferencesFromProfile, UserPreferencesFromTable } from '../utils/userPreferencesMerger';
 import { track } from '../lib/analytics';
 import { useDataSync, DataVersionTimestamps } from '../hooks/useDataSync';
+
+interface UserCompanyData {
+  user_id: string;
+  updated_at?: string;
+  user_profile?: UserPreferencesFromProfile & {
+    name?: string;
+    cmf?: unknown;
+    baseCompanies?: unknown[];
+    addedCompanies?: unknown[];
+    [key: string]: unknown;
+  };
+  companies?: unknown[];
+  [key: string]: unknown;
+}
+
+interface UserDataResponse {
+  authenticated?: boolean;
+  hasData?: boolean;
+  userId: string;
+  profileStatus?: ProfileStatus;
+  isViewingAsUser?: boolean;
+  viewedUserInfo?: { email: string; full_name: string };
+  companyData?: UserCompanyData;
+  preferences?: UserPreferencesFromTable & { updated_at?: string };
+}
 
 const AppContainer: React.FC = () => {
   const [isLoading, setIsLoading] = useState(false);
@@ -60,7 +85,7 @@ const AppContainer: React.FC = () => {
 
       // Always check authentication first, regardless of first-time status
       const response = await fetch(apiUrl);
-      const userData = await response.json();
+      const userData = await response.json() as UserDataResponse;
 
       // Track if we're viewing as another user
       if (userData.isViewingAsUser) {
@@ -132,10 +157,10 @@ const AppContainer: React.FC = () => {
           ...activeUserProfile, // Use as base structure
           id: userData.companyData.user_id,
           name: dbUserProfile?.name || 'User',
-          cmf: dbUserProfile?.cmf || dbUserProfile,
+          cmf: (dbUserProfile?.cmf ?? dbUserProfile) as UserCMF,
           // Handle UserExplorationState format from admin import - with logo migration
-          baseCompanies: migrateCompanyLogos(baseCompanies),
-          addedCompanies: migrateCompanyLogos(addedCompanies),
+          baseCompanies: migrateCompanyLogos(baseCompanies as Company[]),
+          addedCompanies: migrateCompanyLogos(addedCompanies as Company[]),
           // Use merged preferences from centralized utility
           watchlistCompanyIds: mergedPreferences.watchlistCompanyIds,
           removedCompanyIds: mergedPreferences.removedCompanyIds,
@@ -311,7 +336,7 @@ const AppContainer: React.FC = () => {
       <div className="bg-gradient-to-br from-slate-900 via-blue-900 to-indigo-900 flex items-center justify-center relative overflow-hidden" style={{ minHeight: '100vh' }}>
         {/* Floating cosmic particles */}
         <div className="absolute inset-0 overflow-hidden pointer-events-none">
-          {[...Array(20)].map((_, i) => (
+          {Array.from({ length: 20 }).map((_, i) => (
             <div
               key={i}
               className="absolute animate-pulse opacity-30"
@@ -343,7 +368,7 @@ const AppContainer: React.FC = () => {
           </p>
           
           <div className="flex justify-center space-x-2">
-            {[...Array(3)].map((_, i) => (
+            {Array.from({ length: 3 }).map((_, i) => (
               <div
                 key={i}
                 className="w-2 h-2 bg-blue-300 rounded-full animate-bounce"
@@ -393,7 +418,7 @@ const AppContainer: React.FC = () => {
   // Floating stars component for cosmic background
   const FloatingStars = () => (
     <div className="absolute inset-0 overflow-hidden pointer-events-none">
-      {[...Array(12)].map((_, i) => (
+      {Array.from({ length: 12 }).map((_, i) => (
         <div
           key={i}
           className="absolute animate-pulse opacity-30"
