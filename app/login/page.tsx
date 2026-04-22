@@ -4,6 +4,7 @@ import { createClientComponentClient } from '../../src/lib/supabase'
 import { useRouter } from 'next/navigation'
 import { LogIn, Mail, Lock, Loader2, Sparkles } from 'lucide-react'
 import { CosmosBackground } from '../../src/components/CosmosBackground'
+import { getLoginErrorMessage, getPasswordResetErrorMessage } from '../../src/utils/authErrors'
 
 export default function LoginPage() {
   const [email, setEmail] = useState('')
@@ -26,15 +27,15 @@ export default function LoginPage() {
       return
     }
     
-    const { error } = await supabase.auth.signInWithPassword({
-      email,
-      password,
-    })
-
-    if (error) {
-      setError(error.message)
-    } else {
-      router.push('/explorer')
+    try {
+      const { error } = await supabase.auth.signInWithPassword({ email, password })
+      if (error) {
+        setError(getLoginErrorMessage(error))
+      } else {
+        router.push('/explorer')
+      }
+    } catch (err) {
+      setError(getLoginErrorMessage(err))
     }
     setLoading(false)
   }
@@ -52,14 +53,17 @@ export default function LoginPage() {
     }
     
     const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || window.location.origin
-    const { error } = await supabase.auth.resetPasswordForEmail(email, {
-      redirectTo: `${siteUrl}/reset-password`
-    })
-
-    if (error) {
-      setError(error.message)
-    } else {
-      setResetSent(true)
+    try {
+      const { error } = await supabase.auth.resetPasswordForEmail(email, {
+        redirectTo: `${siteUrl}/reset-password`
+      })
+      if (error) {
+        setError(getPasswordResetErrorMessage(error))
+      } else {
+        setResetSent(true)
+      }
+    } catch (err) {
+      setError(getPasswordResetErrorMessage(err))
     }
     setLoading(false)
   }
