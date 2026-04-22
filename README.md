@@ -28,7 +28,7 @@ See the **[Complete Setup Guide](docs/01-GETTING_STARTED.md)** for installation,
 - **Visualization:** Cytoscape.js for interactive graphs
 - **Styling:** Tailwind CSS
 - **AI (Optional):** Anthropic Claude for company analysis
-- **Testing:** Vitest + Playwright (330 tests with performance regression detection)
+- **Testing:** Vitest + Playwright (364 tests with performance regression detection)
 - **Database (Optional):** Supabase for multi-user persistence
 
 ## 📚 Documentation
@@ -64,7 +64,7 @@ npm run test:performance
 npm run test:e2e
 ```
 
-**330 tests** covering unit, integration, performance, and visual regression. See [Testing Guide](docs/guides/TESTING.md) for details.
+**364 tests** covering unit, integration, performance, and visual regression. See [Testing Guide](docs/guides/TESTING.md) for details.
 
 ## 📋 Task Management
 
