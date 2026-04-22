@@ -1,0 +1,28 @@
+name: Supabase Keepalive
+
+# Supabase free tier pauses projects after 7 days of inactivity.
+# This pings the auth health endpoint twice a week to prevent that.
+on:
+  schedule:
+    - cron: '0 9 * * 1'  # Monday 09:00 UTC
+    - cron: '0 9 * * 4'  # Thursday 09:00 UTC
+  workflow_dispatch:      # allow manual trigger
+
+jobs:
+  ping:
+    name: Ping Supabase
+    runs-on: ubuntu-latest
+    steps:
+      - name: Ping auth health endpoint
+        run: |
+          RESPONSE=$(curl -s -o /dev/null -w "%{http_code}" \
+            "${{ secrets.NEXT_PUBLIC_SUPABASE_URL }}/auth/v1/health")
+
+          echo "Response: $RESPONSE"
+
+          if [ "$RESPONSE" = "200" ]; then
+            echo "✅ Supabase is healthy"
+          else
+            echo "⚠️ Unexpected response: $RESPONSE"
+            exit 1
+          fi
