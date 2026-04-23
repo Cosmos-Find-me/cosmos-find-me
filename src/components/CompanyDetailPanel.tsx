@@ -1,9 +1,10 @@
 import React, { useState, useRef, forwardRef, useImperativeHandle } from 'react';
 import Image from 'next/image';
-import { Company, UserCMF } from '../types';
+import { Company, UserCMF, getCMFCombinedText } from '../types';
 import { CompanyDetailPanelProps } from '../types/watchlist';
 import { getExternalLinks } from '../utils/externalLinks';
 import JobAlertsModal from './JobAlertsModal';
+import { llmService } from '../utils/llm/service';
 
 export interface CompanyDetailPanelHandle {
   focusSearch: () => void;
@@ -29,6 +30,8 @@ export interface CompanyDetailPanelHandle {
  * @coverage 100% of component logic and user interactions
  * @regressionProtection Prevents broken company selection, career URLs, and data display
  */
+const REFRESH_COOLDOWN_MS = 24 * 60 * 60 * 1000;
+
 const CompanyDetailPanel = forwardRef<CompanyDetailPanelHandle, CompanyDetailPanelProps & { userCMF?: UserCMF }>(({
   selectedCompany,
   allCompanies,
@@ -36,6 +39,7 @@ const CompanyDetailPanel = forwardRef<CompanyDetailPanelHandle, CompanyDetailPan
   isInWatchlist,
   onToggleWatchlist,
   onRequestDelete,
+  onCompanyUpdate,
   viewMode,
   watchlistStats: _watchlistStats,
   userCMF,
@@ -46,7 +50,61 @@ const CompanyDetailPanel = forwardRef<CompanyDetailPanelHandle, CompanyDetailPan
   const [isJobAlertsModalOpen, setIsJobAlertsModalOpen] = useState(false);
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedCompanyIndex, setSelectedCompanyIndex] = useState(-1);
+  const [isFeedbackOpen, setIsFeedbackOpen] = useState(false);
+  const [feedbackText, setFeedbackText] = useState('');
+  const [isRefreshing, setIsRefreshing] = useState(false);
+  const [refreshError, setRefreshError] = useState<string | null>(null);
   const searchInputRef = useRef<HTMLInputElement>(null);
+
+  const lastRefresh = selectedCompany?.lastAnalysisRefresh;
+  const canRefresh = !lastRefresh || Date.now() - new Date(lastRefresh).getTime() >= REFRESH_COOLDOWN_MS;
+  const hoursUntilRefresh = lastRefresh
+    ? Math.ceil((REFRESH_COOLDOWN_MS - (Date.now() - new Date(lastRefresh).getTime())) / 3600000)
+    : 0;
+
+  const handleFeedbackSubmit = async () => {
+    if (!selectedCompany || !userCMF || !onCompanyUpdate) return;
+    setIsRefreshing(true);
+    setRefreshError(null);
+    try {
+      const result = await llmService.analyzeCompany({
+        companyName: selectedCompany.name,
+        userCMF: {
+          targetRole: userCMF.targetRole || '',
+          mustHaves: (userCMF.mustHaves || []).map(getCMFCombinedText),
+          wantToHave: (userCMF.wantToHave || []).map(getCMFCombinedText),
+          experience: userCMF.experience || [],
+          targetCompanies: userCMF.targetCompanies || ''
+        },
+        correctionContext: feedbackText.trim() || undefined
+      });
+
+      if (!result.success || !result.data) {
+        setRefreshError(result.error || 'Re-analysis failed. Please try again.');
+        return;
+      }
+
+      const updated: Company = {
+        ...selectedCompany,
+        matchReasons: result.data.matchReasons ?? selectedCompany.matchReasons,
+        matchScore: result.data.matchScore ?? selectedCompany.matchScore,
+        industry: result.data.industry ?? selectedCompany.industry,
+        stage: result.data.stage ?? selectedCompany.stage,
+        location: result.data.location ?? selectedCompany.location,
+        employees: result.data.employees ?? selectedCompany.employees,
+        remote: result.data.remote ?? selectedCompany.remote,
+        openRoles: result.data.openRoles ?? selectedCompany.openRoles,
+        lastAnalysisRefresh: new Date().toISOString()
+      };
+      onCompanyUpdate(updated);
+      setIsFeedbackOpen(false);
+      setFeedbackText('');
+    } catch {
+      setRefreshError('An unexpected error occurred. Please try again.');
+    } finally {
+      setIsRefreshing(false);
+    }
+  };
 
   // Expose methods to parent via ref
   useImperativeHandle(ref, () => ({
@@ -494,9 +552,70 @@ const CompanyDetailPanel = forwardRef<CompanyDetailPanelHandle, CompanyDetailPan
 
         {/* Match Reasons */}
         <div className="pb-6 border-b border-slate-200/50">
-          <h3 className={`section-title font-semibold text-slate-800 mb-4 ${isMobile ? 'text-xl' : 'text-lg'}`}>
-            Why This Match?
-          </h3>
+          <div className="flex items-center justify-between mb-4">
+            <h3 className={`section-title font-semibold text-slate-800 ${isMobile ? 'text-xl' : 'text-lg'}`}>
+              Why This Match?
+            </h3>
+            {onCompanyUpdate && userCMF && (
+              <button
+                onClick={() => { setIsFeedbackOpen(f => !f); setRefreshError(null); }}
+                className="text-xs text-slate-400 hover:text-slate-600 transition-colors underline underline-offset-2"
+              >
+                {isFeedbackOpen ? 'Cancel' : 'Incorrect info?'}
+              </button>
+            )}
+          </div>
+
+          {/* Feedback / re-analysis form */}
+          {isFeedbackOpen && onCompanyUpdate && userCMF && (
+            <div className="mb-4 rounded-lg border border-amber-200 bg-amber-50/60 p-3 space-y-2">
+              {canRefresh ? (
+                <>
+                  <p className={`text-slate-600 ${isMobile ? 'text-sm' : 'text-xs'}`}>
+                    What does <span className="font-medium">{selectedCompany.name}</span> actually do? <span className="text-slate-400">(optional)</span>
+                  </p>
+                  <textarea
+                    value={feedbackText}
+                    onChange={e => setFeedbackText(e.target.value)}
+                    placeholder={`e.g. "${selectedCompany.name} does LLM-based medical coding, not developer tools"`}
+                    rows={3}
+                    disabled={isRefreshing}
+                    className="w-full text-xs rounded border border-slate-200 bg-white px-2 py-1.5 text-slate-700 placeholder-slate-300 focus:outline-none focus:ring-1 focus:ring-amber-400 resize-none disabled:opacity-50"
+                  />
+                  <div className="flex items-center gap-2">
+                    <button
+                      onClick={handleFeedbackSubmit}
+                      disabled={isRefreshing}
+                      className="text-xs font-medium px-3 py-1.5 rounded bg-amber-500 hover:bg-amber-600 text-white transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-1.5"
+                    >
+                      {isRefreshing && (
+                        <svg className="animate-spin w-3 h-3" fill="none" viewBox="0 0 24 24">
+                          <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
+                          <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8z" />
+                        </svg>
+                      )}
+                      {isRefreshing ? 'Re-analyzing…' : 'Re-analyze'}
+                    </button>
+                    <button
+                      onClick={() => { setIsFeedbackOpen(false); setFeedbackText(''); setRefreshError(null); }}
+                      disabled={isRefreshing}
+                      className="text-xs text-slate-500 hover:text-slate-700 transition-colors disabled:opacity-50"
+                    >
+                      Cancel
+                    </button>
+                  </div>
+                  {refreshError && (
+                    <p className="text-xs text-red-600">{refreshError}</p>
+                  )}
+                </>
+              ) : (
+                <p className={`text-slate-500 ${isMobile ? 'text-sm' : 'text-xs'}`}>
+                  Analysis already refreshed today. Next refresh available in ~{hoursUntilRefresh}h.
+                </p>
+              )}
+            </div>
+          )}
+
           <div className="relative">
             <ul className={isMobile ? 'space-y-3' : 'space-y-2'}>
               {(selectedCompany.matchReasons || [])

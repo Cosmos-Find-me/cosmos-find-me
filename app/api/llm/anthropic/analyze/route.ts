@@ -133,7 +133,7 @@ export async function POST(request: NextRequest) {
 // Helper function to build Anthropic prompt
 function buildAnthropicPrompt(request: any) {
   return `Analyze "${request.companyName}" and provide comprehensive company information based on the user's career criteria.
-
+${request.correctionContext ? `\nIMPORTANT USER CORRECTION: The user has flagged that a previous analysis of this company was inaccurate. They clarify that this company actually does: "${request.correctionContext}". Use this correction when determining the industry and generating matchReasons — do not repeat the incorrect description.\n` : ''}
 User's Candidate Market Fit (CMF) Criteria:
 - Target Role: ${request.userCMF.targetRole}
 - Must-Haves: ${request.userCMF.mustHaves.join(', ')}

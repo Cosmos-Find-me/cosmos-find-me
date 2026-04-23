@@ -38,6 +38,7 @@ export interface CompanyAnalysisRequest {
     targetCompanies?: string;
   };
   isNewUser?: boolean; // Flag to indicate if user has empty CMF profile
+  correctionContext?: string; // User-provided correction when LLM description was inaccurate
 }
 
 export interface CompanyAnalysisResponse {

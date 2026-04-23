@@ -71,6 +71,7 @@ export interface Company {
     glassdoor?: string;
     crunchbase?: string;
   };
+  lastAnalysisRefresh?: string; // ISO timestamp — rate limits user-triggered re-analysis to once per day
 }
 
 export interface GraphData {

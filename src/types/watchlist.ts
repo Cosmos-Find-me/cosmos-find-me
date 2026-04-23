@@ -61,6 +61,7 @@ export interface CompanyDetailPanelProps {
   onToggleWatchlist: (companyId: number) => void;
   onCompanySelect: (company: import('./index').Company | null) => void;
   onRequestDelete: (company: import('./index').Company) => void;
+  onCompanyUpdate?: (updatedCompany: import('./index').Company) => void;
   viewMode: ViewMode;
   watchlistStats: WatchlistStats;
   isMobile?: boolean;

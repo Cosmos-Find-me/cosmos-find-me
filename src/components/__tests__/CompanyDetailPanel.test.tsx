@@ -1,7 +1,13 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest'
-import { render, screen, fireEvent } from '@testing-library/react'
-import { Company } from '../../types'
+import { render, screen, fireEvent, waitFor } from '@testing-library/react'
+import { Company, UserCMF } from '../../types'
 import CompanyDetailPanel from '../CompanyDetailPanel'
+
+vi.mock('../../utils/llm/service', () => ({
+  llmService: {
+    analyzeCompany: vi.fn()
+  }
+}))
 
 /**
  * @testSuite CompanyDetailPanel
@@ -436,10 +442,152 @@ describe('CompanyDetailPanel', () => {
       )
 
       const firstCompanyContainer = screen.getByText('OpenAI').closest('.cursor-pointer')
-      
+
       // Should be clickable/focusable
       expect(firstCompanyContainer).toHaveClass('cursor-pointer')
       expect(firstCompanyContainer).toBeInTheDocument()
+    })
+  })
+
+  describe('analysis feedback / re-analysis', () => {
+    const mockUserCMF: UserCMF = {
+      id: 'cmf-1',
+      name: 'Test User',
+      targetRole: 'Software Engineer',
+      mustHaves: ['TypeScript'],
+      wantToHave: ['Remote'],
+      experience: ['Frontend'],
+      targetCompanies: ''
+    }
+    const mockOnCompanyUpdate = vi.fn()
+    const selectedCompany = mockCompanies[0] // OpenAI
+
+    beforeEach(() => {
+      mockOnCompanyUpdate.mockReset()
+    })
+
+    it('shows "Incorrect info?" button when onCompanyUpdate and userCMF are provided', () => {
+      renderCompanyDetailPanel({
+        selectedCompany,
+        onCompanyUpdate: mockOnCompanyUpdate,
+        userCMF: mockUserCMF
+      })
+
+      expect(screen.getByText('Incorrect info?')).toBeInTheDocument()
+    })
+
+    it('does not show "Incorrect info?" button without onCompanyUpdate', () => {
+      renderCompanyDetailPanel({ selectedCompany, userCMF: mockUserCMF })
+
+      expect(screen.queryByText('Incorrect info?')).not.toBeInTheDocument()
+    })
+
+    it('does not show "Incorrect info?" button without userCMF', () => {
+      renderCompanyDetailPanel({ selectedCompany, onCompanyUpdate: mockOnCompanyUpdate })
+
+      expect(screen.queryByText('Incorrect info?')).not.toBeInTheDocument()
+    })
+
+    it('opens the feedback form when "Incorrect info?" is clicked', () => {
+      renderCompanyDetailPanel({
+        selectedCompany,
+        onCompanyUpdate: mockOnCompanyUpdate,
+        userCMF: mockUserCMF
+      })
+
+      fireEvent.click(screen.getByText('Incorrect info?'))
+
+      expect(screen.getByRole('textbox')).toBeInTheDocument()
+      expect(screen.getByText('Re-analyze')).toBeInTheDocument()
+    })
+
+    it('shows rate-limit message when lastAnalysisRefresh is within 24 hours', () => {
+      const recentCompany = { ...selectedCompany, lastAnalysisRefresh: new Date().toISOString() }
+
+      renderCompanyDetailPanel({
+        selectedCompany: recentCompany,
+        onCompanyUpdate: mockOnCompanyUpdate,
+        userCMF: mockUserCMF
+      })
+
+      fireEvent.click(screen.getByText('Incorrect info?'))
+
+      expect(screen.getByText(/Next refresh available in/)).toBeInTheDocument()
+      expect(screen.queryByRole('textbox')).not.toBeInTheDocument()
+    })
+
+    it('shows the form when lastAnalysisRefresh is older than 24 hours', () => {
+      const oldDate = new Date(Date.now() - 25 * 60 * 60 * 1000).toISOString()
+      const oldCompany = { ...selectedCompany, lastAnalysisRefresh: oldDate }
+
+      renderCompanyDetailPanel({
+        selectedCompany: oldCompany,
+        onCompanyUpdate: mockOnCompanyUpdate,
+        userCMF: mockUserCMF
+      })
+
+      fireEvent.click(screen.getByText('Incorrect info?'))
+
+      expect(screen.getByRole('textbox')).toBeInTheDocument()
+    })
+
+    it('calls onCompanyUpdate with updated data and lastAnalysisRefresh on success', async () => {
+      const { llmService } = await import('../../utils/llm/service')
+      vi.mocked(llmService.analyzeCompany).mockResolvedValue({
+        success: true,
+        data: {
+          name: 'OpenAI',
+          matchReasons: ['Corrected reason'],
+          matchScore: 90,
+          industry: 'Healthcare AI',
+          stage: 'Late Stage',
+          location: 'San Francisco, CA',
+          employees: '~1500',
+          remote: 'In-office',
+          openRoles: 3,
+          connections: [],
+          connectionTypes: {}
+        }
+      })
+
+      renderCompanyDetailPanel({
+        selectedCompany,
+        onCompanyUpdate: mockOnCompanyUpdate,
+        userCMF: mockUserCMF
+      })
+
+      fireEvent.click(screen.getByText('Incorrect info?'))
+      fireEvent.click(screen.getByText('Re-analyze'))
+
+      await waitFor(() => {
+        expect(mockOnCompanyUpdate).toHaveBeenCalledTimes(1)
+        const updated = mockOnCompanyUpdate.mock.calls[0][0]
+        expect(updated.matchReasons).toEqual(['Corrected reason'])
+        expect(updated.industry).toBe('Healthcare AI')
+        expect(updated.lastAnalysisRefresh).toBeDefined()
+      })
+    })
+
+    it('shows error message when LLM call fails', async () => {
+      const { llmService } = await import('../../utils/llm/service')
+      vi.mocked(llmService.analyzeCompany).mockResolvedValue({
+        success: false,
+        error: 'LLM not configured'
+      })
+
+      renderCompanyDetailPanel({
+        selectedCompany,
+        onCompanyUpdate: mockOnCompanyUpdate,
+        userCMF: mockUserCMF
+      })
+
+      fireEvent.click(screen.getByText('Incorrect info?'))
+      fireEvent.click(screen.getByText('Re-analyze'))
+
+      await waitFor(() => {
+        expect(screen.getByText('LLM not configured')).toBeInTheDocument()
+      })
+      expect(mockOnCompanyUpdate).not.toHaveBeenCalled()
     })
   })
 })

@@ -484,6 +484,10 @@ const CMFGraphExplorer: React.FC<CMFGraphExplorerProps> = ({ userProfile }) => {
     return stateManager.isInWatchlist(companyId);
   }, [stateManager]);
 
+  const handleCompanyUpdate = useCallback((updatedCompany: Company) => {
+    stateManager.updateCompany(updatedCompany);
+  }, [stateManager]);
+
   // ===== COMPANY MANAGEMENT =====
 
   const handleAddCompany = useCallback(async (newCompany: Company) => {
@@ -918,6 +922,7 @@ const CMFGraphExplorer: React.FC<CMFGraphExplorerProps> = ({ userProfile }) => {
             isInWatchlist={isInWatchlist}
             onToggleWatchlist={handleToggleWatchlist}
             onRequestDelete={handleRemoveRequest}
+            onCompanyUpdate={handleCompanyUpdate}
             viewMode={viewMode}
             watchlistStats={watchlistStats}
             userCMF={stateManager.getUserCMF()}
@@ -945,6 +950,7 @@ const CMFGraphExplorer: React.FC<CMFGraphExplorerProps> = ({ userProfile }) => {
             isInWatchlist={isInWatchlist}
             onToggleWatchlist={handleToggleWatchlist}
             onRequestDelete={handleRemoveRequest}
+            onCompanyUpdate={handleCompanyUpdate}
             viewMode={viewMode}
             watchlistStats={watchlistStats}
             userCMF={stateManager.getUserCMF()}
@@ -969,6 +975,7 @@ const CMFGraphExplorer: React.FC<CMFGraphExplorerProps> = ({ userProfile }) => {
             isInWatchlist={isInWatchlist}
             onToggleWatchlist={handleToggleWatchlist}
             onRequestDelete={handleRemoveRequest}
+            onCompanyUpdate={handleCompanyUpdate}
             viewMode={viewMode}
             watchlistStats={watchlistStats}
             userCMF={stateManager.getUserCMF()}
