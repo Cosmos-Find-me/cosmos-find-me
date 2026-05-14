@@ -13,11 +13,33 @@ jobs:
     name: Ping Supabase
     runs-on: ubuntu-latest
     steps:
-      - name: Ping auth health endpoint
+      - name: Check if Supabase URL secret exists
+        id: check-secret
         run: |
+          if [ -z "${{ secrets.NEXT_PUBLIC_SUPABASE_URL }}" ]; then
+            echo "❌ NEXT_PUBLIC_SUPABASE_URL secret is not configured"
+            echo "To fix this:"
+            echo "1. Go to Repository Settings → Secrets and variables → Actions"
+            echo "2. Add a new secret named NEXT_PUBLIC_SUPABASE_URL"
+            echo "3. Set the value to your Supabase project URL (e.g., https://your-project.supabase.co)"
+            echo ""
+            echo "Skipping keepalive ping - secret not configured"
+            echo "secret_exists=false" >> $GITHUB_OUTPUT
+          else
+            echo "✅ NEXT_PUBLIC_SUPABASE_URL secret is configured"
+            echo "secret_exists=true" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Ping auth health endpoint
+        if: steps.check-secret.outputs.secret_exists == 'true'
+        run: |
+          SUPABASE_URL="${{ secrets.NEXT_PUBLIC_SUPABASE_URL }}"
+          HEALTH_URL="${SUPABASE_URL}/auth/v1/health"
+          
+          echo "Pinging: $HEALTH_URL"
+          
           # Capture both HTTP response code and curl exit code
-          RESPONSE=$(curl -s -o /dev/null -w "%{http_code}" \
-            "${{ secrets.NEXT_PUBLIC_SUPABASE_URL }}/auth/v1/health" 2>/dev/null)
+          RESPONSE=$(curl -s -o /dev/null -w "%{http_code}" "$HEALTH_URL" 2>/dev/null)
           CURL_EXIT=$?
           
           echo "Curl exit code: $CURL_EXIT"
@@ -27,9 +49,10 @@ jobs:
           if [ $CURL_EXIT -ne 0 ]; then
             echo "❌ Curl failed with exit code $CURL_EXIT"
             case $CURL_EXIT in
-              3) echo "Error: URL malformed - check NEXT_PUBLIC_SUPABASE_URL secret" ;;
-              6) echo "Error: Couldn't resolve host" ;;
-              7) echo "Error: Failed to connect to host" ;;
+              3) echo "Error: URL malformed - check NEXT_PUBLIC_SUPABASE_URL secret format" ;;
+              6) echo "Error: Couldn't resolve host - check internet connectivity" ;;
+              7) echo "Error: Failed to connect to host - check Supabase project status" ;;
+              28) echo "Error: Connection timeout - check network or Supabase availability" ;;
               *) echo "Error: Curl failed with unknown error code $CURL_EXIT" ;;
             esac
             exit $CURL_EXIT
@@ -40,5 +63,11 @@ jobs:
             echo "✅ Supabase is healthy"
           else
             echo "⚠️ Unexpected HTTP response: $RESPONSE"
+            case $RESPONSE in
+              404) echo "Error: Health endpoint not found - check Supabase URL" ;;
+              500) echo "Error: Supabase server error - check project status" ;;
+              503) echo "Error: Supabase service unavailable - project may be paused" ;;
+              *) echo "Error: Unexpected response code $RESPONSE" ;;
+            esac
             exit 1
           fi
