@@ -15,14 +15,30 @@ jobs:
     steps:
       - name: Ping auth health endpoint
         run: |
+          # Capture both HTTP response code and curl exit code
           RESPONSE=$(curl -s -o /dev/null -w "%{http_code}" \
-            "${{ secrets.NEXT_PUBLIC_SUPABASE_URL }}/auth/v1/health")
-
-          echo "Response: $RESPONSE"
-
+            "${{ secrets.NEXT_PUBLIC_SUPABASE_URL }}/auth/v1/health" 2>/dev/null)
+          CURL_EXIT=$?
+          
+          echo "Curl exit code: $CURL_EXIT"
+          echo "HTTP response: $RESPONSE"
+          
+          # Check if curl command succeeded
+          if [ $CURL_EXIT -ne 0 ]; then
+            echo "❌ Curl failed with exit code $CURL_EXIT"
+            case $CURL_EXIT in
+              3) echo "Error: URL malformed - check NEXT_PUBLIC_SUPABASE_URL secret" ;;
+              6) echo "Error: Couldn't resolve host" ;;
+              7) echo "Error: Failed to connect to host" ;;
+              *) echo "Error: Curl failed with unknown error code $CURL_EXIT" ;;
+            esac
+            exit $CURL_EXIT
+          fi
+          
+          # Check HTTP response
           if [ "$RESPONSE" = "200" ]; then
             echo "✅ Supabase is healthy"
           else
-            echo "⚠️ Unexpected response: $RESPONSE"
+            echo "⚠️ Unexpected HTTP response: $RESPONSE"
             exit 1
           fi
