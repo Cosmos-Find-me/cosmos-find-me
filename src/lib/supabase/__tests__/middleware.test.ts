@@ -95,9 +95,9 @@ describe('updateSession', () => {
   })
 })
 
-describe('middleware matcher', () => {
+describe('proxy matcher', () => {
   it('runs on pages and API routes but skips static assets', async () => {
-    const { config } = await import('../../../../middleware')
+    const { config } = await import('../../../../proxy')
     const matcher = new RegExp(`^${config.matcher[0]}$`)
 
     for (const path of ['/', '/explorer', '/login', '/api/user/data']) {
