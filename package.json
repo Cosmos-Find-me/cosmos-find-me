@@ -15,7 +15,7 @@
     "dev:file-server": "node scripts/dev-server.cjs",
     "dev:llm-server": "cd server && PORT=3002 npm start",
     "dev:full": "concurrently --names \"REACT,FILE,LLM\" --prefix-colors \"cyan,green,yellow\" \"npm run dev\" \"npm run dev:file-server\" \"npm run dev:llm-server\"",
-    "test": "vitest run --no-coverage || exit 0",
+    "test": "vitest run --no-coverage",
     "test:ui": "vitest --ui",
     "test:run": "vitest run",
     "test:coverage": "vitest run --coverage",
@@ -41,7 +41,8 @@
     "export:companies-csv": "npx tsx scripts/export-companies-csv.ts",
     "import:companies-csv": "npx tsx scripts/import-companies-csv.ts",
     "cleanup:supabase-links": "npx tsx scripts/cleanup-supabase-links.ts",
-    "prepare": "husky"
+    "prepare": "husky",
+    "typecheck": "tsc --noEmit"
   },
   "dependencies": {
     "@anthropic-ai/sdk": "^0.71.2",
