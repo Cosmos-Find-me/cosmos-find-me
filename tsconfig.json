@@ -30,26 +30,25 @@
     "noUnusedParameters": true,
     "noFallthroughCasesInSwitch": true,
     /* Path mapping for cleaner imports */
-    "baseUrl": ".",
     "paths": {
       "@/*": [
         "./src/*",
         "./app/*"
       ],
       "@components/*": [
-        "src/components/*"
+        "./src/components/*"
       ],
       "@hooks/*": [
-        "src/hooks/*"
+        "./src/hooks/*"
       ],
       "@utils/*": [
-        "src/utils/*"
+        "./src/utils/*"
       ],
       "@types/*": [
-        "src/types/*"
+        "./src/types/*"
       ],
       "@data/*": [
-        "src/data/*"
+        "./src/data/*"
       ]
     }
   },

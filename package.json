@@ -42,7 +42,7 @@
     "import:companies-csv": "npx tsx scripts/import-companies-csv.ts",
     "cleanup:supabase-links": "npx tsx scripts/cleanup-supabase-links.ts",
     "prepare": "husky",
-    "typecheck": "tsc --noEmit"
+    "typecheck": "next typegen && tsc --noEmit"
   },
   "dependencies": {
     "@supabase/ssr": "^0.12.7",
@@ -93,7 +93,7 @@
     "sharp": "^0.35.5",
     "tailwindcss": "^4.3.3",
     "tsx": "^4.21.0",
-    "typescript": "^5.2.2",
+    "typescript": "^6.0.3",
     "vite": "^8.3.5",
     "vitest": "^5.0.5"
   },
