@@ -39,13 +39,13 @@ const SettingsViewModal: React.FC<SettingsViewModalProps> = ({
     <div className="fixed inset-0 z-50 overflow-y-auto">
       {/* Backdrop */}
       <div
-        className="fixed inset-0 bg-black bg-opacity-50 transition-opacity"
+        className="fixed inset-0 bg-black/50 transition-opacity"
         onClick={onClose}
       />
 
       {/* Modal */}
       <div className="flex min-h-full items-center justify-center p-4">
-        <div className="relative bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50 rounded-lg shadow-xl max-w-2xl w-full p-6 border border-blue-200/40">
+        <div className="relative bg-linear-to-br from-slate-50 via-blue-50 to-indigo-50 rounded-lg shadow-xl max-w-2xl w-full p-6 border border-blue-200/40">
           <div className="mb-6">
             <h2 className="text-xl font-semibold text-slate-800 mb-2">
               Current Settings
@@ -105,7 +105,7 @@ const SettingsViewModal: React.FC<SettingsViewModalProps> = ({
                       {selectedModel.description}
                     </div>
                     {selectedModel.costPer1MTokens && (
-                      <div className="text-xs text-slate-500 bg-slate-50 px-2 py-1 rounded inline-block">
+                      <div className="text-xs text-slate-500 bg-slate-50 px-2 py-1 rounded-sm inline-block">
                         Cost: ${selectedModel.costPer1MTokens.input}-${selectedModel.costPer1MTokens.output}/1M tokens
                       </div>
                     )}

@@ -41,7 +41,7 @@ const CollapsibleCMFPanel: React.FC<CollapsibleCMFPanelProps> = ({
       {/* Fixed Position Icon - Always Visible */}
       <button
         ref={iconRef}
-        className="absolute top-4 left-6 z-20 w-12 h-12 bg-blue-600 hover:bg-blue-700 text-white rounded-full shadow-lg hover:shadow-xl flex items-center justify-center transition-all duration-200 hover:scale-105 active:scale-95 focus:outline-none"
+        className="absolute top-4 left-6 z-20 w-12 h-12 bg-blue-600 hover:bg-blue-700 text-white rounded-full shadow-lg hover:shadow-xl flex items-center justify-center transition-all duration-200 hover:scale-105 active:scale-95 focus:outline-hidden"
         onClick={onToggle}
         onKeyDown={handleKeyDown}
         tabIndex={0}
@@ -56,7 +56,7 @@ const CollapsibleCMFPanel: React.FC<CollapsibleCMFPanelProps> = ({
 
       {/* Expandable Panel - Appears Below Icon */}
       <div 
-        className={`absolute top-16 left-6 z-50 w-80 max-w-[calc(100vw-2rem)] bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50 rounded-lg shadow-xl border border-blue-200/40 backdrop-blur-sm transition-all duration-300 ease-in-out ${
+        className={`absolute top-16 left-6 z-50 w-80 max-w-[calc(100vw-2rem)] bg-linear-to-br from-slate-50 via-blue-50 to-indigo-50 rounded-lg shadow-xl border border-blue-200/40 backdrop-blur-xs transition-all duration-300 ease-in-out ${
           isCollapsed ? 'opacity-0 scale-95 pointer-events-none' : 'opacity-100 scale-100'
         }`}
         style={{
@@ -64,9 +64,9 @@ const CollapsibleCMFPanel: React.FC<CollapsibleCMFPanelProps> = ({
         }}
       >
         {/* Panel Header */}
-        <div className="flex items-center justify-between p-4 border-b border-blue-200/30 bg-white/60 backdrop-blur-sm">
+        <div className="flex items-center justify-between p-4 border-b border-blue-200/30 bg-white/60 backdrop-blur-xs">
           <div className="flex items-center space-x-3">
-            <div className="w-8 h-8 bg-gradient-to-br from-blue-600 to-indigo-600 rounded-full flex items-center justify-center shadow-sm">
+            <div className="w-8 h-8 bg-linear-to-br from-blue-600 to-indigo-600 rounded-full flex items-center justify-center shadow-xs">
               <svg className="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
               </svg>
@@ -82,7 +82,7 @@ const CollapsibleCMFPanel: React.FC<CollapsibleCMFPanelProps> = ({
           </div>
           <button 
             onClick={onToggle}
-            className="p-1 hover:bg-white/60 rounded transition-all duration-200"
+            className="p-1 hover:bg-white/60 rounded-sm transition-all duration-200"
             aria-label="Close panel"
           >
             <svg className="w-4 h-4 text-slate-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -92,17 +92,17 @@ const CollapsibleCMFPanel: React.FC<CollapsibleCMFPanelProps> = ({
         </div>
 
         {/* Panel Content */}
-        <div className="p-3 md:p-4 space-y-3 md:space-y-4 max-h-[60vh] md:max-h-[70vh] overflow-y-auto bg-white/30 backdrop-blur-sm">
+        <div className="p-3 md:p-4 space-y-3 md:space-y-4 max-h-[60vh] md:max-h-[70vh] overflow-y-auto bg-white/30 backdrop-blur-xs">
           {isLoading ? (
             // Loading skeleton
             <div className="space-y-4">
               <div className="animate-pulse">
-                <div className="h-4 bg-slate-200/60 rounded w-3/4 mb-2"></div>
-                <div className="h-3 bg-slate-200/60 rounded w-1/2 mb-4"></div>
+                <div className="h-4 bg-slate-200/60 rounded-sm w-3/4 mb-2"></div>
+                <div className="h-3 bg-slate-200/60 rounded-sm w-1/2 mb-4"></div>
                 <div className="space-y-2">
-                  <div className="h-3 bg-slate-200/60 rounded w-full"></div>
-                  <div className="h-3 bg-slate-200/60 rounded w-5/6"></div>
-                  <div className="h-3 bg-slate-200/60 rounded w-4/5"></div>
+                  <div className="h-3 bg-slate-200/60 rounded-sm w-full"></div>
+                  <div className="h-3 bg-slate-200/60 rounded-sm w-5/6"></div>
+                  <div className="h-3 bg-slate-200/60 rounded-sm w-4/5"></div>
                 </div>
               </div>
             </div>
@@ -135,7 +135,7 @@ const CollapsibleCMFPanel: React.FC<CollapsibleCMFPanelProps> = ({
                   {userCMF.mustHaves && userCMF.mustHaves.length > 0 ? (
                     userCMF.mustHaves.map((item, index) => (
                       <div key={index} className="flex items-center space-x-2">
-                        <div className="w-1.5 h-1.5 bg-rose-500 rounded-full flex-shrink-0"></div>
+                        <div className="w-1.5 h-1.5 bg-rose-500 rounded-full shrink-0"></div>
                         <span className="text-sm text-slate-600">{getCMFDisplayText(item)}</span>
                       </div>
                     ))
@@ -152,7 +152,7 @@ const CollapsibleCMFPanel: React.FC<CollapsibleCMFPanelProps> = ({
                   {userCMF.wantToHave && userCMF.wantToHave.length > 0 ? (
                     userCMF.wantToHave.map((item, index) => (
                       <div key={index} className="flex items-center space-x-2">
-                        <div className="w-1.5 h-1.5 bg-indigo-500 rounded-full flex-shrink-0"></div>
+                        <div className="w-1.5 h-1.5 bg-indigo-500 rounded-full shrink-0"></div>
                         <span className="text-sm text-slate-600">{getCMFDisplayText(item)}</span>
                       </div>
                     ))

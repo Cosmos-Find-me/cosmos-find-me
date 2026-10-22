@@ -23,6 +23,8 @@ test.describe('Public Page Visual Regression', () => {
       await expect(page).toHaveScreenshot(`${name}.png`, {
         fullPage: true,
         animations: 'disabled',
+        // Static pages: much stricter than the 5% default used for the graph
+        maxDiffPixelRatio: 0.005,
         mask: [page.locator('canvas')],
       });
     });

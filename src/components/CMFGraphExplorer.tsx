@@ -375,7 +375,7 @@ const CMFGraphExplorer: React.FC<CMFGraphExplorerProps> = ({ userCMF, companies:
   return (
     <div className="flex h-screen bg-gray-50">
       {/* Debug indicator */}
-      <div className="fixed top-0 left-0 z-[9999] bg-red-500 text-white text-xs px-2 py-1">
+      <div className="fixed top-0 left-0 z-9999 bg-red-500 text-white text-xs px-2 py-1">
         {isMobile ? `Mobile (${mobileView})` : `Desktop (${mobileView})`} - {window.innerWidth}px
       </div>
 
@@ -412,7 +412,7 @@ const CMFGraphExplorer: React.FC<CMFGraphExplorerProps> = ({ userCMF, companies:
                   : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
               }`}
             >
-              <svg className="w-3 h-3 md:w-4 md:h-4 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <svg className="w-3 h-3 md:w-4 md:h-4 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
               </svg>
               <span className="hidden md:inline">Explore Companies ({availableCompanies.length})</span>
@@ -426,7 +426,7 @@ const CMFGraphExplorer: React.FC<CMFGraphExplorerProps> = ({ userCMF, companies:
                   : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
               }`}
             >
-              <svg className="w-3 h-3 md:w-4 md:h-4 flex-shrink-0" fill="currentColor" viewBox="0 0 24 24">
+              <svg className="w-3 h-3 md:w-4 md:h-4 shrink-0" fill="currentColor" viewBox="0 0 24 24">
                 <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/>
               </svg>
               <span className="hidden md:inline">Your Watchlist ({watchlistCompanyIds.size})</span>
@@ -439,7 +439,7 @@ const CMFGraphExplorer: React.FC<CMFGraphExplorerProps> = ({ userCMF, companies:
         <div className={`absolute top-4 right-4 z-10 flex items-center space-x-3 ${mobileView === 'list' ? 'hidden md:flex' : 'flex'}`}>
           {/* LLM Status Indicator - hidden on mobile */}
           {llmConfigured && (
-            <div className="hidden md:flex px-3 py-1.5 bg-green-50 border border-green-200 text-green-700 text-xs rounded-full items-center shadow-sm">
+            <div className="hidden md:flex px-3 py-1.5 bg-green-50 border border-green-200 text-green-700 text-xs rounded-full items-center shadow-xs">
               <div className="w-2 h-2 bg-green-500 rounded-full mr-2 animate-pulse"></div>
               <span className="font-medium">{llmService.getSettings().provider.toUpperCase()} AI</span>
             </div>
@@ -448,7 +448,7 @@ const CMFGraphExplorer: React.FC<CMFGraphExplorerProps> = ({ userCMF, companies:
           {/* Settings Button */}
           <button
             onClick={() => setShowLLMSettings(true)}
-            className="p-2.5 bg-white hover:bg-gray-50 border border-gray-200 rounded-lg shadow-sm hover:shadow-md transition-all duration-200 group"
+            className="p-2.5 bg-white hover:bg-gray-50 border border-gray-200 rounded-lg shadow-xs hover:shadow-md transition-all duration-200 group"
             title="AI Settings"
           >
             <svg 
@@ -546,7 +546,7 @@ const CMFGraphExplorer: React.FC<CMFGraphExplorerProps> = ({ userCMF, companies:
               </p>
               <button
                 onClick={() => handleViewModeChange('explore')}
-                className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 transition-colors"
+                className="px-4 py-2 bg-blue-600 text-white rounded-sm hover:bg-blue-700 transition-colors"
               >
                 Explore Companies
               </button>
@@ -566,7 +566,7 @@ const CMFGraphExplorer: React.FC<CMFGraphExplorerProps> = ({ userCMF, companies:
 
         {/* Watchlist Error State */}
         {watchlistError && (
-          <div className="absolute top-20 left-1/2 transform -translate-x-1/2 z-10 bg-red-50 border border-red-200 text-red-700 px-4 py-2 rounded-lg shadow">
+          <div className="absolute top-20 left-1/2 transform -translate-x-1/2 z-10 bg-red-50 border border-red-200 text-red-700 px-4 py-2 rounded-lg shadow-sm">
             <div className="flex items-center space-x-2">
               <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
                 <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clipRule="evenodd" />
@@ -602,7 +602,7 @@ const CMFGraphExplorer: React.FC<CMFGraphExplorerProps> = ({ userCMF, companies:
         {isMobile && selectedCompany && mobileView === 'detail' && (
           <button
             onClick={handleMobileBackFromDetail}
-            className="absolute top-4 left-4 z-10 p-2 bg-white/90 backdrop-blur-sm rounded-lg shadow-lg hover:shadow-xl transition-all"
+            className="absolute top-4 left-4 z-10 p-2 bg-white/90 backdrop-blur-xs rounded-lg shadow-lg hover:shadow-xl transition-all"
             aria-label="Back to cosmos view"
           >
             <svg className="w-6 h-6 text-gray-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -615,7 +615,7 @@ const CMFGraphExplorer: React.FC<CMFGraphExplorerProps> = ({ userCMF, companies:
         {isMobile && mobileView === 'list' && !selectedCompany && (
           <button
             onClick={() => setMobileView('cosmos')}
-            className="absolute top-4 left-4 z-10 p-2 bg-white/90 backdrop-blur-sm rounded-lg shadow-lg hover:shadow-xl transition-all"
+            className="absolute top-4 left-4 z-10 p-2 bg-white/90 backdrop-blur-xs rounded-lg shadow-lg hover:shadow-xl transition-all"
             aria-label="Back to cosmos view"
           >
             <svg className="w-6 h-6 text-gray-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">

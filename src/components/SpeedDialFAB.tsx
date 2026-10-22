@@ -168,7 +168,7 @@ export const SpeedDialFAB: React.FC<SpeedDialFABProps> = ({
                     transition-all duration-200 ease-in-out
                     flex items-center justify-center
                     hover:scale-110 active:scale-95
-                    focus:outline-none focus:ring-4 focus:ring-blue-400 focus:ring-opacity-50"
+                    focus:outline-hidden focus:ring-4 focus:ring-blue-400/50"
                   aria-label={action.label}
                   aria-describedby={`tooltip-${action.label.replace(/\s+/g, '-').toLowerCase()}`}
                   role="menuitem"
@@ -190,7 +190,7 @@ export const SpeedDialFAB: React.FC<SpeedDialFABProps> = ({
             transition-all duration-200 ease-in-out
             flex items-center justify-center
             hover:scale-105 active:scale-95
-            focus:outline-none focus:ring-4 focus:ring-blue-600 focus:ring-opacity-50"
+            focus:outline-hidden focus:ring-4 focus:ring-blue-600/50"
           aria-label={isMobile ? "Quick actions menu" : "Add Company"}
           aria-expanded={isMobile ? isOpen : undefined}
           aria-haspopup={isMobile ? "menu" : undefined}

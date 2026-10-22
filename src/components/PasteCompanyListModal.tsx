@@ -146,7 +146,7 @@ export const PasteCompanyListModal: React.FC<PasteCompanyListModalProps> = ({
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
       {/* Backdrop */}
       <div
-        className="absolute inset-0 bg-black/50 backdrop-blur-sm"
+        className="absolute inset-0 bg-black/50 backdrop-blur-xs"
         onClick={onClose}
         aria-hidden="true"
       />
@@ -204,7 +204,7 @@ Examples:
 • One company per line
 • Or any text with hyperlinks from LinkedIn, etc.` : undefined}
                   className="w-full h-64 px-4 py-3 border border-gray-300 rounded-lg overflow-y-auto
-                    focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent
+                    focus:outline-hidden focus:ring-2 focus:ring-blue-500 focus:border-transparent
                     text-gray-900 empty:before:content-[attr(data-placeholder)] empty:before:text-gray-400 empty:before:whitespace-pre-wrap"
                   role="textbox"
                   aria-multiline="true"

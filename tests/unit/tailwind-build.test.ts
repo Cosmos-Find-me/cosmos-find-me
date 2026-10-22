@@ -5,8 +5,8 @@
  * and checks that utilities used across app/ and src/ are generated. Catches
  * content-path, config and Tailwind major-version regressions.
  */
-import { readFileSync } from 'fs'
-import { join, resolve } from 'path'
+import { readFileSync, readdirSync, statSync } from 'fs'
+import { join, relative, resolve } from 'path'
 import postcss from 'postcss'
 import { describe, it, expect, beforeAll } from 'vitest'
 
@@ -38,7 +38,7 @@ beforeAll(async () => {
 describe('Tailwind build', () => {
   it.each([
     // used by app/layout.tsx and app/login/page.tsx
-    'bg-gradient-to-br',
+    'bg-linear-to-br',
     'from-slate-900',
     'via-blue-900',
     'to-indigo-900',
@@ -48,7 +48,7 @@ describe('Tailwind build', () => {
     'border-white/20',
     'animate-pulse',
     // used by src/components
-    'backdrop-blur-sm',
+    'backdrop-blur-xs',
     'hover:bg-gray-100',
     'w-80',
   ])('generates .%s', (cls) => {
@@ -62,5 +62,59 @@ describe('Tailwind build', () => {
 
   it('applies the preflight reset', () => {
     expect(css).toMatch(/box-sizing:\s*border-box/)
+  })
+})
+
+describe('Tailwind v4 source compatibility', () => {
+  // Utilities removed in Tailwind v4 that would silently stop styling elements
+  const REMOVED = /(?<![\w-])(?:[\w-]+:)*(?:(?:bg|text|border|divide|ring|placeholder)-opacity-\d+|flex-(?:shrink|grow)(?:-\d)?|overflow-ellipsis|decoration-(?:slice|clone))(?![\w-])/g
+
+  const collect = (dir: string): string[] =>
+    readdirSync(dir).flatMap((entry) => {
+      if (entry === 'node_modules' || entry === '__tests__') return []
+      const full = join(dir, entry)
+      if (statSync(full).isDirectory()) return collect(full)
+      return /\.(tsx?|css)$/.test(entry) ? [full] : []
+    })
+
+  it('never combines transform utilities with an inline transform style', () => {
+    // v3 transform utilities were overridden by inline `transform`; v4 uses the
+    // separate translate/scale/rotate properties, which stack with it instead
+    const TRANSFORM_UTIL = /(?<![\w-])(?:[\w-]+:)*-?(?:translate-[xyz]|scale(?:-[xyz])?|rotate|skew-[xy])-[\w./[\]-]+/
+    const tags = (source: string) => {
+      const found: string[] = []
+      for (let i = source.indexOf('<'); i !== -1; i = source.indexOf('<', i + 1)) {
+        if (!/[A-Za-z]/.test(source[i + 1] ?? '')) continue
+        let depth = 0
+        let j = i + 1
+        for (; j < source.length; j++) {
+          if (source[j] === '{') depth++
+          else if (source[j] === '}') depth--
+          else if (source[j] === '>' && depth === 0) break
+        }
+        found.push(source.slice(i, j + 1))
+      }
+      return found
+    }
+
+    const offenders = [...collect(join(root, 'app')), ...collect(join(root, 'src'))]
+      .filter((file) => file.endsWith('.tsx'))
+      .flatMap((file) =>
+        tags(readFileSync(file, 'utf8'))
+          .filter((tag) => /style=\{\{[^}]*\btransform\s*:/.test(tag))
+          .map((tag) => tag.match(/className=(?:"([^"]*)"|\{`([^`]*)`\})/))
+          .filter((m): m is RegExpMatchArray => !!m && TRANSFORM_UTIL.test(m[1] ?? m[2]))
+          .map((m) => `${relative(root, file)}: ${(m[1] ?? m[2]).match(TRANSFORM_UTIL)![0]}`)
+      )
+
+    expect(offenders).toEqual([])
+  })
+
+  it('uses no utilities that were removed in Tailwind v4', () => {
+    const offenders = [...collect(join(root, 'app')), ...collect(join(root, 'src'))].flatMap((file) =>
+      [...readFileSync(file, 'utf8').matchAll(REMOVED)].map((m) => `${relative(root, file)}: ${m[0]}`)
+    )
+
+    expect(offenders).toEqual([])
   })
 })

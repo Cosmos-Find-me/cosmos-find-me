@@ -14,11 +14,11 @@ const EmptyWatchlistModal: React.FC<EmptyWatchlistModalProps> = ({
   return (
     <div className="fixed inset-0 z-50 overflow-y-auto">
       {/* Backdrop */}
-      <div className="fixed inset-0 bg-black bg-opacity-50 transition-opacity" />
+      <div className="fixed inset-0 bg-black/50 transition-opacity" />
       
       {/* Modal */}
       <div className="flex min-h-full items-center justify-center p-4">
-        <div className="relative bg-gradient-to-br from-white via-blue-50 to-indigo-50 rounded-lg shadow-xl max-w-md w-full p-8 border border-blue-200/40 backdrop-blur-sm text-center">
+        <div className="relative bg-linear-to-br from-white via-blue-50 to-indigo-50 rounded-lg shadow-xl max-w-md w-full p-8 border border-blue-200/40 backdrop-blur-xs text-center">
           
           {/* Empty State Icon */}
           <div className="mx-auto flex items-center justify-center h-16 w-16 rounded-full bg-blue-100 mb-6">
@@ -41,7 +41,7 @@ const EmptyWatchlistModal: React.FC<EmptyWatchlistModalProps> = ({
             onClick={onGoToExplore}
             className="w-full px-6 py-3 text-white bg-blue-600 hover:bg-blue-700 
                      rounded-lg font-medium transition-colors duration-200 ease-in-out
-                     focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2
+                     focus:outline-hidden focus:ring-2 focus:ring-blue-500 focus:ring-offset-2
                      shadow-lg hover:shadow-xl"
           >
             Go to Explore Companies

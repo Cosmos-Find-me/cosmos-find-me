@@ -1,8 +1,52 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+@import 'tailwindcss';
 
+@source '../**/*.{js,ts,jsx,tsx}';
+
+/*
+  The default border color has changed to `currentcolor` in Tailwind CSS v4,
+  so we've added these compatibility styles to make sure everything still
+  looks the same as it did with Tailwind CSS v3.
+
+  If we ever want to remove these styles, we need to add an explicit border
+  color utility to any element that depends on these defaults.
+*/
+@layer base {
+  *,
+  ::after,
+  ::before,
+  ::backdrop,
+  ::file-selector-button {
+    border-color: var(--color-gray-200, currentcolor);
+  }
+}
+
+/*
+  Tailwind v3 `space-y-*` semantics. v4 spaces children with a zero-specificity
+  margin-bottom; v3 used margin-top on all but the first child at higher
+  specificity. The laptop overrides further down were written against v3, so
+  restore it for the spacing values the app uses.
+
+  The reset stays layered so a child's own mb-* utility still wins; the spacing
+  rules are unlayered so specificity decides against the overrides, as in v3.
+*/
 @layer utilities {
+  :where([class*='space-y-'] > *) {
+    margin-block-end: 0;
+  }
+}
+
+.space-y-1 > :not([hidden]) ~ :not([hidden]) { margin-top: 0.25rem; margin-bottom: 0; }
+.space-y-2 > :not([hidden]) ~ :not([hidden]) { margin-top: 0.5rem; margin-bottom: 0; }
+.space-y-3 > :not([hidden]) ~ :not([hidden]) { margin-top: 0.75rem; margin-bottom: 0; }
+.space-y-4 > :not([hidden]) ~ :not([hidden]) { margin-top: 1rem; margin-bottom: 0; }
+.space-y-6 > :not([hidden]) ~ :not([hidden]) { margin-top: 1.5rem; margin-bottom: 0; }
+.space-y-8 > :not([hidden]) ~ :not([hidden]) { margin-top: 2rem; margin-bottom: 0; }
+
+@media (width >= 48rem) {
+  .md\:space-y-4 > :not([hidden]) ~ :not([hidden]) { margin-top: 1rem; margin-bottom: 0; }
+}
+
+@utility bottom-safe {
   /*
    * Safe Area Utilities for Bottom-Positioned Elements
    * ===================================================
@@ -10,18 +54,15 @@
    * Simple approach: Use base spacing + env(safe-area-inset-bottom) for all browsers.
    * This ensures buttons stay visible and within viewport on all devices.
    */
+  bottom: calc(1.5rem + env(safe-area-inset-bottom));
+}
 
-  .bottom-safe {
-    bottom: calc(1.5rem + env(safe-area-inset-bottom));
-  }
+@utility bottom-safe-4 {
+  bottom: calc(1rem + env(safe-area-inset-bottom));
+}
 
-  .bottom-safe-4 {
-    bottom: calc(1rem + env(safe-area-inset-bottom));
-  }
-
-  .bottom-safe-6 {
-    bottom: calc(1.5rem + env(safe-area-inset-bottom));
-  }
+@utility bottom-safe-6 {
+  bottom: calc(1.5rem + env(safe-area-inset-bottom));
 }
 
 /*
@@ -309,26 +350,32 @@ span.text-lg.font-bold.px-3.py-1.rounded-full.text-white {
   /* Font size adjustments for better proportions */
   
   /* Company Detail Panel - reduce font sizes */
-  .text-xl {
+  /* Responsive text sizes (md:text-*, lg:text-*) take precedence, as in Tailwind v3 */
+  .text-xl:not([class*='sm:text-'], [class*='md:text-'], [class*='lg:text-'], [class*='xl:text-']) {
     font-size: 1.125rem; /* down from 1.25rem */
+    --text-xl--line-height: 1.75rem; /* keep v3's fixed line-height */
   }
-  
-  .text-lg {
+
+  .text-lg:not([class*='sm:text-'], [class*='md:text-'], [class*='lg:text-'], [class*='xl:text-']) {
     font-size: 1rem; /* down from 1.125rem */
+    --text-lg--line-height: 1.75rem; /* keep v3's fixed line-height */
   }
-  
-  .text-sm {
+
+  .text-sm:not([class*='sm:text-'], [class*='md:text-'], [class*='lg:text-'], [class*='xl:text-']) {
     font-size: 0.8125rem; /* down from 0.875rem */
+    --text-sm--line-height: 1.25rem; /* keep v3's fixed line-height */
   }
-  
-  .text-xs {
+
+  .text-xs:not([class*='sm:text-'], [class*='md:text-'], [class*='lg:text-'], [class*='xl:text-']) {
     font-size: 0.6875rem; /* down from 0.75rem */
+    --text-xs--line-height: 1rem; /* keep v3's fixed line-height */
   }
   
   /* Navigation tabs - smaller font */
   button .text-base,
   button span {
     font-size: 0.875rem !important; /* down from 1rem */
+    --text-base--line-height: 1.5rem; /* keep v3's fixed line-height */
   }
   
   /* CMF Panel - refined font sizes and colors */
