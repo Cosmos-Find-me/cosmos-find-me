@@ -4,7 +4,7 @@ This file provides context for Claude Code when working on this project.
 
 ## Project Overview
 
-Cosmos is a visual career exploration tool built with Next.js 15, TypeScript, and Cytoscape.js. It helps users discover companies aligned with their skills and career goals.
+Cosmos is a visual career exploration tool built with Next.js 16, TypeScript, and Cytoscape.js. It helps users discover companies aligned with their skills and career goals.
 
 ## Team Members
 

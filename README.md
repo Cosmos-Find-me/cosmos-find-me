@@ -24,7 +24,7 @@ See the **[Complete Setup Guide](docs/01-GETTING_STARTED.md)** for installation,
 
 ## 🏗️ Tech Stack
 
-- **Framework:** Next.js 15 with TypeScript
+- **Framework:** Next.js 16 with TypeScript
 - **Visualization:** Cytoscape.js for interactive graphs
 - **Styling:** Tailwind CSS
 - **AI (Optional):** Anthropic Claude for company analysis
