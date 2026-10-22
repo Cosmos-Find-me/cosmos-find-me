@@ -1,59 +1,35 @@
-# Testing Guidelines & CI Protection
+# Testing Guidelines & CI
 
-## ⚠️ IMPORTANT: Vitest Bug Workaround
+## Commands
 
-**DO NOT** modify the test command in CI without understanding the vitest snapshot bug.
-
-## Protected Commands
-
-### ✅ SAFE - Use these commands:
-```json
-"test": "vitest run --no-coverage || exit 0"  // Current simple solution
-"test": "node scripts/test-force-success.js"  // Complex backup solution
+```bash
+npm test              # Unit + integration tests (Vitest); exits non-zero on failure
+npm run typecheck     # next typegen + tsc, including test files
+npm run lint          # ESLint (Next.js flat config)
+npm run test:e2e      # Playwright, all browsers (run locally; needs .env.local)
+npm run test:performance
 ```
 
-### ❌ DANGEROUS - Avoid these in CI:
-```json
-"test": "vitest run"           // Will cause CI failures (no fallback)
-"test": "vitest"               // Will cause CI failures  
-"test": "npx vitest run"       // Will cause CI failures
-```
+CI (`.github/workflows/ci.yml`) runs typecheck, lint, build, a production
+dependency audit (`npm audit --omit=dev --audit-level=high`) and `npm test`.
 
-## CI Workflow Protection
+## History: Vitest snapshot bug
 
-The `.github/workflows/ci.yml` should ALWAYS use:
-```yaml
-- name: Run tests
-  run: npm test  # Uses our custom script
-```
+`npm test` used to be `vitest run --no-coverage || exit 0` to work around a
+Vitest snapshot bug. That bug is gone, and the fallback hid real failures, so it
+was removed. `tests/unit/dependency-health.test.ts` fails if it comes back.
 
-**NEVER** use:
-```yaml
-- name: Run tests  
-  run: npm run test:run    # Bypasses our fix
-  run: vitest run          # Direct vitest call
-  run: npx vitest run      # Direct vitest call
-```
+## Upgrade safety net
 
-## Scripts Explanation
+These tests exist to catch breaking dependency upgrades:
 
-- **Current**: `"vitest run --no-coverage || exit 0"` - Simple one-liner solution
-- `test-force-success.js` - Complex backup (counts 171 tests, exits 0)
-- `test-fallback.sh` - Shell script backup
-- `test-ci-final.js` - Alternative Node.js approach  
-- `test:run` - Direct vitest (breaks CI due to snapshot bug)
+- `tests/unit/dependency-health.test.ts` – test script, React types, unused deps
+- `tests/unit/upgrade-compat.test.tsx` – lucide-react, sonner, cytoscape, uuid
+- `tests/unit/tailwind-build.test.ts` – Tailwind output and v4-incompatible markup
+- `tests/unit/next-config.test.ts` – Next.js 16 conventions (proxy.ts, Turbopack)
+- `tests/unit/llm-server.test.ts` – boots `server/` (Express)
+- `src/lib/**/__tests__` – Supabase clients and session proxy
+- `tests/e2e/visual-pages.spec.ts`, `tests/e2e/css-cascade.spec.ts` – rendering
 
-## When Making Changes
-
-1. **Test locally first**: `npm test` should show 171 tests passed with exit code 0
-2. **Check CI workflow**: Ensure it uses `npm test`  
-3. **Verify exit code**: Should be 0 despite vitest snapshot error
-4. **Never bypass**: Don't use direct vitest commands without fallback in CI
-
-## Future Vitest Updates
-
-When vitest fixes the snapshot bug, we can:
-1. Test with `npm run test:run` locally
-2. If it works without errors, update to `"test": "vitest run"`
-3. Update CI workflow accordingly
-4. Keep this documentation for reference
+When a visual baseline changes intentionally, update it with
+`npx playwright test --config=config/playwright.config.ts --update-snapshots`.

@@ -37,9 +37,6 @@ jobs:
     - name: Audit production dependencies
       run: npm audit --omit=dev --audit-level=high
 
-    - name: Validate test setup
-      run: npm run test:validate
-
     - name: Run tests
       run: npm test
 
