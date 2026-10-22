@@ -54,6 +54,12 @@ describe('updateSession', () => {
     expect(captured?.key).toBe('anon-key')
   })
 
+  it('uses the getAll/setAll cookie adapter (get/set/remove is deprecated)', async () => {
+    await updateSession(new NextRequest('https://app.test/explorer'))
+
+    expect(Object.keys(captured!.cookies).sort()).toEqual(['getAll', 'setAll'])
+  })
+
   it('exposes incoming request cookies to the Supabase client', async () => {
     const request = new NextRequest('https://app.test/explorer', {
       headers: { cookie: 'sb-access-token=abc123; other=1' },
