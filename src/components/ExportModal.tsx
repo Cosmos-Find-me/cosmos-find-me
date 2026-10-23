@@ -118,7 +118,7 @@ const ExportModal: React.FC<ExportModalProps> = ({
 
       {/* Modal */}
       <div className="flex min-h-full items-center justify-center p-4">
-        <div className="relative bg-linear-to-br from-white via-blue-50 to-indigo-50 rounded-lg shadow-xl max-w-md w-full p-6 border border-blue-200/40 backdrop-blur-xs">
+        <div className="relative bg-linear-to-br from-white via-blue-50 to-indigo-50 rounded-lg shadow-xl max-w-md w-full p-6 compact:p-5 border border-blue-200/40 backdrop-blur-xs">
           {/* Close Button */}
           <button
             onClick={onClose}
@@ -130,7 +130,7 @@ const ExportModal: React.FC<ExportModalProps> = ({
 
           {/* Header */}
           <div className="mb-6">
-            <h2 className="text-lg font-semibold text-slate-800 mb-2">
+            <h2 className="text-lg font-semibold text-slate-800 mb-2 compact:mb-1.5">
               Export Companies
             </h2>
             <p className="text-sm text-slate-600">
@@ -141,7 +141,7 @@ const ExportModal: React.FC<ExportModalProps> = ({
 
           {/* Company Preview */}
           <div className="mb-6 p-3 bg-white/60 backdrop-blur-xs rounded-lg border border-blue-200/30 max-h-32 overflow-y-auto">
-            <div className="text-xs text-slate-500 mb-2 font-medium">Companies to export:</div>
+            <div className="text-xs text-slate-500 mb-2 compact:mb-1.5 font-medium">Companies to export:</div>
             <div className="flex flex-wrap gap-1.5">
               {companies.slice(0, 10).map((company) => (
                 <span
@@ -161,7 +161,7 @@ const ExportModal: React.FC<ExportModalProps> = ({
 
           {/* Format Selection */}
           <div className="mb-6">
-            <label className="block text-sm font-medium text-slate-700 mb-3">
+            <label className="block text-sm font-medium text-slate-700 mb-3 compact:mb-2">
               Export Format
             </label>
             <div className="space-y-2">

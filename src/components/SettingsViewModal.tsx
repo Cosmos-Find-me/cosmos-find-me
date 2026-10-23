@@ -45,9 +45,9 @@ const SettingsViewModal: React.FC<SettingsViewModalProps> = ({
 
       {/* Modal */}
       <div className="flex min-h-full items-center justify-center p-4">
-        <div className="relative bg-linear-to-br from-slate-50 via-blue-50 to-indigo-50 rounded-lg shadow-xl max-w-2xl w-full p-6 border border-blue-200/40">
+        <div className="relative bg-linear-to-br from-slate-50 via-blue-50 to-indigo-50 rounded-lg shadow-xl max-w-2xl w-full p-6 compact:p-5 border border-blue-200/40">
           <div className="mb-6">
-            <h2 className="text-xl font-semibold text-slate-800 mb-2">
+            <h2 className="text-xl font-semibold text-slate-800 mb-2 compact:mb-1.5">
               Current Settings
             </h2>
             <p className="text-sm text-slate-600">
@@ -58,7 +58,7 @@ const SettingsViewModal: React.FC<SettingsViewModalProps> = ({
           <div className="space-y-6">
             {/* AI Provider */}
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-3">
+              <label className="block text-sm font-medium text-gray-700 mb-3 compact:mb-2">
                 AI Provider
               </label>
               <div className="p-4 bg-white border border-gray-200 rounded-lg">
@@ -70,7 +70,7 @@ const SettingsViewModal: React.FC<SettingsViewModalProps> = ({
                         alt="Anthropic"
                         width={48}
                         height={48}
-                        className="w-12 h-12 rounded-lg object-cover"
+                        className="w-12 h-12 compact:w-10 compact:h-10 rounded-lg object-cover"
                       />
                       <div>
                         <div className="font-medium text-slate-800">
@@ -94,14 +94,14 @@ const SettingsViewModal: React.FC<SettingsViewModalProps> = ({
               <>
                 {/* Model */}
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                  <label className="block text-sm font-medium text-gray-700 mb-2 compact:mb-1.5">
                     Model
                   </label>
                   <div className="p-4 bg-white border border-gray-200 rounded-lg">
                     <div className="font-medium text-slate-800 mb-1">
                       {selectedModel.name}
                     </div>
-                    <div className="text-sm text-slate-600 mb-2">
+                    <div className="text-sm text-slate-600 mb-2 compact:mb-1.5">
                       {selectedModel.description}
                     </div>
                     {selectedModel.costPer1MTokens && (

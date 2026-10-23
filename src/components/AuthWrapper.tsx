@@ -121,7 +121,7 @@ export default function AuthWrapper({
     return (
       <div className="min-h-screen bg-linear-to-br from-slate-50 via-blue-50 to-indigo-50 flex items-center justify-center">
         <div className="text-center">
-          <Loader2 className="w-8 h-8 animate-spin text-blue-600 mx-auto mb-4" />
+          <Loader2 className="w-8 h-8 compact:w-7 compact:h-7 animate-spin text-blue-600 mx-auto mb-4" />
           <p className="text-slate-600">
             {shouldRedirect ? 'Redirecting...' : 'Loading...'}
           </p>

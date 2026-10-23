@@ -73,7 +73,7 @@ const KeyboardShortcutsModal: React.FC<KeyboardShortcutsModalProps> = ({ isOpen,
 
       {/* Modal */}
       <div className="flex min-h-full items-center justify-center p-4">
-        <div className="relative bg-white rounded-lg shadow-xl max-w-2xl w-full p-6">
+        <div className="relative bg-white rounded-lg shadow-xl max-w-2xl w-full p-6 compact:p-5">
           {/* Header */}
           <div className="flex items-center justify-between mb-6">
             <div>
@@ -87,7 +87,7 @@ const KeyboardShortcutsModal: React.FC<KeyboardShortcutsModalProps> = ({ isOpen,
               className="text-slate-400 hover:text-slate-600 transition-colors"
               aria-label="Close"
             >
-              <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <svg className="w-6 h-6 compact:w-5 compact:h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
               </svg>
             </button>
@@ -97,7 +97,7 @@ const KeyboardShortcutsModal: React.FC<KeyboardShortcutsModalProps> = ({ isOpen,
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             {categories.map((category, categoryIndex) => (
               <div key={categoryIndex}>
-                <h3 className="text-sm font-semibold text-slate-700 uppercase tracking-wider mb-3">
+                <h3 className="text-sm font-semibold text-slate-700 uppercase tracking-wider mb-3 compact:mb-2">
                   {category.title}
                 </h3>
                 <div className="space-y-2">

@@ -20,12 +20,12 @@ export const BatchImportPlaceholderModal: React.FC<BatchImportPlaceholderModalPr
 
   const config = {
     paste: {
-      icon: <Clipboard className="w-12 h-12 text-blue-500" />,
+      icon: <Clipboard className="w-12 h-12 compact:w-10 compact:h-10 text-blue-500" />,
       title: 'Paste Company List',
       description: 'Quickly import multiple companies by pasting a list from LinkedIn, articles, or emails.',
     },
     screenshot: {
-      icon: <Camera className="w-12 h-12 text-blue-500" />,
+      icon: <Camera className="w-12 h-12 compact:w-10 compact:h-10 text-blue-500" />,
       title: 'Import from Screenshot',
       description: 'Upload a screenshot and automatically detect company names to import.',
     },
@@ -58,7 +58,7 @@ export const BatchImportPlaceholderModal: React.FC<BatchImportPlaceholderModalPr
         {/* Title */}
         <h2
           id="modal-title"
-          className="text-2xl font-bold text-gray-900 text-center mb-3"
+          className="text-2xl font-bold text-gray-900 text-center mb-3 compact:mb-2"
         >
           {title}
         </h2>

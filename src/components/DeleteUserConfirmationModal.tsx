@@ -42,7 +42,7 @@ export const DeleteUserConfirmationModal: React.FC<DeleteUserConfirmationModalPr
         aria-labelledby="delete-modal-title"
       >
         {/* Header */}
-        <div className="flex items-center justify-between p-6 border-b border-gray-200">
+        <div className="flex items-center justify-between p-6 compact:p-5 border-b border-gray-200">
           <div className="flex items-center gap-3">
             <div className="w-10 h-10 bg-red-100 rounded-full flex items-center justify-center">
               <AlertTriangle className="w-5 h-5 text-red-600" />
@@ -56,7 +56,7 @@ export const DeleteUserConfirmationModal: React.FC<DeleteUserConfirmationModalPr
           <button
             onClick={onClose}
             disabled={isDeleting}
-            className="w-8 h-8 flex items-center justify-center rounded-full hover:bg-gray-100 transition-colors disabled:opacity-50"
+            className="w-8 h-8 compact:w-7 compact:h-7 flex items-center justify-center rounded-full hover:bg-gray-100 transition-colors disabled:opacity-50"
             aria-label="Close"
           >
             <X className="w-5 h-5 text-gray-500" />
@@ -64,10 +64,10 @@ export const DeleteUserConfirmationModal: React.FC<DeleteUserConfirmationModalPr
         </div>
 
         {/* Content */}
-        <div className="p-6 space-y-4">
+        <div className="p-6 compact:p-5 space-y-4">
           {/* Warning Message */}
           <div className="bg-red-50 border border-red-200 rounded-lg p-4">
-            <p className="text-sm font-medium text-red-900 mb-2">
+            <p className="text-sm font-medium text-red-900 mb-2 compact:mb-1.5">
               ⚠️ This action cannot be undone
             </p>
             <p className="text-sm text-red-700">
@@ -85,7 +85,7 @@ export const DeleteUserConfirmationModal: React.FC<DeleteUserConfirmationModalPr
 
           {/* Consequences List */}
           <div>
-            <p className="text-sm font-medium text-gray-900 mb-2">
+            <p className="text-sm font-medium text-gray-900 mb-2 compact:mb-1.5">
               This will permanently delete:
             </p>
             <ul className="text-sm text-gray-700 space-y-1 list-disc list-inside">
@@ -98,7 +98,7 @@ export const DeleteUserConfirmationModal: React.FC<DeleteUserConfirmationModalPr
         </div>
 
         {/* Footer */}
-        <div className="flex items-center justify-end gap-3 p-6 border-t border-gray-200 bg-gray-50">
+        <div className="flex items-center justify-end gap-3 p-6 compact:p-5 border-t border-gray-200 bg-gray-50">
           <button
             onClick={onClose}
             disabled={isDeleting}

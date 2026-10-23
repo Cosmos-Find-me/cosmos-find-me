@@ -497,11 +497,11 @@ const AddCompanyModalContent: React.FC<Omit<AddCompanyModalProps, 'isOpen'>> = (
       
       {/* Modal */}
       <div className="flex min-h-full items-center justify-center p-4">
-        <div className="relative bg-linear-to-br from-white via-blue-50 to-indigo-50 rounded-lg shadow-xl max-w-md w-full p-6 border border-blue-200/40 backdrop-blur-xs">
+        <div className="relative bg-linear-to-br from-white via-blue-50 to-indigo-50 rounded-lg shadow-xl max-w-md w-full p-6 compact:p-5 border border-blue-200/40 backdrop-blur-xs">
           {step === 'input' && (
             <>
               <div className="mb-4">
-                <h2 className="text-lg font-semibold text-slate-800 mb-2">
+                <h2 className="text-lg font-semibold text-slate-800 mb-2 compact:mb-1.5">
                   Add Company
                 </h2>
                 <p className="text-sm text-slate-600">
@@ -534,7 +534,7 @@ const AddCompanyModalContent: React.FC<Omit<AddCompanyModalProps, 'isOpen'>> = (
               
               <div className="space-y-4">
                 <div className="relative">
-                  <label htmlFor="company-name" className="block text-sm font-medium text-slate-700 mb-2">
+                  <label htmlFor="company-name" className="block text-sm font-medium text-slate-700 mb-2 compact:mb-1.5">
                     Company Name
                   </label>
                   <input
@@ -570,13 +570,13 @@ const AddCompanyModalContent: React.FC<Omit<AddCompanyModalProps, 'isOpen'>> = (
                         <button
                           key={index}
                           onClick={() => handleSuggestionClick(suggestion)}
-                          className={`w-full text-left px-4 py-3 flex items-center space-x-3 transition-colors border-l-4 ${
+                          className={`w-full text-left px-4 py-3 compact:px-3.5 compact:py-2.5 flex items-center space-x-3 transition-colors border-l-4 ${
                             index === selectedSuggestionIndex
                               ? 'bg-blue-100 border-blue-500'
                               : 'hover:bg-slate-50/80 hover:backdrop-blur-xs border-transparent'
                           }`}
                         >
-                          <div className="relative w-8 h-8 rounded-sm shrink-0 overflow-hidden">
+                          <div className="relative w-8 h-8 compact:w-7 compact:h-7 rounded-sm shrink-0 overflow-hidden">
                             <Image 
                               src={suggestion.logo} 
                               alt={`${suggestion.name} logo`}
@@ -641,7 +641,7 @@ const AddCompanyModalContent: React.FC<Omit<AddCompanyModalProps, 'isOpen'>> = (
           {step === 'confirm' && companyPreview && (
             <>
               <div className="mb-4">
-                <h2 className="text-lg font-semibold text-slate-800 mb-2">
+                <h2 className="text-lg font-semibold text-slate-800 mb-2 compact:mb-1.5">
                   Confirm Company
                 </h2>
                 <p className="text-sm text-slate-600">
@@ -652,7 +652,7 @@ const AddCompanyModalContent: React.FC<Omit<AddCompanyModalProps, 'isOpen'>> = (
               <div className="space-y-4">
                 <div className="p-4 border border-blue-200/50 rounded-lg bg-white/60 backdrop-blur-xs">
                   <div className="flex items-start space-x-4">
-                    <div className="relative w-12 h-12 rounded-sm shrink-0 overflow-hidden">
+                    <div className="relative w-12 h-12 compact:w-10 compact:h-10 rounded-sm shrink-0 overflow-hidden">
                       <Image 
                         src={companyPreview.logo} 
                         alt={`${companyPreview.name} logo`}
@@ -735,7 +735,7 @@ const AddCompanyModalContent: React.FC<Omit<AddCompanyModalProps, 'isOpen'>> = (
           {step === 'processing' && (
             <>
               <div className="mb-4">
-                <h2 className="text-lg font-semibold text-slate-800 mb-2">
+                <h2 className="text-lg font-semibold text-slate-800 mb-2 compact:mb-1.5">
                   Adding Company
                 </h2>
                 <p className="text-sm text-slate-600">
@@ -746,7 +746,7 @@ const AddCompanyModalContent: React.FC<Omit<AddCompanyModalProps, 'isOpen'>> = (
               <div className="flex items-center justify-center py-8">
                 <div className="text-center">
                   <div className="relative mb-4">
-                    <svg className="w-8 h-8 animate-spin text-blue-600 mx-auto" fill="none" viewBox="0 0 24 24">
+                    <svg className="w-8 h-8 compact:w-7 compact:h-7 animate-spin text-blue-600 mx-auto" fill="none" viewBox="0 0 24 24">
                       <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
                       <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" />
                     </svg>

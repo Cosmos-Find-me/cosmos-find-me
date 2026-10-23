@@ -124,10 +124,10 @@ const JobAlertsModalContent: React.FC<Omit<JobAlertsModalProps, 'isOpen'>> = ({
     <div className="fixed inset-0 bg-black/50 backdrop-blur-xs flex items-center justify-center z-50 p-4">
       <div className="bg-white rounded-xl shadow-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto">
         {/* Header */}
-        <div className="sticky top-0 bg-linear-to-r from-blue-600 to-indigo-600 text-white p-6 rounded-t-xl">
+        <div className="sticky top-0 bg-linear-to-r from-blue-600 to-indigo-600 text-white p-6 compact:p-5 rounded-t-xl">
           <div className="flex items-start justify-between">
             <div>
-              <h2 className="text-2xl font-bold mb-2">Setup Job Alerts</h2>
+              <h2 className="text-2xl font-bold mb-2 compact:mb-1.5">Setup Job Alerts</h2>
               <p className="text-blue-100">
                 Get notified when {company.name} posts new {targetRole || 'positions'}
               </p>
@@ -137,7 +137,7 @@ const JobAlertsModalContent: React.FC<Omit<JobAlertsModalProps, 'isOpen'>> = ({
               className="text-white/80 hover:text-white transition-colors"
               aria-label="Close modal"
             >
-              <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <svg className="w-6 h-6 compact:w-5 compact:h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
               </svg>
             </button>
@@ -145,7 +145,7 @@ const JobAlertsModalContent: React.FC<Omit<JobAlertsModalProps, 'isOpen'>> = ({
         </div>
 
         {/* Content */}
-        <div className="p-6 space-y-6">
+        <div className="p-6 compact:p-5 space-y-6">
           {/* Instructions */}
           <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
             <div className="flex items-start space-x-3">
@@ -175,7 +175,7 @@ const JobAlertsModalContent: React.FC<Omit<JobAlertsModalProps, 'isOpen'>> = ({
 
             {isLoading ? (
               <div className="flex items-center justify-center py-8">
-                <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
+                <div className="animate-spin rounded-full h-8 w-8 compact:w-7 compact:h-7 border-b-2 border-blue-600"></div>
               </div>
             ) : (
               <>
@@ -184,7 +184,7 @@ const JobAlertsModalContent: React.FC<Omit<JobAlertsModalProps, 'isOpen'>> = ({
                     key={index}
                     className="border border-slate-200 rounded-lg p-4 hover:border-blue-300 transition-colors bg-white"
                   >
-                    <div className="flex items-start justify-between mb-2">
+                    <div className="flex items-start justify-between mb-2 compact:mb-1.5">
                       <h4 className="font-semibold text-slate-800">{alert.label}</h4>
                       <button
                         onClick={() => copyToClipboard(alert.query, index)}
@@ -211,7 +211,7 @@ const JobAlertsModalContent: React.FC<Omit<JobAlertsModalProps, 'isOpen'>> = ({
                         )}
                       </button>
                     </div>
-                    <p className="text-sm text-slate-600 mb-3">{alert.description}</p>
+                    <p className="text-sm text-slate-600 mb-3 compact:mb-2">{alert.description}</p>
                     <div className="bg-slate-50 rounded-md p-3 border border-slate-200">
                       <code className="text-sm text-slate-800 font-mono break-all">
                         {alert.query}
@@ -229,7 +229,7 @@ const JobAlertsModalContent: React.FC<Omit<JobAlertsModalProps, 'isOpen'>> = ({
               href="https://www.google.com/alerts"
               target="_blank"
               rel="noopener noreferrer"
-              className="w-full bg-linear-to-r from-blue-600 to-indigo-600 text-white py-3 px-4 rounded-lg hover:from-blue-700 hover:to-indigo-700 transition-all duration-200 shadow-xs flex items-center justify-center space-x-2 font-medium"
+              className="w-full bg-linear-to-r from-blue-600 to-indigo-600 text-white py-3 px-4 compact:px-3.5 compact:py-2.5 rounded-lg hover:from-blue-700 hover:to-indigo-700 transition-all duration-200 shadow-xs flex items-center justify-center space-x-2 font-medium"
             >
               <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
@@ -240,7 +240,7 @@ const JobAlertsModalContent: React.FC<Omit<JobAlertsModalProps, 'isOpen'>> = ({
               href="https://www.linkedin.com/jobs/search"
               target="_blank"
               rel="noopener noreferrer"
-              className="w-full bg-white border border-blue-600 text-blue-600 py-3 px-4 rounded-lg hover:bg-blue-50 transition-all duration-200 flex items-center justify-center space-x-2 font-medium"
+              className="w-full bg-white border border-blue-600 text-blue-600 py-3 px-4 compact:px-3.5 compact:py-2.5 rounded-lg hover:bg-blue-50 transition-all duration-200 flex items-center justify-center space-x-2 font-medium"
             >
               <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
                 <path d="M19 0h-14c-2.761 0-5 2.239-5 5v14c0 2.761 2.239 5 5 5h14c2.762 0 5-2.239 5-5v-14c0-2.761-2.238-5-5-5zm-11 19h-3v-11h3v11zm-1.5-12.268c-.966 0-1.75-.79-1.75-1.764s.784-1.764 1.75-1.764 1.75.79 1.75 1.764-.783 1.764-1.75 1.764zm13.5 12.268h-3v-5.604c0-3.368-4-3.113-4 0v5.604h-3v-11h3v1.765c1.396-2.586 7-2.777 7 2.476v6.759z"/>

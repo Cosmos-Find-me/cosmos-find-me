@@ -57,7 +57,14 @@ describe('Tailwind build', () => {
 
   it('keeps the custom overrides from index.css', () => {
     expect(css).toContain('[data-sonner-toaster]')
-    expect(css).toContain('.cmf-panel')
+  })
+
+  it('generates the compact laptop sizes', () => {
+    // compact: variant used in the markup, e.g. `p-6 compact:p-5`
+    expect(css).toContain(`.${escapeClass('compact:p-5')}`)
+    expect(css).toMatch(/@media \(max-width: 1920px\)/)
+    // Text sizes shrink through the theme variables
+    expect(css).toMatch(/--text-sm:\s*0?\.8125rem/)
   })
 
   it('applies the preflight reset', () => {

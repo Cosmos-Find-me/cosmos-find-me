@@ -265,8 +265,8 @@ export default function AdminPage() {
           <div className="max-w-7xl mx-auto px-4 py-6">
             <div className="flex justify-between items-center">
               <div className="flex items-center space-x-4">
-                <div className="w-12 h-12 bg-linear-to-br from-blue-500 to-indigo-600 rounded-xl flex items-center justify-center">
-                  <Settings className="w-6 h-6 text-white" />
+                <div className="w-12 h-12 compact:w-10 compact:h-10 bg-linear-to-br from-blue-500 to-indigo-600 rounded-xl flex items-center justify-center">
+                  <Settings className="w-6 h-6 compact:w-5 compact:h-5 text-white" />
                 </div>
                 <div>
                   <h1 className="text-3xl font-bold text-slate-900">Admin Dashboard</h1>
@@ -298,10 +298,10 @@ export default function AdminPage() {
           )}
 
           {/* LLM Settings */}
-          <div className="bg-white/60 backdrop-blur-xs rounded-xl shadow-lg border border-blue-200/40 p-6">
+          <div className="bg-white/60 backdrop-blur-xs rounded-xl shadow-lg border border-blue-200/40 p-6 compact:p-5">
             <div className="flex items-center justify-between mb-6">
               <div className="flex items-center space-x-3">
-                <Settings className="w-6 h-6 text-blue-600" />
+                <Settings className="w-6 h-6 compact:w-5 compact:h-5 text-blue-600" />
                 <div>
                   <h2 className="text-xl font-semibold text-slate-900">LLM Configuration</h2>
                   <p className="text-sm text-slate-600">Configure AI provider for all users</p>
@@ -336,9 +336,9 @@ export default function AdminPage() {
           </div>
 
           {/* Invite User */}
-          <div className="bg-white/60 backdrop-blur-xs rounded-xl shadow-lg border border-blue-200/40 p-6">
+          <div className="bg-white/60 backdrop-blur-xs rounded-xl shadow-lg border border-blue-200/40 p-6 compact:p-5">
             <div className="flex items-center space-x-3 mb-6">
-              <Plus className="w-6 h-6 text-blue-600" />
+              <Plus className="w-6 h-6 compact:w-5 compact:h-5 text-blue-600" />
               <h2 className="text-xl font-semibold text-slate-900">Invite New User</h2>
             </div>
             
@@ -370,10 +370,10 @@ export default function AdminPage() {
           </div>
 
           {/* Users List */}
-          <div className="bg-white/60 backdrop-blur-xs rounded-xl shadow-lg border border-blue-200/40 p-6">
+          <div className="bg-white/60 backdrop-blur-xs rounded-xl shadow-lg border border-blue-200/40 p-6 compact:p-5">
             <div className="flex items-center justify-between mb-6">
               <div className="flex items-center space-x-3">
-                <Users className="w-6 h-6 text-blue-600" />
+                <Users className="w-6 h-6 compact:w-5 compact:h-5 text-blue-600" />
                 <h2 className="text-xl font-semibold text-slate-900">Users</h2>
               </div>
 
@@ -408,7 +408,7 @@ export default function AdminPage() {
 
             {loading ? (
               <div className="text-center py-8">
-                <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600 mx-auto"></div>
+                <div className="animate-spin rounded-full h-8 w-8 compact:w-7 compact:h-7 border-b-2 border-blue-600 mx-auto"></div>
                 <p className="text-slate-600 mt-4">Loading users...</p>
               </div>
             ) : (
@@ -416,12 +416,12 @@ export default function AdminPage() {
                 <table className="w-full text-sm">
                   <thead>
                     <tr className="border-b border-slate-200">
-                      <th className="text-left py-3 px-4 font-semibold text-slate-700">Email</th>
-                      <th className="text-left py-3 px-4 font-semibold text-slate-700">Name</th>
-                      <th className="text-left py-3 px-4 font-semibold text-slate-700">Role</th>
-                      <th className="text-left py-3 px-4 font-semibold text-slate-700">Onboarding</th>
-                      <th className="text-left py-3 px-4 font-semibold text-slate-700">Data</th>
-                      <th className="text-left py-3 px-4 font-semibold text-slate-700">Actions</th>
+                      <th className="text-left py-3 px-4 compact:px-3.5 compact:py-2.5 font-semibold text-slate-700">Email</th>
+                      <th className="text-left py-3 px-4 compact:px-3.5 compact:py-2.5 font-semibold text-slate-700">Name</th>
+                      <th className="text-left py-3 px-4 compact:px-3.5 compact:py-2.5 font-semibold text-slate-700">Role</th>
+                      <th className="text-left py-3 px-4 compact:px-3.5 compact:py-2.5 font-semibold text-slate-700">Onboarding</th>
+                      <th className="text-left py-3 px-4 compact:px-3.5 compact:py-2.5 font-semibold text-slate-700">Data</th>
+                      <th className="text-left py-3 px-4 compact:px-3.5 compact:py-2.5 font-semibold text-slate-700">Actions</th>
                     </tr>
                   </thead>
                   <tbody>
@@ -433,9 +433,9 @@ export default function AdminPage() {
 
                       return (
                         <tr key={user.id} className="border-b border-slate-100 hover:bg-white/40">
-                          <td className="py-3 px-4">{user.email}</td>
-                          <td className="py-3 px-4">{user.full_name || '-'}</td>
-                          <td className="py-3 px-4">
+                          <td className="py-3 px-4 compact:px-3.5 compact:py-2.5">{user.email}</td>
+                          <td className="py-3 px-4 compact:px-3.5 compact:py-2.5">{user.full_name || '-'}</td>
+                          <td className="py-3 px-4 compact:px-3.5 compact:py-2.5">
                             <span className={`px-2 py-1 rounded-full text-xs font-medium ${
                               user.role === 'admin'
                                 ? 'bg-purple-100 text-purple-800'
@@ -444,7 +444,7 @@ export default function AdminPage() {
                               {user.role}
                             </span>
                           </td>
-                          <td className="py-3 px-4">
+                          <td className="py-3 px-4 compact:px-3.5 compact:py-2.5">
                             <div className="flex items-center space-x-2">
                               <span
                                 className={`px-2 py-1 rounded-full text-xs font-medium ${onboardingStatus.bgColor} ${onboardingStatus.color}`}
@@ -459,7 +459,7 @@ export default function AdminPage() {
                               )}
                             </div>
                           </td>
-                          <td className="py-3 px-4">
+                          <td className="py-3 px-4 compact:px-3.5 compact:py-2.5">
                             {hasData ? (
                               <span className="px-2 py-1 bg-green-100 text-green-800 rounded-full text-xs font-medium">
                                 {companyCount} {companyCount === 1 ? 'company' : 'companies'}
@@ -470,7 +470,7 @@ export default function AdminPage() {
                               </span>
                             )}
                           </td>
-                          <td className="py-3 px-4">
+                          <td className="py-3 px-4 compact:px-3.5 compact:py-2.5">
                             {user.role !== 'admin' && (
                               <div className="flex items-center space-x-2">
                                 <button

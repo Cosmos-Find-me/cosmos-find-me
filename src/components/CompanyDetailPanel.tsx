@@ -111,7 +111,7 @@ const CompanyDetailPanel = forwardRef<CompanyDetailPanelHandle, CompanyDetailPan
       <div className="h-full flex flex-col bg-linear-to-br from-slate-50 via-blue-50 to-indigo-50">
         {/* Header - Desktop and Mobile List View */}
         {(!isMobile || (isMobile && onBack)) && (
-          <div className="panel-header p-6 pb-4 border-b border-blue-200/40 bg-white/60 backdrop-blur-xs">
+          <div className="panel-header p-6 compact:p-5 pb-4 border-b border-blue-200/40 bg-white/60 backdrop-blur-xs">
             {/* Header with optional back button for mobile */}
             <div className="flex items-start gap-2">
               {isMobile && onBack && (
@@ -216,7 +216,7 @@ const CompanyDetailPanel = forwardRef<CompanyDetailPanelHandle, CompanyDetailPan
         )}
 
         {/* Company List */}
-        <div className="panel-content flex-1 overflow-auto p-6 bg-white/30 backdrop-blur-xs">
+        <div className="panel-content flex-1 overflow-auto p-6 compact:p-5 bg-white/30 backdrop-blur-xs">
           {filteredCompanies.length === 0 ? (
             <div className="flex flex-col items-center justify-center h-full text-center px-4">
               <svg className="w-16 h-16 text-slate-300 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -236,12 +236,12 @@ const CompanyDetailPanel = forwardRef<CompanyDetailPanelHandle, CompanyDetailPan
               )}
             </div>
           ) : (
-            <div className={isMobile ? "space-y-4" : "space-y-3"}>
+            <div className={isMobile ? "space-y-4" : "space-y-3 compact:space-y-1"}>
               {filteredCompanies.map((company, index) => (
               <div
                 key={company.id}
                 className={`flex items-center justify-between rounded-lg cursor-pointer transition-all border-l-4 ${
-                  isMobile ? 'p-4 active:scale-98' : 'p-3'
+                  isMobile ? 'p-4 active:scale-98' : 'p-3 compact:p-1.5'
                 } ${
                   index === selectedCompanyIndex
                     ? 'bg-blue-100 border-blue-500 shadow-xs'
@@ -252,7 +252,7 @@ const CompanyDetailPanel = forwardRef<CompanyDetailPanelHandle, CompanyDetailPan
                 <div className="flex items-center space-x-3 flex-1 min-w-0">
                   <div className="relative shrink-0">
                     <div
-                      className={isMobile ? "w-12 h-12 rounded-lg bg-white/80 border border-blue-200/50 shadow-xs" : "w-8 h-8 rounded-sm bg-white/80 border border-blue-200/50"}
+                      className={isMobile ? "w-12 h-12 compact:w-10 compact:h-10 rounded-lg bg-white/80 border border-blue-200/50 shadow-xs" : "w-8 h-8 compact:w-7 compact:h-7 rounded-sm bg-white/80 border border-blue-200/50"}
                       style={{
                         backgroundImage: `url(${company.logo})`,
                         backgroundSize: 'contain',
@@ -335,7 +335,7 @@ const CompanyDetailPanel = forwardRef<CompanyDetailPanelHandle, CompanyDetailPan
             aria-label={isInWatchlist(selectedCompany.id) ? 'Remove from watchlist' : 'Add to watchlist'}
           >
             <svg
-              className={`w-6 h-6 ${isInWatchlist(selectedCompany.id) ? 'fill-red-500 text-red-500' : 'text-gray-400'}`}
+              className={`w-6 h-6 compact:w-5 compact:h-5 ${isInWatchlist(selectedCompany.id) ? 'fill-red-500 text-red-500' : 'text-gray-400'}`}
               fill={isInWatchlist(selectedCompany.id) ? 'currentColor' : 'none'}
               stroke="currentColor"
               viewBox="0 0 24 24"
@@ -347,7 +347,7 @@ const CompanyDetailPanel = forwardRef<CompanyDetailPanelHandle, CompanyDetailPan
           {/* Centered: Company Logo and Name */}
           <div className="flex flex-col items-center pt-5">
             <div
-              className="w-20 h-20 rounded-full bg-white shadow-lg mb-3"
+              className="w-20 h-20 rounded-full bg-white shadow-lg mb-3 compact:mb-2"
               style={{
                 backgroundImage: `url(${selectedCompany.logo})`,
                 backgroundSize: 'cover',
@@ -366,11 +366,11 @@ const CompanyDetailPanel = forwardRef<CompanyDetailPanelHandle, CompanyDetailPan
 
       {/* Desktop Header */}
       {!isMobile && (
-        <div className="panel-header p-6 border-b border-blue-200/40 bg-white/60 backdrop-blur-xs">
+        <div className="panel-header p-6 compact:p-5 border-b border-blue-200/40 bg-white/60 backdrop-blur-xs">
           <div className="flex items-center justify-between">
             <div className="flex items-center space-x-3">
               <div
-                className="company-logo w-12 h-12 rounded-sm bg-white/80 border border-blue-200/60 shadow-xs"
+                className="company-logo w-12 h-12 compact:w-10 compact:h-10 rounded-sm bg-white/80 border border-blue-200/60 shadow-xs"
                 style={{
                   backgroundImage: `url(${selectedCompany.logo})`,
                   backgroundSize: 'contain',
@@ -396,7 +396,7 @@ const CompanyDetailPanel = forwardRef<CompanyDetailPanelHandle, CompanyDetailPan
               title={isInWatchlist(selectedCompany.id) ? 'Remove from watchlist' : 'Add to watchlist'}
             >
               <svg
-                className="w-6 h-6"
+                className="w-6 h-6 compact:w-5 compact:h-5"
                 viewBox="0 0 24 24"
                 fill="none"
                 stroke="currentColor"
@@ -411,7 +411,7 @@ const CompanyDetailPanel = forwardRef<CompanyDetailPanelHandle, CompanyDetailPan
 
           {/* Match Score */}
           <div className="mt-4">
-          <div className="flex items-center justify-between mb-2">
+          <div className="flex items-center justify-between mb-2 compact:mb-1.5">
             <span className="text-sm font-medium text-slate-700">
               Candidate Market Fit Score
             </span>
@@ -436,11 +436,11 @@ const CompanyDetailPanel = forwardRef<CompanyDetailPanelHandle, CompanyDetailPan
       )}
 
       {/* Content */}
-      <div className={`panel-content flex-1 overflow-auto bg-white/30 backdrop-blur-xs ${isMobile ? 'px-4 py-6 space-y-6' : 'p-6 space-y-6'}`}>
+      <div className={`panel-content flex-1 overflow-auto bg-white/30 backdrop-blur-xs ${isMobile ? 'px-4 py-6 space-y-6' : 'p-6 compact:p-5 space-y-6'}`}>
         {/* Mobile Match Score - First item in scrollable content */}
         {isMobile && (
           <div className="bg-white/60 rounded-lg p-4 border border-blue-100/50">
-            <div className="flex items-center justify-between mb-3">
+            <div className="flex items-center justify-between mb-3 compact:mb-2">
               <span className="text-sm font-medium text-slate-700">
                 Candidate Market Fit Score
               </span>
@@ -468,24 +468,24 @@ const CompanyDetailPanel = forwardRef<CompanyDetailPanelHandle, CompanyDetailPan
           <h3 className={`section-title font-semibold text-slate-800 mb-4 ${isMobile ? 'text-xl' : 'text-lg'}`}>
             Company Info
           </h3>
-          <div className={`gap-4 ${isMobile ? 'flex flex-col space-y-3' : 'grid grid-cols-2 text-sm'}`}>
-            <div className={isMobile ? 'bg-white/60 rounded-lg p-3 border border-blue-100/50' : ''}>
+          <div className={`gap-4 ${isMobile ? 'flex flex-col space-y-3 compact:space-y-1' : 'grid grid-cols-2 text-sm'}`}>
+            <div className={isMobile ? 'bg-white/60 rounded-lg p-3 compact:p-1.5 border border-blue-100/50' : ''}>
               <span className={`text-slate-500 ${isMobile ? 'text-xs' : ''}`}>Stage:</span>
               <p className={`font-semibold text-slate-800 ${isMobile ? 'text-base mt-1' : 'font-medium text-slate-700'}`}>{selectedCompany.stage}</p>
             </div>
-            <div className={isMobile ? 'bg-white/60 rounded-lg p-3 border border-blue-100/50' : ''}>
+            <div className={isMobile ? 'bg-white/60 rounded-lg p-3 compact:p-1.5 border border-blue-100/50' : ''}>
               <span className={`text-slate-500 ${isMobile ? 'text-xs' : ''}`}>Employees:</span>
               <p className={`font-semibold text-slate-800 ${isMobile ? 'text-base mt-1' : 'font-medium text-slate-700'}`}>{selectedCompany.employees}</p>
             </div>
-            <div className={isMobile ? 'bg-white/60 rounded-lg p-3 border border-blue-100/50' : ''}>
+            <div className={isMobile ? 'bg-white/60 rounded-lg p-3 compact:p-1.5 border border-blue-100/50' : ''}>
               <span className={`text-slate-500 ${isMobile ? 'text-xs' : ''}`}>Location:</span>
               <p className={`font-semibold text-slate-800 ${isMobile ? 'text-base mt-1' : 'font-medium text-slate-700'}`}>{selectedCompany.location}</p>
             </div>
-            <div className={isMobile ? 'bg-white/60 rounded-lg p-3 border border-blue-100/50' : ''}>
+            <div className={isMobile ? 'bg-white/60 rounded-lg p-3 compact:p-1.5 border border-blue-100/50' : ''}>
               <span className={`text-slate-500 ${isMobile ? 'text-xs' : ''}`}>Remote:</span>
               <p className={`font-semibold text-slate-800 ${isMobile ? 'text-base mt-1' : 'font-medium text-slate-700'}`}>{selectedCompany.remote}</p>
             </div>
-            <div className={isMobile ? 'bg-white/60 rounded-lg p-3 border border-blue-100/50' : 'col-span-2'}>
+            <div className={isMobile ? 'bg-white/60 rounded-lg p-3 compact:p-1.5 border border-blue-100/50' : 'col-span-2'}>
               <span className={`text-slate-500 ${isMobile ? 'text-xs' : ''}`}>Open Roles:</span>
               <p className={`font-semibold text-slate-800 ${isMobile ? 'text-base mt-1' : 'font-medium text-slate-700'}`}>{selectedCompany.openRoles} positions</p>
             </div>
@@ -498,7 +498,7 @@ const CompanyDetailPanel = forwardRef<CompanyDetailPanelHandle, CompanyDetailPan
             Why This Match?
           </h3>
           <div className="relative">
-            <ul className={isMobile ? 'space-y-3' : 'space-y-2'}>
+            <ul className={isMobile ? 'space-y-3 compact:space-y-1' : 'space-y-2'}>
               {(selectedCompany.matchReasons || [])
                 .slice(0, isMatchReasonsExpanded ? undefined : 3)
                 .map((reason, index) => (
@@ -614,7 +614,7 @@ const CompanyDetailPanel = forwardRef<CompanyDetailPanelHandle, CompanyDetailPan
             <h3 className={`section-title font-semibold text-slate-800 mb-4 ${isMobile ? 'text-xl' : 'text-lg'}`}>
               Related Companies ({connectedCompanies.length})
             </h3>
-            <div className={isMobile ? 'space-y-3' : 'space-y-2'}>
+            <div className={isMobile ? 'space-y-3 compact:space-y-1' : 'space-y-2'}>
               {connectedCompanies.map((company) => (
                 <div
                   key={company.id}
@@ -626,7 +626,7 @@ const CompanyDetailPanel = forwardRef<CompanyDetailPanelHandle, CompanyDetailPan
                   <div className="flex items-center space-x-3 flex-1 min-w-0">
                     <div className="relative shrink-0">
                       <div
-                        className={isMobile ? "w-10 h-10 rounded-lg bg-white/80 border border-blue-200/50 shadow-xs" : "w-6 h-6 rounded-sm bg-white/80 border border-blue-200/50"}
+                        className={isMobile ? "w-10 h-10 rounded-lg bg-white/80 border border-blue-200/50 shadow-xs" : "w-6 h-6 compact:w-5 compact:h-5 rounded-sm bg-white/80 border border-blue-200/50"}
                         style={{
                           backgroundImage: `url(${company.logo})`,
                           backgroundSize: 'contain',
@@ -669,7 +669,7 @@ const CompanyDetailPanel = forwardRef<CompanyDetailPanelHandle, CompanyDetailPan
         )}
 
         {/* Action Buttons */}
-        <div className={`pt-4 border-t border-slate-200/50 ${isMobile ? 'space-y-3' : 'space-y-3'}`}>
+        <div className={`pt-4 border-t border-slate-200/50 space-y-3 compact:space-y-1`}>
           <button
             className={`w-full bg-linear-to-r from-blue-600 to-indigo-600 text-white px-4 rounded-lg hover:from-blue-700 hover:to-indigo-700 active:from-blue-800 active:to-indigo-800 transition-all duration-200 shadow-md hover:shadow-lg font-semibold ${
               isMobile ? 'py-4 text-base' : 'py-2 text-sm'
