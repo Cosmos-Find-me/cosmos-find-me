@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useCallback, useRef } from 'react';
 import DreamyFirstContact from './DreamyFirstContact';
 import { StarField } from './StarField';
 import CMFGraphExplorerNew from './CMFGraphExplorerNew';
@@ -197,7 +197,14 @@ const AppContainer: React.FC = () => {
   // Initial data load on mount. checkAuthAndLoadData only sets state after its
   // first await; starting it from a promise keeps the effect body itself free
   // of synchronous state updates.
+  // In dev, Strict Mode re-runs this effect (on mount, and again when the page's
+  // Suspense boundary reveals content) while keeping state and refs, so the
+  // ref keeps it to one load per mounted instance. Stale-data refreshes call
+  // checkAuthAndLoadData directly.
+  const initialLoadStartedRef = useRef(false);
   useEffect(() => {
+    if (initialLoadStartedRef.current) return;
+    initialLoadStartedRef.current = true;
     void Promise.resolve().then(checkAuthAndLoadData);
   }, [checkAuthAndLoadData]);
 
