@@ -65,7 +65,7 @@ const DreamyFirstContact: React.FC<DreamyFirstContactProps> = ({ onComplete }) =
 
   if (step === 'welcome') {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-slate-900 via-blue-900 to-indigo-900 relative overflow-y-auto" style={{ height: '100dvh', maxHeight: '100dvh' }}>
+      <div className="min-h-screen bg-linear-to-br from-slate-900 via-blue-900 to-indigo-900 relative overflow-y-auto" style={{ height: '100dvh', maxHeight: '100dvh' }}>
         <FloatingStars />
         
         <div className="absolute inset-0 opacity-10">
@@ -103,18 +103,18 @@ const DreamyFirstContact: React.FC<DreamyFirstContactProps> = ({ onComplete }) =
               );
             })}
             
-            <div className="absolute inset-0 scale-150 opacity-20 pointer-events-none" style={{ transform: 'translateZ(0)', willChange: 'opacity' }}>
-              <div className="w-32 h-32 bg-gradient-to-r from-orange-400 via-purple-500 to-blue-500 rounded-full animate-pulse" />
+            <div className="absolute inset-0 opacity-20 pointer-events-none" style={{ transform: 'translateZ(0)', willChange: 'opacity' }}>
+              <div className="w-32 h-32 bg-linear-to-r from-orange-400 via-purple-500 to-blue-500 rounded-full animate-pulse" />
             </div>
             
-            <div className="absolute inset-0 scale-125 opacity-40 pointer-events-none" style={{ transform: 'translateZ(0)', willChange: 'opacity' }}>
-              <div className="w-32 h-32 bg-gradient-to-r from-orange-400 via-pink-500 to-purple-500 rounded-full animate-pulse" 
+            <div className="absolute inset-0 opacity-40 pointer-events-none" style={{ transform: 'translateZ(0)', willChange: 'opacity' }}>
+              <div className="w-32 h-32 bg-linear-to-r from-orange-400 via-pink-500 to-purple-500 rounded-full animate-pulse" 
                    style={{ animationDelay: '0.5s', animationDuration: '3s' }} />
             </div>
             
-            <div className="relative w-32 h-32 bg-gradient-to-br from-orange-300 via-pink-400 to-purple-500 rounded-full shadow-2xl z-10">
-              <div className="absolute inset-2 bg-gradient-to-br from-yellow-200 via-orange-300 to-pink-400 rounded-full animate-pulse pointer-events-none" style={{ animationDuration: '2s', transform: 'translateZ(0)', willChange: 'opacity' }} />
-              <div className="absolute inset-4 bg-gradient-to-br from-yellow-100 via-orange-200 to-yellow-300 rounded-full animate-pulse pointer-events-none" style={{ animationDelay: '1s', animationDuration: '4s', transform: 'translateZ(0)', willChange: 'opacity' }} />
+            <div className="relative w-32 h-32 bg-linear-to-br from-orange-300 via-pink-400 to-purple-500 rounded-full shadow-2xl z-10">
+              <div className="absolute inset-2 bg-linear-to-br from-yellow-200 via-orange-300 to-pink-400 rounded-full animate-pulse pointer-events-none" style={{ animationDuration: '2s', transform: 'translateZ(0)', willChange: 'opacity' }} />
+              <div className="absolute inset-4 bg-linear-to-br from-yellow-100 via-orange-200 to-yellow-300 rounded-full animate-pulse pointer-events-none" style={{ animationDelay: '1s', animationDuration: '4s', transform: 'translateZ(0)', willChange: 'opacity' }} />
               
               <div className="absolute -top-2 left-1/2 transform -translate-x-1/2 pointer-events-none">
                 <Sparkles className="w-6 h-6 text-yellow-200 animate-bounce" style={{ animationDelay: '2s' }} />
@@ -128,7 +128,7 @@ const DreamyFirstContact: React.FC<DreamyFirstContactProps> = ({ onComplete }) =
             </div>
             
             {showInteraction && !sparkClicked && (
-              <div className="absolute inset-0 rounded-full animate-ping opacity-20 bg-gradient-to-r from-orange-400 to-purple-500 pointer-events-none" />
+              <div className="absolute inset-0 rounded-full animate-ping opacity-20 bg-linear-to-r from-orange-400 to-purple-500 pointer-events-none" />
             )}
             
             {/* Explosion particles - shown on the same screen */}
@@ -156,9 +156,9 @@ const DreamyFirstContact: React.FC<DreamyFirstContactProps> = ({ onComplete }) =
           <div className={`text-center transition-opacity duration-1000 ${
             showText && !sparkClicked ? 'opacity-100' : 'opacity-0'
           }`}>
-            <h1 className="text-4xl md:text-5xl font-bold text-white mb-6 leading-tight">
+            <h1 className="text-4xl md:text-5xl font-bold text-white mb-6 leading-tight md:leading-none">
               Welcome to your{' '}
-              <span className="bg-gradient-to-r from-orange-300 via-pink-300 to-purple-300 bg-clip-text text-transparent">
+              <span className="bg-linear-to-r from-orange-300 via-pink-300 to-purple-300 bg-clip-text text-transparent">
                 career universe
               </span>
             </h1>
@@ -211,7 +211,7 @@ const DreamyFirstContact: React.FC<DreamyFirstContactProps> = ({ onComplete }) =
 
   if (step === 'transition') {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-slate-900 via-blue-900 to-indigo-900 relative overflow-y-auto" style={{ height: '100dvh', maxHeight: '100dvh' }}>
+      <div className="min-h-screen bg-linear-to-br from-slate-900 via-blue-900 to-indigo-900 relative overflow-y-auto" style={{ height: '100dvh', maxHeight: '100dvh' }}>
         <FloatingStars />
         
         {/* Copy the exact same background elements as welcome screen */}
@@ -227,17 +227,17 @@ const DreamyFirstContact: React.FC<DreamyFirstContactProps> = ({ onComplete }) =
           <div className="relative mb-8 cursor-pointer transition-transform duration-300">
             {/* Copy exact glow structure from welcome screen for perfect positioning */}
             <div className="absolute inset-0 scale-150 opacity-0">
-              <div className="w-32 h-32 bg-gradient-to-r from-orange-400 via-purple-500 to-blue-500 rounded-full" />
+              <div className="w-32 h-32 bg-linear-to-r from-orange-400 via-purple-500 to-blue-500 rounded-full" />
             </div>
             
             <div className="absolute inset-0 scale-125 opacity-0">
-              <div className="w-32 h-32 bg-gradient-to-r from-orange-400 via-pink-500 to-purple-500 rounded-full" />
+              <div className="w-32 h-32 bg-linear-to-r from-orange-400 via-pink-500 to-purple-500 rounded-full" />
             </div>
             
             {/* Hidden spark for positioning reference - matches welcome screen exactly */}
-            <div className="relative w-32 h-32 bg-gradient-to-br from-orange-300 via-pink-400 to-purple-500 rounded-full shadow-2xl opacity-0 pointer-events-none">
-              <div className="absolute inset-2 bg-gradient-to-br from-yellow-200 via-orange-300 to-pink-400 rounded-full opacity-0" />
-              <div className="absolute inset-4 bg-gradient-to-br from-yellow-100 via-orange-200 to-yellow-300 rounded-full opacity-0" />
+            <div className="relative w-32 h-32 bg-linear-to-br from-orange-300 via-pink-400 to-purple-500 rounded-full shadow-2xl opacity-0 pointer-events-none">
+              <div className="absolute inset-2 bg-linear-to-br from-yellow-200 via-orange-300 to-pink-400 rounded-full opacity-0" />
+              <div className="absolute inset-4 bg-linear-to-br from-yellow-100 via-orange-200 to-yellow-300 rounded-full opacity-0" />
             </div>
             
             {/* Explosion rings positioned exactly like sparkles - relative to the spark */}
@@ -331,8 +331,8 @@ const DreamyFirstContact: React.FC<DreamyFirstContactProps> = ({ onComplete }) =
       return (
         <div className={`
           relative p-8 rounded-2xl backdrop-blur-lg border-2 border-dashed transition-all duration-300 hover:scale-105
-          ${file ? 'bg-gradient-to-br from-green-500/20 to-emerald-500/20 border-green-400/40' : 
-           `bg-gradient-to-br ${colorClasses[color]} hover:border-opacity-60`}
+          ${file ? 'bg-linear-to-br from-green-500/20 to-emerald-500/20 border-green-400/40' : 
+           `bg-linear-to-br ${colorClasses[color]}`}
         `}>
           <div className="absolute inset-0 overflow-hidden rounded-2xl pointer-events-none">
             {[...Array(6)].map((_, i) => (
@@ -380,8 +380,8 @@ const DreamyFirstContact: React.FC<DreamyFirstContactProps> = ({ onComplete }) =
                 <p className="text-gray-300 mb-6">{description}</p>
                 <div className={`inline-flex items-center px-6 py-3 rounded-xl font-medium transition-all hover:scale-105 ${
                   color === 'blue' 
-                    ? 'bg-gradient-to-r from-blue-500 to-cyan-500 text-white'
-                    : 'bg-gradient-to-r from-purple-500 to-pink-500 text-white'
+                    ? 'bg-linear-to-r from-blue-500 to-cyan-500 text-white'
+                    : 'bg-linear-to-r from-purple-500 to-pink-500 text-white'
                 }`}>
                   <Upload className="w-5 h-5 mr-2" />
                   Gather this element
@@ -394,7 +394,7 @@ const DreamyFirstContact: React.FC<DreamyFirstContactProps> = ({ onComplete }) =
     };
 
     return (
-      <div className="min-h-screen bg-gradient-to-br from-slate-900 via-blue-900 to-indigo-900 relative overflow-y-auto" style={{ height: '100dvh', maxHeight: '100dvh' }}>
+      <div className="min-h-screen bg-linear-to-br from-slate-900 via-blue-900 to-indigo-900 relative overflow-y-auto" style={{ height: '100dvh', maxHeight: '100dvh' }}>
         <FloatingStars />
         
         <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-purple-500 rounded-full opacity-5 blur-3xl animate-pulse" 
@@ -404,10 +404,10 @@ const DreamyFirstContact: React.FC<DreamyFirstContactProps> = ({ onComplete }) =
 
         <div className="relative max-w-6xl mx-auto py-12 px-4">
           <div className="text-center mb-16">
-            <div className="w-16 h-16 bg-gradient-to-br from-orange-300 to-purple-400 rounded-full mx-auto mb-6 animate-pulse" />
+            <div className="w-16 h-16 bg-linear-to-br from-orange-300 to-purple-400 rounded-full mx-auto mb-6 animate-pulse" />
             <h1 className="text-4xl font-bold text-white mb-4">
               Building Your{' '}
-              <span className="bg-gradient-to-r from-orange-300 via-pink-300 to-purple-300 bg-clip-text text-transparent">
+              <span className="bg-linear-to-r from-orange-300 via-pink-300 to-purple-300 bg-clip-text text-transparent">
                 Career Universe
               </span>
             </h1>
@@ -449,7 +449,7 @@ const DreamyFirstContact: React.FC<DreamyFirstContactProps> = ({ onComplete }) =
                 </div>
                 <button
                   onClick={() => setShowCMFGuide(true)}
-                  className="text-purple-300 hover:text-purple-200 text-sm flex items-center bg-purple-500/10 px-3 py-2 rounded-lg transition-colors backdrop-blur-sm"
+                  className="text-purple-300 hover:text-purple-200 text-sm flex items-center bg-purple-500/10 px-3 py-2 rounded-lg transition-colors backdrop-blur-xs"
                 >
                   <Eye className="w-4 h-4 mr-1" />
                   Guide
@@ -475,9 +475,9 @@ const DreamyFirstContact: React.FC<DreamyFirstContactProps> = ({ onComplete }) =
             {resumeFile && cmfFile ? (
               <button
                 onClick={handleComplete}
-                className="group relative inline-flex items-center px-12 py-4 bg-gradient-to-r from-orange-400 via-pink-500 to-purple-600 text-white font-bold text-xl rounded-2xl hover:scale-105 transition-all duration-300 shadow-2xl"
+                className="group relative inline-flex items-center px-12 py-4 bg-linear-to-r from-orange-400 via-pink-500 to-purple-600 text-white font-bold text-xl rounded-2xl hover:scale-105 transition-all duration-300 shadow-2xl"
               >
-                <div className="absolute inset-0 rounded-2xl bg-gradient-to-r from-orange-400 via-pink-500 to-purple-600 opacity-75 blur group-hover:opacity-100 transition-opacity" />
+                <div className="absolute inset-0 rounded-2xl bg-linear-to-r from-orange-400 via-pink-500 to-purple-600 opacity-75 blur-sm group-hover:opacity-100 transition-opacity" />
                 <div className="relative flex items-center">
                   <Sparkles className="w-8 h-8 mr-3 animate-spin" />
                   <span>Generate My Universe</span>
@@ -515,9 +515,9 @@ const DreamyFirstContact: React.FC<DreamyFirstContactProps> = ({ onComplete }) =
         </div>
 
         {showCMFGuide && (
-          <div className="fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center z-50 p-4">
-            <div className="bg-gradient-to-br from-slate-800 to-blue-900 rounded-2xl max-w-4xl w-full max-h-[90vh] overflow-y-auto border border-purple-500/30 shadow-2xl">
-              <div className="sticky top-0 bg-gradient-to-r from-slate-800 to-blue-900 border-b border-purple-500/20 p-6 flex justify-between items-center">
+          <div className="fixed inset-0 bg-black/75 flex items-center justify-center z-50 p-4">
+            <div className="bg-linear-to-br from-slate-800 to-blue-900 rounded-2xl max-w-4xl w-full max-h-[90vh] overflow-y-auto border border-purple-500/30 shadow-2xl">
+              <div className="sticky top-0 bg-linear-to-r from-slate-800 to-blue-900 border-b border-purple-500/20 p-6 flex justify-between items-center">
                 <h2 className="text-2xl font-bold text-white">✨ Your North Star Guide</h2>
                 <button
                   onClick={() => setShowCMFGuide(false)}
@@ -574,7 +574,7 @@ const DreamyFirstContact: React.FC<DreamyFirstContactProps> = ({ onComplete }) =
 
                     <button 
                       onClick={() => setShowCMFGuide(false)}
-                      className="w-full mt-4 bg-gradient-to-r from-purple-500 to-pink-500 text-white py-3 rounded-lg hover:scale-105 transition-transform"
+                      className="w-full mt-4 bg-linear-to-r from-purple-500 to-pink-500 text-white py-3 rounded-lg hover:scale-105 transition-transform"
                     >
                       Got it! Let's build my universe ✨
                     </button>

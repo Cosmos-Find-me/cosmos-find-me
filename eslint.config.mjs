@@ -1,13 +1,4 @@
-import { FlatCompat } from '@eslint/eslintrc';
-import path from 'path';
-import { fileURLToPath } from 'url';
-
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
-
-const compat = new FlatCompat({
-  baseDirectory: __dirname,
-});
+import nextCoreWebVitals from 'eslint-config-next/core-web-vitals';
 
 const eslintConfig = [
   {
@@ -25,13 +16,22 @@ const eslintConfig = [
       'coverage/**',
       // Generated files
       '**/*.min.js',
+      'next-env.d.ts',
     ],
   },
-  ...compat.extends('next/core-web-vitals'),
+  ...nextCoreWebVitals,
   {
+    files: ['**/*.{js,jsx,mjs,ts,tsx,mts,cts}'],
     rules: {
       'react/no-unescaped-entities': 'off',
       'react-hooks/exhaustive-deps': 'warn',
+      // React Compiler rules introduced in eslint-plugin-react-hooks 7 flag
+      // existing patterns; warn until those components are refactored
+      'react-hooks/set-state-in-effect': 'warn',
+      'react-hooks/purity': 'warn',
+      'react-hooks/refs': 'warn',
+      'react-hooks/static-components': 'warn',
+      'react-hooks/immutability': 'warn',
     },
   },
 ];

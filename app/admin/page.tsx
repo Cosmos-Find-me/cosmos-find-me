@@ -250,13 +250,13 @@ export default function AdminPage() {
 
   return (
     <AuthWrapper requireAdmin={true}>
-      <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50 overflow-y-auto" style={{ height: '100dvh', maxHeight: '100dvh' }}>
+      <div className="min-h-screen bg-linear-to-br from-slate-50 via-blue-50 to-indigo-50 overflow-y-auto" style={{ height: '100dvh', maxHeight: '100dvh' }}>
         {/* Header */}
-        <header className="bg-white/60 backdrop-blur-sm shadow-sm border-b border-blue-200/40">
+        <header className="bg-white/60 backdrop-blur-xs shadow-xs border-b border-blue-200/40">
           <div className="max-w-7xl mx-auto px-4 py-6">
             <div className="flex justify-between items-center">
               <div className="flex items-center space-x-4">
-                <div className="w-12 h-12 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-xl flex items-center justify-center">
+                <div className="w-12 h-12 bg-linear-to-br from-blue-500 to-indigo-600 rounded-xl flex items-center justify-center">
                   <Settings className="w-6 h-6 text-white" />
                 </div>
                 <div>
@@ -289,7 +289,7 @@ export default function AdminPage() {
           )}
 
           {/* LLM Settings */}
-          <div className="bg-white/60 backdrop-blur-sm rounded-xl shadow-lg border border-blue-200/40 p-6">
+          <div className="bg-white/60 backdrop-blur-xs rounded-xl shadow-lg border border-blue-200/40 p-6">
             <div className="flex items-center justify-between mb-6">
               <div className="flex items-center space-x-3">
                 <Settings className="w-6 h-6 text-blue-600" />
@@ -306,7 +306,7 @@ export default function AdminPage() {
               )}
             </div>
 
-            <div className="flex items-center justify-between bg-gradient-to-r from-blue-50 to-indigo-50 p-4 rounded-lg border border-blue-200">
+            <div className="flex items-center justify-between bg-linear-to-r from-blue-50 to-indigo-50 p-4 rounded-lg border border-blue-200">
               <div>
                 <p className="text-slate-700 mb-1">
                   <span className="font-medium">Current Provider:</span> {llmConfigured ? llmService.getSettings().provider.charAt(0).toUpperCase() + llmService.getSettings().provider.slice(1) : 'Not configured'}
@@ -319,7 +319,7 @@ export default function AdminPage() {
               </div>
               <button
                 onClick={() => setShowLLMSettings(true)}
-                className="bg-gradient-to-r from-blue-500 to-indigo-600 text-white px-6 py-2 rounded-lg font-semibold hover:shadow-lg transition-all duration-200"
+                className="bg-linear-to-r from-blue-500 to-indigo-600 text-white px-6 py-2 rounded-lg font-semibold hover:shadow-lg transition-all duration-200"
               >
                 {llmConfigured ? 'Update Settings' : 'Configure LLM'}
               </button>
@@ -327,7 +327,7 @@ export default function AdminPage() {
           </div>
 
           {/* Invite User */}
-          <div className="bg-white/60 backdrop-blur-sm rounded-xl shadow-lg border border-blue-200/40 p-6">
+          <div className="bg-white/60 backdrop-blur-xs rounded-xl shadow-lg border border-blue-200/40 p-6">
             <div className="flex items-center space-x-3 mb-6">
               <Plus className="w-6 h-6 text-blue-600" />
               <h2 className="text-xl font-semibold text-slate-900">Invite New User</h2>
@@ -353,7 +353,7 @@ export default function AdminPage() {
               <button
                 type="submit"
                 disabled={inviteLoading}
-                className="bg-gradient-to-r from-blue-500 to-indigo-600 text-white px-6 py-2 rounded-lg font-semibold hover:shadow-lg transition-all duration-200 disabled:opacity-50"
+                className="bg-linear-to-r from-blue-500 to-indigo-600 text-white px-6 py-2 rounded-lg font-semibold hover:shadow-lg transition-all duration-200 disabled:opacity-50"
               >
                 {inviteLoading ? 'Sending...' : 'Send Invite'}
               </button>
@@ -361,7 +361,7 @@ export default function AdminPage() {
           </div>
 
           {/* Users List */}
-          <div className="bg-white/60 backdrop-blur-sm rounded-xl shadow-lg border border-blue-200/40 p-6">
+          <div className="bg-white/60 backdrop-blur-xs rounded-xl shadow-lg border border-blue-200/40 p-6">
             <div className="flex items-center justify-between mb-6">
               <div className="flex items-center space-x-3">
                 <Users className="w-6 h-6 text-blue-600" />
@@ -466,35 +466,35 @@ export default function AdminPage() {
                               <div className="flex items-center space-x-2">
                                 <button
                                   onClick={() => handleImportData(user.id, user.email)}
-                                  className="p-1.5 text-blue-600 hover:text-blue-800 hover:bg-blue-50 rounded transition-colors"
+                                  className="p-1.5 text-blue-600 hover:text-blue-800 hover:bg-blue-50 rounded-sm transition-colors"
                                   title="Import companies from JSON file"
                                 >
                                   <FileUp className="w-4 h-4" />
                                 </button>
                                 <button
                                   onClick={() => handleExportData(user.id, user.email)}
-                                  className="p-1.5 text-green-600 hover:text-green-800 hover:bg-green-50 rounded transition-colors"
+                                  className="p-1.5 text-green-600 hover:text-green-800 hover:bg-green-50 rounded-sm transition-colors"
                                   title="Export user's companies to JSON"
                                 >
                                   <Download className="w-4 h-4" />
                                 </button>
                                 <button
                                   onClick={() => handleViewAsUser(user.id)}
-                                  className="p-1.5 text-purple-600 hover:text-purple-800 hover:bg-purple-50 rounded transition-colors"
+                                  className="p-1.5 text-purple-600 hover:text-purple-800 hover:bg-purple-50 rounded-sm transition-colors"
                                   title="View the app as this user (opens in new tab)"
                                 >
                                   <Eye className="w-4 h-4" />
                                 </button>
                                 <button
                                   onClick={() => handleResetOnboarding(user.id, user.email)}
-                                  className="p-1.5 text-orange-600 hover:text-orange-800 hover:bg-orange-50 rounded transition-colors"
+                                  className="p-1.5 text-orange-600 hover:text-orange-800 hover:bg-orange-50 rounded-sm transition-colors"
                                   title="Reset onboarding - clears all data and shows onboarding on next login"
                                 >
                                   <RotateCcw className="w-4 h-4" />
                                 </button>
                                 <button
                                   onClick={() => handleDeleteUser(user.id, user.email)}
-                                  className="p-1.5 text-red-600 hover:text-red-800 hover:bg-red-50 rounded transition-colors"
+                                  className="p-1.5 text-red-600 hover:text-red-800 hover:bg-red-50 rounded-sm transition-colors"
                                   title="Permanently delete this user and all their data"
                                 >
                                   <Trash2 className="w-4 h-4" />

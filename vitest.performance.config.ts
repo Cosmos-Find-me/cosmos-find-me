@@ -4,8 +4,10 @@
  */
 
 import { defineConfig } from 'vitest/config';
+import react from '@vitejs/plugin-react';
 
 export default defineConfig({
+  plugins: [react()],
   test: {
     // Focus on performance tests
     include: [
@@ -33,11 +35,7 @@ export default defineConfig({
     
     // Memory and timing limits
     pool: 'forks',
-    poolOptions: {
-      forks: {
-        singleFork: true // Single worker to better detect performance issues
-      }
-    },
+    maxWorkers: 1, // Single worker to better detect performance issues
     
     // Environment setup
     environment: 'jsdom',

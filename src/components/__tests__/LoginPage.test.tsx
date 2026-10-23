@@ -4,8 +4,10 @@ import { vi, describe, it, expect, beforeEach } from 'vitest';
 
 // --- mocks ---
 
+const mockPush = vi.hoisted(() => vi.fn());
+
 vi.mock('next/navigation', () => ({
-  useRouter: () => ({ push: vi.fn() }),
+  useRouter: () => ({ push: mockPush }),
 }));
 
 vi.mock('../../components/CosmosBackground', () => ({
@@ -112,12 +114,10 @@ describe('LoginPage error messages', () => {
     });
 
     it('redirects to explorer on success', async () => {
-      const push = vi.fn();
-      vi.mocked(await import('next/navigation')).useRouter = () => ({ push } as ReturnType<typeof import('next/navigation').useRouter>);
       mockSignIn.mockResolvedValue({ error: null });
       render(<LoginPage />);
       fillAndSubmit();
-      await waitFor(() => expect(push).toHaveBeenCalledWith('/explorer'));
+      await waitFor(() => expect(mockPush).toHaveBeenCalledWith('/explorer'));
     });
   });
 

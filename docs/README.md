@@ -19,7 +19,6 @@ Step-by-step guides for development and configuration:
 - **[LLM Setup](./guides/SETUP_LLM.md)** - Configure AI providers (OpenAI, Anthropic, Google)
 - **[LLM Integration](./guides/LLM_INTEGRATION.md)** - Advanced AI features and company analysis
 - **[Testing Guide (Detailed)](./guides/TESTING_GUIDE.md)** - Extended testing documentation
-- **[Vitest Workarounds](./guides/VITEST_BUG_WORKAROUND.md)** - Solutions for testing environment issues
 
 ## 🔐 Security
 

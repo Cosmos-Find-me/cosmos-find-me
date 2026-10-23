@@ -80,9 +80,10 @@ test.describe('Critical User Interactions', () => {
 
     const duration = Date.now() - startTime;
 
-    // Should make at most 2 API calls (initial load + possible one refresh)
+    // Production makes a single call. The Next 16 dev server (which E2E runs
+    // against) adds a Strict Mode double-mount and one refetch, so allow 3.
     // If there's an infinite loop, we'd see many more
-    expect(apiCalls.length).toBeLessThanOrEqual(2);
+    expect(apiCalls.length).toBeLessThanOrEqual(3);
 
     // Should not take excessively long due to infinite loops
     expect(duration).toBeLessThan(15000); // 15 seconds max

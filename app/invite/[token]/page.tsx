@@ -148,7 +148,7 @@ export default function InvitePage() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50 flex items-center justify-center">
+      <div className="min-h-screen bg-linear-to-br from-slate-50 via-blue-50 to-indigo-50 flex items-center justify-center">
         <div className="text-center">
           <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600 mx-auto mb-4"></div>
           <p className="text-slate-600">Verifying invitation...</p>
@@ -159,8 +159,8 @@ export default function InvitePage() {
 
   if (success) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50 flex items-center justify-center">
-        <div className="bg-white/60 backdrop-blur-sm rounded-xl shadow-lg border border-blue-200/40 p-8 w-full max-w-md text-center">
+      <div className="min-h-screen bg-linear-to-br from-slate-50 via-blue-50 to-indigo-50 flex items-center justify-center">
+        <div className="bg-white/60 backdrop-blur-xs rounded-xl shadow-lg border border-blue-200/40 p-8 w-full max-w-md text-center">
           <CheckCircle className="w-16 h-16 text-green-500 mx-auto mb-4" />
           <h1 className="text-2xl font-bold text-slate-900 mb-2">Account Created!</h1>
           <p className="text-slate-600 mb-4">
@@ -174,14 +174,14 @@ export default function InvitePage() {
 
   if (error || !invitation) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50 flex items-center justify-center">
-        <div className="bg-white/60 backdrop-blur-sm rounded-xl shadow-lg border border-red-200/40 p-8 w-full max-w-md text-center">
+      <div className="min-h-screen bg-linear-to-br from-slate-50 via-blue-50 to-indigo-50 flex items-center justify-center">
+        <div className="bg-white/60 backdrop-blur-xs rounded-xl shadow-lg border border-red-200/40 p-8 w-full max-w-md text-center">
           <AlertCircle className="w-16 h-16 text-red-500 mx-auto mb-4" />
           <h1 className="text-2xl font-bold text-slate-900 mb-2">Invalid Invitation</h1>
           <p className="text-slate-600 mb-4">{error}</p>
           <button
             onClick={() => router.push('/login')}
-            className="bg-gradient-to-r from-blue-500 to-indigo-600 text-white px-6 py-2 rounded-lg font-semibold hover:shadow-lg transition-all duration-200"
+            className="bg-linear-to-r from-blue-500 to-indigo-600 text-white px-6 py-2 rounded-lg font-semibold hover:shadow-lg transition-all duration-200"
           >
             Go to Login
           </button>
@@ -191,8 +191,8 @@ export default function InvitePage() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50 flex items-center justify-center">
-      <div className="bg-white/60 backdrop-blur-sm rounded-xl shadow-lg border border-blue-200/40 p-8 w-full max-w-md">
+    <div className="min-h-screen bg-linear-to-br from-slate-50 via-blue-50 to-indigo-50 flex items-center justify-center">
+      <div className="bg-white/60 backdrop-blur-xs rounded-xl shadow-lg border border-blue-200/40 p-8 w-full max-w-md">
         <div className="text-center mb-6">
           <UserPlus className="w-12 h-12 text-blue-600 mx-auto mb-4" />
           <h1 className="text-2xl font-bold text-slate-900">Complete Your Registration</h1>
@@ -236,12 +236,12 @@ export default function InvitePage() {
           {error && (
             <div className="p-4 bg-red-50 border border-red-200 text-red-700 rounded-lg">
               <div className="flex items-start space-x-2">
-                <AlertCircle className="w-5 h-5 text-red-500 mt-0.5 flex-shrink-0" />
+                <AlertCircle className="w-5 h-5 text-red-500 mt-0.5 shrink-0" />
                 <div>
                   <p className="text-sm font-medium mb-1">Account creation failed</p>
                   <p className="text-sm">{error}</p>
                   {error.includes('rate limit') || error.includes('4 emails per hour') ? (
-                    <div className="mt-2 text-xs text-red-600 bg-red-100 p-2 rounded">
+                    <div className="mt-2 text-xs text-red-600 bg-red-100 p-2 rounded-sm">
                       <p className="font-medium">Developer Note:</p>
                       <p>You can disable email confirmation in Supabase Dashboard → Authentication → Settings → Email to bypass this limit during development.</p>
                     </div>
@@ -254,7 +254,7 @@ export default function InvitePage() {
           <button
             type="submit"
             disabled={creating}
-            className="w-full bg-gradient-to-r from-blue-500 to-indigo-600 text-white py-3 rounded-lg font-semibold hover:shadow-lg transition-all duration-200 disabled:opacity-50"
+            className="w-full bg-linear-to-r from-blue-500 to-indigo-600 text-white py-3 rounded-lg font-semibold hover:shadow-lg transition-all duration-200 disabled:opacity-50"
           >
             {creating ? 'Creating Account...' : 'Create Account'}
           </button>

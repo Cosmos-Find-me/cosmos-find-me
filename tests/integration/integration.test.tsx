@@ -129,7 +129,7 @@ describe('Integration Tests - CompanyDetailPanel with Real Data', () => {
       
       // Logo is now rendered as background image, so we can verify it exists
       expect(logo).toBeInTheDocument()
-      expect(logo).toHaveClass('w-8', 'h-8', 'rounded')
+      expect(logo).toHaveClass('w-8', 'h-8', 'rounded-sm')
     })
   })
 

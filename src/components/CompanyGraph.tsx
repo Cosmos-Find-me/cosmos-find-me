@@ -594,7 +594,7 @@ const CompanyGraph: React.FC<CompanyGraphProps> = ({
           }}
         >
           <div 
-            className="relative bg-gradient-to-br from-orange-300 via-pink-400 to-purple-500 rounded-full shadow-2xl cursor-pointer pointer-events-auto transition-all duration-300 ease-out hover:scale-110"
+            className="relative bg-linear-to-br from-orange-300 via-pink-400 to-purple-500 rounded-full shadow-2xl cursor-pointer pointer-events-auto transition-all duration-300 ease-out hover:scale-110"
             style={{
               width: `${62.5 * zoomLevel}px`,
               height: `${62.5 * zoomLevel}px`
@@ -609,7 +609,7 @@ const CompanyGraph: React.FC<CompanyGraphProps> = ({
             title={cmf.name}
           >
             <div 
-              className="absolute bg-gradient-to-br from-yellow-200 via-orange-300 to-pink-400 rounded-full"
+              className="absolute bg-linear-to-br from-yellow-200 via-orange-300 to-pink-400 rounded-full"
               style={{
                 top: `${3.75 * zoomLevel}px`,
                 left: `${3.75 * zoomLevel}px`,
@@ -618,7 +618,7 @@ const CompanyGraph: React.FC<CompanyGraphProps> = ({
               }}
             />
             <div 
-              className="absolute bg-gradient-to-br from-yellow-100 via-orange-200 to-yellow-300 rounded-full"
+              className="absolute bg-linear-to-br from-yellow-100 via-orange-200 to-yellow-300 rounded-full"
               style={{
                 top: `${7.5 * zoomLevel}px`,
                 left: `${7.5 * zoomLevel}px`,

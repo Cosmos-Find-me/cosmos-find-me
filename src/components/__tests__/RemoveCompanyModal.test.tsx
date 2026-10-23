@@ -321,7 +321,7 @@ describe('RemoveCompanyModal', () => {
         />
       )
 
-      const modalContainer = document.querySelector('.bg-gradient-to-br.rounded-lg')
+      const modalContainer = document.querySelector('.bg-linear-to-br.rounded-lg')
       const removeButton = screen.getByRole('button', { name: 'Remove Company' })
       const cancelButton = screen.getByText('Cancel')
       

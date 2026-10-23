@@ -39,7 +39,7 @@ export const CosmosBackground: React.FC<CosmosBackgroundProps> = ({
   }, []);
 
   return (
-    <div className={`min-h-screen bg-gradient-to-br from-slate-900 via-blue-900 to-indigo-900 relative overflow-y-auto ${className}`}>
+    <div className={`min-h-screen bg-linear-to-br from-slate-900 via-blue-900 to-indigo-900 relative overflow-y-auto ${className}`}>
       {/* Floating Stars - only render after mount to avoid hydration issues */}
       {mounted && (
         <div className="absolute inset-0 overflow-hidden pointer-events-none">

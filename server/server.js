@@ -46,9 +46,6 @@ app.post('/api/llm/anthropic/analyze', async (req, res) => {
       });
     }
 
-    // Import fetch dynamically for Node.js compatibility
-    const fetch = (await import('node-fetch')).default;
-
     const prompt = buildAnthropicPrompt(request);
 
     const response = await fetch('https://api.anthropic.com/v1/messages', {
@@ -113,9 +110,6 @@ app.post('/api/llm/anthropic/validate', async (req, res) => {
     if (!apiKey) {
       return res.json({ valid: false, error: 'API key not configured' });
     }
-
-    // Import fetch dynamically
-    const fetch = (await import('node-fetch')).default;
 
     const response = await fetch('https://api.anthropic.com/v1/messages', {
       method: 'POST',

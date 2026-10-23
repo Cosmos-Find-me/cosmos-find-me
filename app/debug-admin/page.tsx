@@ -76,24 +76,24 @@ export default function DebugAdminPage() {
       <div className="max-w-4xl mx-auto">
         <h1 className="text-3xl font-bold mb-8">Admin Auth Debug</h1>
         
-        <div className="bg-white p-6 rounded-lg shadow">
+        <div className="bg-white p-6 rounded-lg shadow-sm">
           <h2 className="text-xl font-semibold mb-4">Authentication Debug Info</h2>
-          <pre className="bg-gray-100 p-4 rounded text-sm overflow-auto">
+          <pre className="bg-gray-100 p-4 rounded-sm text-sm overflow-auto">
             {JSON.stringify(debugInfo, null, 2)}
           </pre>
         </div>
 
         <div className="mt-6 space-y-4">
-          <div className={`p-4 rounded ${debugInfo.isAuthenticated ? 'bg-green-50 border-green-200' : 'bg-red-50 border-red-200'} border`}>
+          <div className={`p-4 rounded-sm ${debugInfo.isAuthenticated ? 'bg-green-50 border-green-200' : 'bg-red-50 border-red-200'} border`}>
             <strong>Authentication Status:</strong> {debugInfo.isAuthenticated ? '✅ Authenticated' : '❌ Not Authenticated'}
           </div>
           
-          <div className={`p-4 rounded ${debugInfo.isAdmin ? 'bg-green-50 border-green-200' : 'bg-red-50 border-red-200'} border`}>
+          <div className={`p-4 rounded-sm ${debugInfo.isAdmin ? 'bg-green-50 border-green-200' : 'bg-red-50 border-red-200'} border`}>
             <strong>Admin Status:</strong> {debugInfo.isAdmin ? '✅ Is Admin' : '❌ Not Admin'}
           </div>
 
           {debugInfo.profile && (
-            <div className="p-4 bg-blue-50 border-blue-200 border rounded">
+            <div className="p-4 bg-blue-50 border-blue-200 border rounded-sm">
               <strong>Profile Role:</strong> {debugInfo.profile.role}
               <br />
               <strong>Profile Email:</strong> {debugInfo.profile.email}

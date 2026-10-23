@@ -18,12 +18,6 @@ const nextConfig = {
     // Enable app directory (already default in Next.js 15)
   },
   
-  // Handle CSS and static files
-  webpack: (config) => {
-    // Handle any webpack customization if needed for existing dependencies
-    return config;
-  },
-  
   // Environment variables
   env: {
     CUSTOM_KEY: 'my-value',

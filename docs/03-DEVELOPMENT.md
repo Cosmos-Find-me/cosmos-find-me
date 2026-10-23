@@ -6,7 +6,7 @@ Complete guide for developers working on Cosmos.
 
 ### Prerequisites
 
-- Node.js 16+
+- Node.js 22.22+ (24 LTS recommended)
 - npm or yarn
 - Git
 - VS Code (recommended) with extensions:

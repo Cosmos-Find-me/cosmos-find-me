@@ -145,13 +145,13 @@ const LLMSettingsModal: React.FC<LLMSettingsModalProps> = ({
     <div className="fixed inset-0 z-50 overflow-y-auto">
       {/* Backdrop */}
       <div 
-        className="fixed inset-0 bg-black bg-opacity-50 transition-opacity"
+        className="fixed inset-0 bg-black/50 transition-opacity"
         onClick={onClose}
       />
       
       {/* Modal */}
       <div className="flex min-h-full items-center justify-center p-4">
-        <div className="relative bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50 rounded-lg shadow-xl max-w-2xl w-full p-6 border border-blue-200/40">
+        <div className="relative bg-linear-to-br from-slate-50 via-blue-50 to-indigo-50 rounded-lg shadow-xl max-w-2xl w-full p-6 border border-blue-200/40">
           <div className="mb-6">
             <h2 className="text-xl font-semibold text-slate-800 mb-2">
               LLM Settings
@@ -164,7 +164,7 @@ const LLMSettingsModal: React.FC<LLMSettingsModalProps> = ({
           {/* Backend Notice */}
           <div className="mb-4 p-4 bg-green-50 border border-green-200 rounded-lg">
             <div className="flex items-start space-x-3">
-              <svg className="w-5 h-5 text-green-600 mt-0.5 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+              <svg className="w-5 h-5 text-green-600 mt-0.5 shrink-0" fill="currentColor" viewBox="0 0 20 20">
                 <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
               </svg>
               <div className="flex-1">
@@ -189,7 +189,7 @@ const LLMSettingsModal: React.FC<LLMSettingsModalProps> = ({
                   onClick={() => handleProviderChange('none')}
                   className={`p-4 border rounded-lg text-left transition-all ${
                     settings.provider === 'none'
-                      ? 'border-blue-500 bg-blue-50 ring-2 ring-blue-500 ring-opacity-20'
+                      ? 'border-blue-500 bg-blue-50 ring-2 ring-blue-500/20'
                       : 'border-gray-200 hover:border-gray-300'
                   }`}
                 >
@@ -204,7 +204,7 @@ const LLMSettingsModal: React.FC<LLMSettingsModalProps> = ({
                     onClick={() => handleProviderChange(provider.name)}
                     className={`p-4 border rounded-lg text-left transition-all ${
                       settings.provider === provider.name
-                        ? 'border-blue-500 bg-blue-50 ring-2 ring-blue-500 ring-opacity-20'
+                        ? 'border-blue-500 bg-blue-50 ring-2 ring-blue-500/20'
                         : 'border-gray-200 hover:border-gray-300'
                     }`}
                   >
@@ -232,7 +232,7 @@ const LLMSettingsModal: React.FC<LLMSettingsModalProps> = ({
                     id="model"
                     value={settings.model}
                     onChange={(e) => handleModelChange(e.target.value)}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none"
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-hidden"
                   >
                     {selectedProvider.models.map((model) => (
                       <option key={model.id} value={model.id}>
@@ -249,7 +249,7 @@ const LLMSettingsModal: React.FC<LLMSettingsModalProps> = ({
                   </label>
                   <div className="p-4 bg-gray-50 border border-gray-200 rounded-lg">
                     <div className="flex items-start space-x-3">
-                      <svg className="w-5 h-5 text-slate-600 mt-0.5 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+                      <svg className="w-5 h-5 text-slate-600 mt-0.5 shrink-0" fill="currentColor" viewBox="0 0 20 20">
                         <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clipRule="evenodd" />
                       </svg>
                       <div className="flex-1">
@@ -257,7 +257,7 @@ const LLMSettingsModal: React.FC<LLMSettingsModalProps> = ({
                         <p className="text-sm text-slate-600 mb-2">
                           API keys are securely stored in the backend server environment.
                         </p>
-                        <p className="text-xs text-slate-500 font-mono bg-white px-2 py-1 rounded border">
+                        <p className="text-xs text-slate-500 font-mono bg-white px-2 py-1 rounded-sm border">
                           server/.env → ANTHROPIC_API_KEY={selectedProvider.apiKeyPlaceholder}
                         </p>
                       </div>
@@ -332,7 +332,7 @@ const LLMSettingsModal: React.FC<LLMSettingsModalProps> = ({
                         onChange={(e) => setSettings(prev => ({ ...prev, maxTokens: parseInt(e.target.value) || 1500 }))}
                         min="100"
                         max="4000"
-                        className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none"
+                        className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-hidden"
                       />
                     </div>
                     <div>
@@ -347,7 +347,7 @@ const LLMSettingsModal: React.FC<LLMSettingsModalProps> = ({
                         min="0"
                         max="1"
                         step="0.1"
-                        className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none"
+                        className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-hidden"
                       />
                     </div>
                   </div>

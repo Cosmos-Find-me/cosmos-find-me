@@ -108,16 +108,16 @@ const CompanyDetailPanel = forwardRef<CompanyDetailPanelHandle, CompanyDetailPan
     ).length;
 
     return (
-      <div className="h-full flex flex-col bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50">
+      <div className="h-full flex flex-col bg-linear-to-br from-slate-50 via-blue-50 to-indigo-50">
         {/* Header - Desktop and Mobile List View */}
         {(!isMobile || (isMobile && onBack)) && (
-          <div className="panel-header p-6 pb-4 border-b border-blue-200/40 bg-white/60 backdrop-blur-sm">
+          <div className="panel-header p-6 pb-4 border-b border-blue-200/40 bg-white/60 backdrop-blur-xs">
             {/* Header with optional back button for mobile */}
             <div className="flex items-start gap-2">
               {isMobile && onBack && (
                 <button
                   onClick={onBack}
-                  className="p-2 -ml-2 hover:bg-gray-100 rounded-lg transition-colors flex-shrink-0"
+                  className="p-2 -ml-2 hover:bg-gray-100 rounded-lg transition-colors shrink-0"
                   aria-label="Back"
                 >
                   <svg className="w-5 h-5 text-gray-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -183,7 +183,7 @@ const CompanyDetailPanel = forwardRef<CompanyDetailPanelHandle, CompanyDetailPan
                     break;
                 }
               }}
-              className="w-full px-4 py-2 pl-10 pr-10 rounded-lg border border-blue-200 bg-white/80 backdrop-blur-sm focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-transparent text-sm placeholder-slate-400"
+              className="w-full px-4 py-2 pl-10 pr-10 rounded-lg border border-blue-200 bg-white/80 backdrop-blur-xs focus:outline-hidden focus:ring-2 focus:ring-blue-400 focus:border-transparent text-sm placeholder-slate-400"
             />
             <svg
               className="absolute left-3 top-2.5 h-5 w-5 text-slate-400"
@@ -216,7 +216,7 @@ const CompanyDetailPanel = forwardRef<CompanyDetailPanelHandle, CompanyDetailPan
         )}
 
         {/* Company List */}
-        <div className="panel-content flex-1 overflow-auto p-6 bg-white/30 backdrop-blur-sm">
+        <div className="panel-content flex-1 overflow-auto p-6 bg-white/30 backdrop-blur-xs">
           {filteredCompanies.length === 0 ? (
             <div className="flex flex-col items-center justify-center h-full text-center px-4">
               <svg className="w-16 h-16 text-slate-300 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -244,15 +244,15 @@ const CompanyDetailPanel = forwardRef<CompanyDetailPanelHandle, CompanyDetailPan
                   isMobile ? 'p-4 active:scale-98' : 'p-3'
                 } ${
                   index === selectedCompanyIndex
-                    ? 'bg-blue-100 border-blue-500 shadow-sm'
-                    : 'bg-white/50 hover:bg-white/70 active:bg-white/80 border-transparent hover:shadow-sm'
+                    ? 'bg-blue-100 border-blue-500 shadow-xs'
+                    : 'bg-white/50 hover:bg-white/70 active:bg-white/80 border-transparent hover:shadow-xs'
                 } border-r border-t border-b border-blue-100/50`}
                 onClick={() => onCompanySelect(company)}
               >
                 <div className="flex items-center space-x-3 flex-1 min-w-0">
-                  <div className="relative flex-shrink-0">
+                  <div className="relative shrink-0">
                     <div
-                      className={isMobile ? "w-12 h-12 rounded-lg bg-white/80 border border-blue-200/50 shadow-sm" : "w-8 h-8 rounded bg-white/80 border border-blue-200/50"}
+                      className={isMobile ? "w-12 h-12 rounded-lg bg-white/80 border border-blue-200/50 shadow-xs" : "w-8 h-8 rounded-sm bg-white/80 border border-blue-200/50"}
                       style={{
                         backgroundImage: `url(${company.logo})`,
                         backgroundSize: 'contain',
@@ -262,7 +262,7 @@ const CompanyDetailPanel = forwardRef<CompanyDetailPanelHandle, CompanyDetailPan
                       aria-label={`${company.name} logo`}
                     />
                     {isInWatchlist && isInWatchlist(company.id) && (
-                      <div className={`absolute -bottom-0.5 -right-0.5 bg-red-500 rounded-full flex items-center justify-center shadow-sm border border-white ${
+                      <div className={`absolute -bottom-0.5 -right-0.5 bg-red-500 rounded-full flex items-center justify-center shadow-xs border border-white ${
                         isMobile ? 'w-4 h-4' : 'w-3 h-3'
                       }`}>
                         <svg className={`text-white fill-current ${isMobile ? 'w-2 h-2' : 'w-1.5 h-1.5'}`} viewBox="0 0 24 24">
@@ -282,7 +282,7 @@ const CompanyDetailPanel = forwardRef<CompanyDetailPanelHandle, CompanyDetailPan
                     <p className={`text-slate-500 truncate ${isMobile ? 'text-sm mt-0.5' : 'text-xs'}`}>{company.industry}</p>
                   </div>
                 </div>
-                <div className="text-right ml-3 flex-shrink-0">
+                <div className="text-right ml-3 shrink-0">
                   <div
                     className={`font-semibold rounded-full text-white ${
                       isMobile ? 'text-sm px-3 py-1.5 min-w-[56px]' : 'text-xs px-2 py-1'
@@ -313,10 +313,10 @@ const CompanyDetailPanel = forwardRef<CompanyDetailPanelHandle, CompanyDetailPan
   const externalLinks = getExternalLinks(selectedCompany);
 
   return (
-    <div className="h-full flex flex-col bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50">
+    <div className="h-full flex flex-col bg-linear-to-br from-slate-50 via-blue-50 to-indigo-50">
       {/* Mobile Header Bar - Stacked centered profile design (detail view only) */}
       {isMobile && onBack && selectedCompany && (
-        <div className="relative px-4 pt-3 pb-4 border-b border-blue-200/40 bg-white/80 backdrop-blur-sm" style={{ zIndex: 100 }}>
+        <div className="relative px-4 pt-3 pb-4 border-b border-blue-200/40 bg-white/80 backdrop-blur-xs" style={{ zIndex: 100 }}>
           {/* Back Button - Top Left */}
           <button
             onClick={onBack}
@@ -366,11 +366,11 @@ const CompanyDetailPanel = forwardRef<CompanyDetailPanelHandle, CompanyDetailPan
 
       {/* Desktop Header */}
       {!isMobile && (
-        <div className="panel-header p-6 border-b border-blue-200/40 bg-white/60 backdrop-blur-sm">
+        <div className="panel-header p-6 border-b border-blue-200/40 bg-white/60 backdrop-blur-xs">
           <div className="flex items-center justify-between">
             <div className="flex items-center space-x-3">
               <div
-                className="company-logo w-12 h-12 rounded bg-white/80 border border-blue-200/60 shadow-sm"
+                className="company-logo w-12 h-12 rounded-sm bg-white/80 border border-blue-200/60 shadow-xs"
                 style={{
                   backgroundImage: `url(${selectedCompany.logo})`,
                   backgroundSize: 'contain',
@@ -436,7 +436,7 @@ const CompanyDetailPanel = forwardRef<CompanyDetailPanelHandle, CompanyDetailPan
       )}
 
       {/* Content */}
-      <div className={`panel-content flex-1 overflow-auto bg-white/30 backdrop-blur-sm ${isMobile ? 'px-4 py-6 space-y-6' : 'p-6 space-y-6'}`}>
+      <div className={`panel-content flex-1 overflow-auto bg-white/30 backdrop-blur-xs ${isMobile ? 'px-4 py-6 space-y-6' : 'p-6 space-y-6'}`}>
         {/* Mobile Match Score - First item in scrollable content */}
         {isMobile && (
           <div className="bg-white/60 rounded-lg p-4 border border-blue-100/50">
@@ -445,7 +445,7 @@ const CompanyDetailPanel = forwardRef<CompanyDetailPanelHandle, CompanyDetailPan
                 Candidate Market Fit Score
               </span>
               <span
-                className="text-lg font-bold px-3 py-1.5 rounded-full text-white shadow-sm"
+                className="text-lg font-bold px-3 py-1.5 rounded-full text-white shadow-xs"
                 style={{ backgroundColor: selectedCompany.color }}
               >
                 {selectedCompany.matchScore}%
@@ -503,7 +503,7 @@ const CompanyDetailPanel = forwardRef<CompanyDetailPanelHandle, CompanyDetailPan
                 .slice(0, isMatchReasonsExpanded ? undefined : 3)
                 .map((reason, index) => (
                   <li key={index} className={`flex items-start space-x-3 ${isMobile ? 'text-base' : 'text-sm'}`}>
-                    <div className={`bg-emerald-500 rounded-full flex-shrink-0 ${isMobile ? 'w-2 h-2 mt-2' : 'w-1.5 h-1.5 mt-2'}`}></div>
+                    <div className={`bg-emerald-500 rounded-full shrink-0 ${isMobile ? 'w-2 h-2 mt-2' : 'w-1.5 h-1.5 mt-2'}`}></div>
                     <span className="text-slate-700 leading-relaxed">{reason}</span>
                   </li>
                 ))}
@@ -572,7 +572,7 @@ const CompanyDetailPanel = forwardRef<CompanyDetailPanelHandle, CompanyDetailPan
                     isMobile ? 'px-4 py-3.5 text-base' : 'px-3 py-2 text-sm'
                   }`}
                 >
-                  <Image src="/icons/linkedin.svg" alt="LinkedIn" width={isMobile ? 20 : 16} height={isMobile ? 20 : 16} className="flex-shrink-0" style={{ filter: 'brightness(0) saturate(100%) invert(27%) sepia(93%) saturate(2793%) hue-rotate(196deg) brightness(95%) contrast(101%)' }} />
+                  <Image src="/icons/linkedin.svg" alt="LinkedIn" width={isMobile ? 20 : 16} height={isMobile ? 20 : 16} className="shrink-0" style={{ filter: 'brightness(0) saturate(100%) invert(27%) sepia(93%) saturate(2793%) hue-rotate(196deg) brightness(95%) contrast(101%)' }} />
                   <span>LinkedIn</span>
                 </a>
               )}
@@ -586,7 +586,7 @@ const CompanyDetailPanel = forwardRef<CompanyDetailPanelHandle, CompanyDetailPan
                     isMobile ? 'px-4 py-3.5 text-base' : 'px-3 py-2 text-sm'
                   }`}
                 >
-                  <Image src="/icons/glassdoor.svg" alt="Glassdoor" width={isMobile ? 20 : 16} height={isMobile ? 20 : 16} className="flex-shrink-0" style={{ filter: 'brightness(0) saturate(100%) invert(50%) sepia(96%) saturate(1707%) hue-rotate(102deg) brightness(95%) contrast(101%)' }} />
+                  <Image src="/icons/glassdoor.svg" alt="Glassdoor" width={isMobile ? 20 : 16} height={isMobile ? 20 : 16} className="shrink-0" style={{ filter: 'brightness(0) saturate(100%) invert(50%) sepia(96%) saturate(1707%) hue-rotate(102deg) brightness(95%) contrast(101%)' }} />
                   <span>Glassdoor</span>
                 </a>
               )}
@@ -600,7 +600,7 @@ const CompanyDetailPanel = forwardRef<CompanyDetailPanelHandle, CompanyDetailPan
                     isMobile ? 'px-4 py-3.5 text-base' : 'px-3 py-2 text-sm'
                   }`}
                 >
-                  <Image src="/icons/crunchbase.svg" alt="Crunchbase" width={isMobile ? 20 : 16} height={isMobile ? 20 : 16} className="flex-shrink-0" style={{ filter: 'brightness(0) saturate(100%) invert(42%) sepia(84%) saturate(1261%) hue-rotate(171deg) brightness(94%) contrast(94%)' }} />
+                  <Image src="/icons/crunchbase.svg" alt="Crunchbase" width={isMobile ? 20 : 16} height={isMobile ? 20 : 16} className="shrink-0" style={{ filter: 'brightness(0) saturate(100%) invert(42%) sepia(84%) saturate(1261%) hue-rotate(171deg) brightness(94%) contrast(94%)' }} />
                   <span>Crunchbase</span>
                 </a>
               )}
@@ -624,9 +624,9 @@ const CompanyDetailPanel = forwardRef<CompanyDetailPanelHandle, CompanyDetailPan
                   onClick={() => onCompanySelect(company)}
                 >
                   <div className="flex items-center space-x-3 flex-1 min-w-0">
-                    <div className="relative flex-shrink-0">
+                    <div className="relative shrink-0">
                       <div
-                        className={isMobile ? "w-10 h-10 rounded-lg bg-white/80 border border-blue-200/50 shadow-sm" : "w-6 h-6 rounded bg-white/80 border border-blue-200/50"}
+                        className={isMobile ? "w-10 h-10 rounded-lg bg-white/80 border border-blue-200/50 shadow-xs" : "w-6 h-6 rounded-sm bg-white/80 border border-blue-200/50"}
                         style={{
                           backgroundImage: `url(${company.logo})`,
                           backgroundSize: 'contain',
@@ -636,7 +636,7 @@ const CompanyDetailPanel = forwardRef<CompanyDetailPanelHandle, CompanyDetailPan
                         aria-label={`${company.name} logo`}
                       />
                       {isInWatchlist && isInWatchlist(company.id) && (
-                        <div className={`absolute -bottom-0.5 -right-0.5 bg-red-500 rounded-full flex items-center justify-center shadow-sm border border-white ${
+                        <div className={`absolute -bottom-0.5 -right-0.5 bg-red-500 rounded-full flex items-center justify-center shadow-xs border border-white ${
                           isMobile ? 'w-3.5 h-3.5' : 'w-2.5 h-2.5'
                         }`}>
                           <svg className={`text-white fill-current ${isMobile ? 'w-2 h-2' : 'w-1 h-1'}`} viewBox="0 0 24 24">
@@ -655,7 +655,7 @@ const CompanyDetailPanel = forwardRef<CompanyDetailPanelHandle, CompanyDetailPan
                     </div>
                   </div>
                   <div
-                    className={`font-semibold rounded-full text-white ml-3 flex-shrink-0 ${
+                    className={`font-semibold rounded-full text-white ml-3 shrink-0 ${
                       isMobile ? 'text-sm px-2.5 py-1 min-w-[52px] text-center' : 'text-xs px-2 py-1'
                     }`}
                     style={{ backgroundColor: company.color }}
@@ -671,7 +671,7 @@ const CompanyDetailPanel = forwardRef<CompanyDetailPanelHandle, CompanyDetailPan
         {/* Action Buttons */}
         <div className={`pt-4 border-t border-slate-200/50 ${isMobile ? 'space-y-3' : 'space-y-3'}`}>
           <button
-            className={`w-full bg-gradient-to-r from-blue-600 to-indigo-600 text-white px-4 rounded-lg hover:from-blue-700 hover:to-indigo-700 active:from-blue-800 active:to-indigo-800 transition-all duration-200 shadow-md hover:shadow-lg font-semibold ${
+            className={`w-full bg-linear-to-r from-blue-600 to-indigo-600 text-white px-4 rounded-lg hover:from-blue-700 hover:to-indigo-700 active:from-blue-800 active:to-indigo-800 transition-all duration-200 shadow-md hover:shadow-lg font-semibold ${
               isMobile ? 'py-4 text-base' : 'py-2 text-sm'
             }`}
             onClick={() => window.open(selectedCompany.careerUrl, '_blank')}

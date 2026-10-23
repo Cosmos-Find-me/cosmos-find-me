@@ -308,7 +308,7 @@ const AppContainer: React.FC = () => {
   // Loading state during universe generation
   if (isLoading) {
     return (
-      <div className="bg-gradient-to-br from-slate-900 via-blue-900 to-indigo-900 flex items-center justify-center relative overflow-hidden" style={{ minHeight: '100vh' }}>
+      <div className="bg-linear-to-br from-slate-900 via-blue-900 to-indigo-900 flex items-center justify-center relative overflow-hidden" style={{ minHeight: '100vh' }}>
         {/* Floating cosmic particles */}
         <div className="absolute inset-0 overflow-hidden pointer-events-none">
           {[...Array(20)].map((_, i) => (
@@ -329,9 +329,9 @@ const AppContainer: React.FC = () => {
         
         <div className="text-center px-4">
           <div className="relative mb-8">
-            <div className="w-32 h-32 bg-gradient-to-br from-orange-300 via-pink-400 to-purple-500 rounded-full mx-auto animate-pulse shadow-2xl" />
+            <div className="w-32 h-32 bg-linear-to-br from-orange-300 via-pink-400 to-purple-500 rounded-full mx-auto animate-pulse shadow-2xl" />
             <div className="absolute inset-0 scale-150 opacity-20">
-              <div className="w-32 h-32 bg-gradient-to-r from-orange-400 to-purple-500 rounded-full animate-spin" style={{ animationDuration: '8s' }} />
+              <div className="w-32 h-32 bg-linear-to-r from-orange-400 to-purple-500 rounded-full animate-spin" style={{ animationDuration: '8s' }} />
             </div>
           </div>
           
@@ -373,12 +373,12 @@ const AppContainer: React.FC = () => {
   // Transition state - smooth fade from dark to light
   if (isTransitioning) {
     return (
-      <div className="bg-gradient-to-br from-slate-900 via-blue-900 to-indigo-900 flex items-center justify-center relative overflow-hidden" style={{ minHeight: '100vh' }}>
-        <div className="absolute inset-0 bg-gradient-to-br from-white to-gray-50 opacity-0 animate-pulse" 
+      <div className="bg-linear-to-br from-slate-900 via-blue-900 to-indigo-900 flex items-center justify-center relative overflow-hidden" style={{ minHeight: '100vh' }}>
+        <div className="absolute inset-0 bg-linear-to-br from-white to-gray-50 opacity-0 animate-pulse" 
              style={{ animationDuration: '2s', animationFillMode: 'forwards' }} />
         
         <div className="text-center px-4 relative z-10">
-          <div className="w-24 h-24 bg-gradient-to-br from-orange-300 via-pink-400 to-purple-500 rounded-full mx-auto animate-pulse shadow-2xl mb-6" />
+          <div className="w-24 h-24 bg-linear-to-br from-orange-300 via-pink-400 to-purple-500 rounded-full mx-auto animate-pulse shadow-2xl mb-6" />
           <h1 className="text-3xl font-bold text-white mb-4 animate-fade-out">
             🚀 Launching Your Career Universe
           </h1>
@@ -413,9 +413,9 @@ const AppContainer: React.FC = () => {
   // Show loading screen while checking authentication
   if (authLoading) {
     return (
-      <div className="bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50 flex items-center justify-center" style={{ minHeight: '100vh' }}>
+      <div className="bg-linear-to-br from-slate-50 via-blue-50 to-indigo-50 flex items-center justify-center" style={{ minHeight: '100vh' }}>
         <div className="text-center">
-          <div className="w-16 h-16 bg-gradient-to-br from-blue-400 to-purple-400 rounded-full mx-auto animate-pulse shadow-2xl mb-4" />
+          <div className="w-16 h-16 bg-linear-to-br from-blue-400 to-purple-400 rounded-full mx-auto animate-pulse shadow-2xl mb-4" />
           <p className="text-slate-600 text-lg">Verifying authentication...</p>
         </div>
       </div>
@@ -425,7 +425,7 @@ const AppContainer: React.FC = () => {
   // Show the main graph explorer for returning users or after completion
   if (userProfile && hasCompletedDataCheck && !authLoading) {
     return (
-      <div className="bg-gradient-to-br from-slate-900 via-blue-900 to-indigo-900 relative overflow-hidden transition-all duration-1000" style={{ height: '100dvh', maxHeight: '100dvh' }}>
+      <div className="bg-linear-to-br from-slate-900 via-blue-900 to-indigo-900 relative overflow-hidden transition-all duration-1000" style={{ height: '100dvh', maxHeight: '100dvh' }}>
         <FloatingStars />
 
         <div className="absolute inset-0 opacity-10">
@@ -471,9 +471,9 @@ const AppContainer: React.FC = () => {
   // Show loading while fetching user data (only after auth is verified)
   if (dataLoading && !authLoading && profileStatus !== 'pending') {
     return (
-      <div className="bg-gradient-to-br from-slate-900 via-blue-900 to-indigo-900 flex items-center justify-center" style={{ minHeight: '100vh' }}>
+      <div className="bg-linear-to-br from-slate-900 via-blue-900 to-indigo-900 flex items-center justify-center" style={{ minHeight: '100vh' }}>
         <div className="text-center">
-          <div className="w-16 h-16 bg-gradient-to-br from-orange-300 to-purple-400 rounded-full mx-auto animate-pulse shadow-2xl mb-4" />
+          <div className="w-16 h-16 bg-linear-to-br from-orange-300 to-purple-400 rounded-full mx-auto animate-pulse shadow-2xl mb-4" />
           <p className="text-white text-lg">Loading your personalized data...</p>
         </div>
       </div>
@@ -486,13 +486,13 @@ const AppContainer: React.FC = () => {
     <div
       className={`flex items-center justify-center ${
         authLoading
-          ? 'bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50'
-          : 'bg-gradient-to-br from-slate-900 via-blue-900 to-indigo-900'
+          ? 'bg-linear-to-br from-slate-50 via-blue-50 to-indigo-50'
+          : 'bg-linear-to-br from-slate-900 via-blue-900 to-indigo-900'
       }`}
       style={{ minHeight: '100vh' }}
     >
       <div className="text-center">
-        <div className="w-16 h-16 bg-gradient-to-br from-orange-300 to-purple-400 rounded-full mx-auto animate-pulse shadow-2xl mb-4" />
+        <div className="w-16 h-16 bg-linear-to-br from-orange-300 to-purple-400 rounded-full mx-auto animate-pulse shadow-2xl mb-4" />
         <p className={`text-lg ${authLoading ? 'text-slate-600' : 'text-white'}`}>
           {authLoading ? 'Verifying authentication...' : 'Initializing...'}
         </p>

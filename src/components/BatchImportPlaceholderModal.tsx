@@ -37,7 +37,7 @@ export const BatchImportPlaceholderModal: React.FC<BatchImportPlaceholderModalPr
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
       {/* Backdrop */}
       <div
-        className="absolute inset-0 bg-black/50 backdrop-blur-sm"
+        className="absolute inset-0 bg-black/50 backdrop-blur-xs"
         onClick={onClose}
         aria-hidden="true"
       />
@@ -69,7 +69,7 @@ export const BatchImportPlaceholderModal: React.FC<BatchImportPlaceholderModalPr
         </p>
 
         {/* Coming Soon Badge */}
-        <div className="bg-gradient-to-r from-blue-500 to-purple-600 text-white
+        <div className="bg-linear-to-r from-blue-500 to-purple-600 text-white
           py-3 px-4 rounded-lg text-center mb-6">
           <p className="font-semibold text-lg">Coming Soon</p>
           <p className="text-sm text-blue-100 mt-1">
@@ -83,7 +83,7 @@ export const BatchImportPlaceholderModal: React.FC<BatchImportPlaceholderModalPr
           className="w-full py-3 px-4 bg-gray-100 hover:bg-gray-200
             text-gray-700 font-medium rounded-lg
             transition-colors duration-200
-            focus:outline-none focus:ring-4 focus:ring-gray-300"
+            focus:outline-hidden focus:ring-4 focus:ring-gray-300"
         >
           Got it
         </button>

@@ -91,12 +91,12 @@ const ImportDataModal: React.FC<ImportDataModalProps> = ({
   };
 
   return (
-    <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50 p-4">
+    <div className="fixed inset-0 bg-black/50 backdrop-blur-xs flex items-center justify-center z-50 p-4">
       <div className="bg-white rounded-xl shadow-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto">
         {/* Header */}
         <div className="flex items-center justify-between p-6 border-b border-slate-200">
           <div className="flex items-center space-x-3">
-            <div className="w-10 h-10 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-lg flex items-center justify-center">
+            <div className="w-10 h-10 bg-linear-to-br from-blue-500 to-indigo-600 rounded-lg flex items-center justify-center">
               <FileUp className="w-5 h-5 text-white" />
             </div>
             <div>
@@ -117,7 +117,7 @@ const ImportDataModal: React.FC<ImportDataModalProps> = ({
           {/* Error Message */}
           {error && (
             <div className="bg-red-50 border border-red-200 text-red-700 p-4 rounded-lg flex items-start space-x-2">
-              <AlertCircle className="w-5 h-5 mt-0.5 flex-shrink-0" />
+              <AlertCircle className="w-5 h-5 mt-0.5 shrink-0" />
               <p className="text-sm">{error}</p>
             </div>
           )}
@@ -139,7 +139,7 @@ const ImportDataModal: React.FC<ImportDataModalProps> = ({
           {/* Expected Format */}
           <div className="bg-slate-50 p-4 rounded-lg border border-slate-200 space-y-2">
             <p className="font-medium text-slate-700 text-sm">Expected JSON format (UserExplorationState):</p>
-            <pre className="text-xs text-slate-600 overflow-x-auto bg-white p-3 rounded border border-slate-200">
+            <pre className="text-xs text-slate-600 overflow-x-auto bg-white p-3 rounded-sm border border-slate-200">
 {`{
   "id": "user-id",
   "name": "User Name",
@@ -159,7 +159,7 @@ const ImportDataModal: React.FC<ImportDataModalProps> = ({
 }`}
             </pre>
             <p className="text-xs text-slate-500">
-              Also supports legacy format: <code className="bg-white px-1 py-0.5 rounded">{'{"userProfile": {...}, "companies": [...]}'}</code>
+              Also supports legacy format: <code className="bg-white px-1 py-0.5 rounded-sm">{'{"userProfile": {...}, "companies": [...]}'}</code>
             </p>
           </div>
 
@@ -175,7 +175,7 @@ const ImportDataModal: React.FC<ImportDataModalProps> = ({
             <button
               type="submit"
               disabled={importing || !importFile}
-              className="bg-gradient-to-r from-blue-500 to-indigo-600 text-white px-6 py-2 rounded-lg font-semibold hover:shadow-lg transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
+              className="bg-linear-to-r from-blue-500 to-indigo-600 text-white px-6 py-2 rounded-lg font-semibold hover:shadow-lg transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
             >
               {importing ? 'Importing...' : 'Import Data'}
             </button>

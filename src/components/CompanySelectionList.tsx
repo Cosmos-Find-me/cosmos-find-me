@@ -65,7 +65,7 @@ export const CompanySelectionList: React.FC<CompanySelectionListProps> = ({
             <button
               onClick={() => !company.isDuplicate && onToggleSelection(index)}
               disabled={company.isDuplicate}
-              className={`w-5 h-5 rounded border-2 flex items-center justify-center flex-shrink-0 transition-colors ${
+              className={`w-5 h-5 rounded border-2 flex items-center justify-center shrink-0 transition-colors ${
                 company.isDuplicate
                   ? 'border-gray-300 bg-gray-100 cursor-not-allowed'
                   : company.selected
@@ -84,7 +84,7 @@ export const CompanySelectionList: React.FC<CompanySelectionListProps> = ({
             </button>
 
             {/* Logo */}
-            <div className="relative w-10 h-10 flex-shrink-0">
+            <div className="relative w-10 h-10 shrink-0">
               <Image
                 src={company.preview.logo}
                 alt={`${company.name} logo`}
@@ -104,7 +104,7 @@ export const CompanySelectionList: React.FC<CompanySelectionListProps> = ({
 
             {/* Duplicate Badge */}
             {company.isDuplicate && (
-              <span className="text-xs font-medium text-gray-500 bg-gray-200 px-2 py-1 rounded">
+              <span className="text-xs font-medium text-gray-500 bg-gray-200 px-2 py-1 rounded-sm">
                 Already in graph
               </span>
             )}

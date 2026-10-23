@@ -48,7 +48,7 @@ export default function RootLayout({
       <head>
         <meta name="viewport" content="viewport-fit=cover" />
       </head>
-      <body className="bg-gradient-to-br from-slate-900 via-blue-900 to-indigo-900">
+      <body className="bg-linear-to-br from-slate-900 via-blue-900 to-indigo-900">
         <Suspense fallback={null}>
           <PosthogProvider>
             {children}

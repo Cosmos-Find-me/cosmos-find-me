@@ -101,7 +101,7 @@ export const SettingsFAB: React.FC<SettingsFABProps> = ({
                   transition-all duration-200 ease-in-out
                   flex items-center justify-center
                   hover:scale-110 active:scale-95
-                  focus:outline-none focus:ring-4 focus:ring-blue-400 focus:ring-opacity-50"
+                  focus:outline-hidden focus:ring-4 focus:ring-blue-400/50"
                 aria-label="Export Companies"
                 aria-describedby="tooltip-export"
                 role="menuitem"
@@ -134,7 +134,7 @@ export const SettingsFAB: React.FC<SettingsFABProps> = ({
             transition-all duration-200 ease-in-out
             flex items-center justify-center
             hover:scale-105 active:scale-95
-            focus:outline-none focus:ring-4 focus:ring-blue-600 focus:ring-opacity-50"
+            focus:outline-hidden focus:ring-4 focus:ring-blue-600/50"
           aria-label="Settings"
         >
           <Settings className="w-6 h-6" />

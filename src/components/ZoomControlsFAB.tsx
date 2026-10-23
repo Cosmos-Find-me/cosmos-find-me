@@ -83,7 +83,7 @@ export const ZoomControlsFAB: React.FC<ZoomControlsFABProps> = ({
                   transition-all duration-200 ease-in-out
                   flex items-center justify-center
                   hover:scale-110 active:scale-95
-                  focus:outline-none focus:ring-4 focus:ring-blue-400 focus:ring-opacity-50"
+                  focus:outline-hidden focus:ring-4 focus:ring-blue-400/50"
                 aria-label="Zoom in"
                 role="menuitem"
               >
@@ -115,7 +115,7 @@ export const ZoomControlsFAB: React.FC<ZoomControlsFABProps> = ({
                   transition-all duration-200 ease-in-out
                   flex items-center justify-center
                   hover:scale-110 active:scale-95
-                  focus:outline-none focus:ring-4 focus:ring-blue-400 focus:ring-opacity-50"
+                  focus:outline-hidden focus:ring-4 focus:ring-blue-400/50"
                 aria-label="Zoom out"
                 role="menuitem"
               >
@@ -133,7 +133,7 @@ export const ZoomControlsFAB: React.FC<ZoomControlsFABProps> = ({
             transition-all duration-200 ease-in-out
             flex items-center justify-center
             hover:scale-105 active:scale-95
-            focus:outline-none focus:ring-4 focus:ring-blue-600 focus:ring-opacity-50"
+            focus:outline-hidden focus:ring-4 focus:ring-blue-600/50"
           aria-label="Fit to view"
         >
           <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">

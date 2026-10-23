@@ -36,7 +36,7 @@ import { useSwipeGesture } from '../hooks/useSwipeGesture';
 import { track } from '../lib/analytics';
 // Using inline SVG icons instead of lucide-react
 const SearchIcon = () => (
-  <svg className="w-4 h-4 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+  <svg className="w-4 h-4 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
   </svg>
 );
@@ -814,7 +814,7 @@ const CMFGraphExplorer: React.FC<CMFGraphExplorerProps> = ({ userProfile }) => {
               transition-all duration-200 ease-in-out
               flex items-center justify-center
               hover:scale-105 active:scale-95
-              focus:outline-none focus:ring-4 focus:ring-blue-600 focus:ring-opacity-50"
+              focus:outline-hidden focus:ring-4 focus:ring-blue-600/50"
             aria-label={mobileView === 'list' ? 'Show cosmos view' : 'Show company list'}
           >
             <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -898,7 +898,7 @@ const CMFGraphExplorer: React.FC<CMFGraphExplorerProps> = ({ userProfile }) => {
             />
             {/* LLM Status indicator */}
             {llmConfigured && (
-              <div className="px-3 py-1.5 bg-green-50 border border-green-200 text-green-700 text-xs rounded-full flex items-center shadow-sm">
+              <div className="px-3 py-1.5 bg-green-50 border border-green-200 text-green-700 text-xs rounded-full flex items-center shadow-xs">
                 <div className="w-2 h-2 bg-green-500 rounded-full mr-2 animate-pulse"></div>
                 <span className="font-medium">{llmService.getSettings().provider.toUpperCase()} AI</span>
               </div>
@@ -958,7 +958,7 @@ const CMFGraphExplorer: React.FC<CMFGraphExplorerProps> = ({ userProfile }) => {
       {isMobile && (mobileView === 'detail' || isDetailClosing) && (
         <div
           ref={detailPanelRef}
-          className={`fixed inset-0 z-[60] bg-white border-l border-gray-200 overflow-hidden ${
+          className={`fixed inset-0 z-60 bg-white border-l border-gray-200 overflow-hidden ${
           isDetailClosing ? 'animate-slide-out-right' : 'animate-slide-in-right'
         }`}>
           <CompanyDetailPanel

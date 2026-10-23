@@ -67,7 +67,7 @@ const KeyboardShortcutsModal: React.FC<KeyboardShortcutsModalProps> = ({ isOpen,
     <div className="fixed inset-0 z-50 overflow-y-auto">
       {/* Backdrop */}
       <div
-        className="fixed inset-0 bg-black bg-opacity-50 transition-opacity"
+        className="fixed inset-0 bg-black/50 transition-opacity"
         onClick={onClose}
       />
 
@@ -111,7 +111,7 @@ const KeyboardShortcutsModal: React.FC<KeyboardShortcutsModalProps> = ({ isOpen,
                         {shortcut.keys.map((key, keyIndex) => (
                           <kbd
                             key={keyIndex}
-                            className="px-2 py-1 text-xs font-semibold text-slate-800 bg-slate-100 border border-slate-300 rounded shadow-sm"
+                            className="px-2 py-1 text-xs font-semibold text-slate-800 bg-slate-100 border border-slate-300 rounded-sm shadow-xs"
                           >
                             {key}
                           </kbd>
@@ -127,7 +127,7 @@ const KeyboardShortcutsModal: React.FC<KeyboardShortcutsModalProps> = ({ isOpen,
           {/* Footer */}
           <div className="mt-6 pt-4 border-t border-slate-200">
             <p className="text-xs text-slate-500 text-center">
-              Press <kbd className="px-1.5 py-0.5 text-xs font-semibold text-slate-800 bg-slate-100 border border-slate-300 rounded">Esc</kbd> to close this dialog
+              Press <kbd className="px-1.5 py-0.5 text-xs font-semibold text-slate-800 bg-slate-100 border border-slate-300 rounded-sm">Esc</kbd> to close this dialog
             </p>
           </div>
         </div>

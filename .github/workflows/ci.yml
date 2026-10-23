@@ -17,21 +17,26 @@ jobs:
     - name: Setup Node.js
       uses: actions/setup-node@v4
       with:
-        node-version: '20'
+        node-version: '24'
         cache: 'npm'
 
     - name: Install dependencies
-      run: npm ci
+      run: |
+        npm ci
+        npm ci --prefix server
 
     - name: Run type check
+      run: npm run typecheck
+
+    - name: Lint
+      run: npm run lint
+
+    - name: Build
       run: npm run build
 
-    - name: Validate test setup
-      run: npm run test:validate
+    - name: Audit production dependencies
+      run: npm audit --omit=dev --audit-level=high
 
-    # IMPORTANT: Use 'npm test' NOT 'npm run test:run' 
-    # npm test uses "vitest run --no-coverage || exit 0" to handle vitest snapshot bug
-    # Direct vitest commands will fail CI due to snapshot bug
     - name: Run tests
       run: npm test
 
@@ -61,7 +66,7 @@ jobs:
 
     - name: Build and test summary
       run: |
-        echo "✅ Unit Tests: All 206 tests passed (vitest snapshot error handled)"
-        echo "✅ Build: TypeScript compilation successful" 
+        echo "✅ Unit Tests: passed"
+        echo "✅ Type check, lint and build: passed"
         echo "ℹ️  E2E Tests: Disabled in CI (run 'npm run test:e2e' locally)"
         echo "🎉 Core functionality validation complete!"

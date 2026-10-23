@@ -1,4 +1,4 @@
-import '@testing-library/jest-dom'
+import '@testing-library/jest-dom/vitest'
 import { vi } from 'vitest'
 
 // Test logo helper - generates consistent logo URLs for testing
@@ -13,29 +13,32 @@ const localStorageMock = {
   length: 0,
   key: vi.fn(() => null),
 }
-Object.defineProperty(window, 'localStorage', {
-  writable: true,
-  value: localStorageMock,
-})
+// Browser mocks only apply to jsdom tests; files using `@vitest-environment node` skip them
+if (typeof window !== 'undefined') {
+  Object.defineProperty(window, 'localStorage', {
+    writable: true,
+    value: localStorageMock,
+  })
 
-// Mock custom storage events to prevent issues in tests
-const originalAddEventListener = window.addEventListener;
-window.addEventListener = vi.fn((event, handler, options) => {
-  if (event === 'watchlist-storage-change' || event === 'storage') {
-    // Don't actually add storage listeners that could cause issues in tests
-    return
-  }
-  // Call original implementation for other events if it exists
-  if (originalAddEventListener) {
-    return originalAddEventListener.call(window, event, handler, options)
-  }
-})
+  // Mock custom storage events to prevent issues in tests
+  const originalAddEventListener = window.addEventListener;
+  window.addEventListener = vi.fn((event, handler, options) => {
+    if (event === 'watchlist-storage-change' || event === 'storage') {
+      // Don't actually add storage listeners that could cause issues in tests
+      return
+    }
+    // Call original implementation for other events if it exists
+    if (originalAddEventListener) {
+      return originalAddEventListener.call(window, event, handler, options)
+    }
+  })
 
-// Mock window.open for testing
-Object.defineProperty(window, 'open', {
-  writable: true,
-  value: vi.fn(),
-})
+  // Mock window.open for testing
+  Object.defineProperty(window, 'open', {
+    writable: true,
+    value: vi.fn(),
+  })
+}
 
 // Mock companies.ts data to ensure consistent test data
 vi.mock('../../src/data/companies', () => ({
