@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { getModelForTask } from '@/utils/llm/config';
+import { ANTHROPIC_MESSAGES_URL, claudeRequest, readClaudeText } from '@/utils/llm/anthropic';
 import { processCareerUrl } from './urlProcessors';
 
 interface ExtractedCompany {
@@ -134,49 +134,35 @@ Rules:
 Text to analyze:
 ${contentToAnalyze}${extractedLinks.length > 0 ? `\n\nHyperlinks found in the text (these are mostly career pages):\n${extractedLinks.map(link => `- "${link.text}" -> ${link.url}`).join('\n')}` : ''}`;
 
-    const response = await fetch('https://api.anthropic.com/v1/messages', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'x-api-key': apiKey,
-        'anthropic-version': '2023-06-01',
-        'anthropic-beta': 'structured-outputs-2025-11-13'
-      },
-      body: JSON.stringify({
-        model: getModelForTask('COMPANY_EXTRACTION'),
-        max_tokens: 2048, // Reduced from 4096 - URLs are pre-processed before sending to LLM
-        temperature: 0.1, // Low temperature for consistent extraction
-        messages: [
-          {
-            role: 'user',
-            content: prompt
-          }
-        ],
-        output_format: {
-          type: 'json_schema',
-          schema: {
-            type: 'object',
-            properties: {
-              companies: {
-                type: 'array',
-                items: {
-                  type: 'object',
-                  properties: {
-                    name: { type: 'string' },
-                    url: { type: 'string' },
-                    careerUrl: { type: 'string' }
-                  },
-                  required: ['name'],
-                  additionalProperties: false
-                }
-              }
-            },
-            required: ['companies'],
-            additionalProperties: false
-          }
+    const response = await fetch(ANTHROPIC_MESSAGES_URL, claudeRequest(apiKey, 'COMPANY_EXTRACTION', {
+      maxTokens: 8000,
+      messages: [
+        {
+          role: 'user',
+          content: prompt
         }
-      })
-    });
+      ],
+      schema: {
+        type: 'object',
+        properties: {
+          companies: {
+            type: 'array',
+            items: {
+              type: 'object',
+              properties: {
+                name: { type: 'string' },
+                url: { type: 'string' },
+                careerUrl: { type: 'string' }
+              },
+              required: ['name'],
+              additionalProperties: false
+            }
+          }
+        },
+        required: ['companies'],
+        additionalProperties: false
+      }
+    }));
 
     if (!response.ok) {
       const errorData = await response.json().catch(() => ({}));
@@ -184,11 +170,7 @@ ${contentToAnalyze}${extractedLinks.length > 0 ? `\n\nHyperlinks found in the te
     }
 
     const data = await response.json();
-    const content = data.content?.[0]?.text;
-
-    if (!content) {
-      throw new Error('No content in response');
-    }
+    const content = readClaudeText(data);
 
     // Parse the JSON response (with structured outputs, it's guaranteed valid JSON)
     let result: { companies: ExtractedCompany[] };

@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { getModelForTask } from '@/utils/llm/config';
+import { ANTHROPIC_MESSAGES_URL, claudeRequest, readClaudeText, claudeCost } from '@/utils/llm/anthropic';
 import { extractText } from 'unpdf';
 
 /**
@@ -57,25 +57,11 @@ export async function POST(request: NextRequest) {
     // Extract text and build messages (PDF text extraction reduces token usage)
     const messages = await buildMessagesWithDocuments(resume, careerGoals);
 
-    const response = await fetch('https://api.anthropic.com/v1/messages', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'x-api-key': apiKey,
-        'anthropic-version': '2023-06-01',
-        'anthropic-beta': 'structured-outputs-2025-11-13'
-      },
-      body: JSON.stringify({
-        model: getModelForTask('PROFILE_EXTRACTION'),
-        max_tokens: 4096,
-        temperature: 0.3, // Lower temperature for consistent extraction
-        messages,
-        output_format: {
-          type: 'json_schema',
-          schema: getProfileExtractionSchema()
-        }
-      })
-    });
+    const response = await fetch(ANTHROPIC_MESSAGES_URL, claudeRequest(apiKey, 'PROFILE_EXTRACTION', {
+      maxTokens: 16000,
+      messages,
+      schema: getProfileExtractionSchema()
+    }));
 
     if (!response.ok) {
       const errorData = await response.json().catch(() => ({}));
@@ -84,11 +70,7 @@ export async function POST(request: NextRequest) {
     }
 
     const data = await response.json();
-    const responseText = data.content[0]?.text;
-
-    if (!responseText) {
-      throw new Error('No response content from Claude API');
-    }
+    const responseText = readClaudeText(data);
 
     console.log('📝 Profile extraction response length:', responseText.length, 'characters');
     console.log('⏹️  Stop reason:', data.stop_reason);
@@ -102,7 +84,7 @@ export async function POST(request: NextRequest) {
       usage: {
         inputTokens: data.usage?.input_tokens || 0,
         outputTokens: data.usage?.output_tokens || 0,
-        totalCost: calculateCost(data.usage?.input_tokens || 0, data.usage?.output_tokens || 0)
+        totalCost: claudeCost('PROFILE_EXTRACTION', data.usage)
       }
     });
 
@@ -325,17 +307,4 @@ function parseProfileResponse(responseText: string): {
     console.error('Raw response:', responseText);
     throw new Error(`Failed to parse profile extraction response: ${error instanceof Error ? error.message : 'Invalid JSON'}`);
   }
-}
-
-/**
- * Calculate API cost for Opus 4.5
- */
-function calculateCost(inputTokens: number, outputTokens: number): number {
-  // Claude Opus 4.5 pricing: $5/1M input, $25/1M output
-  const inputPrice = 5;
-  const outputPrice = 25;
-
-  const inputCost = (inputTokens / 1000000) * inputPrice;
-  const outputCost = (outputTokens / 1000000) * outputPrice;
-  return inputCost + outputCost;
 }

@@ -5,24 +5,10 @@ require('dotenv').config();
 const app = express();
 const PORT = process.env.PORT || 3002;
 
-// Anthropic model configuration - single source of truth
-// Keep in sync with src/utils/llm/config.ts
-const ANTHROPIC_MODELS = {
-  OPUS_4_5: 'claude-opus-4-5-20251101',
-  SONNET_4_5: 'claude-sonnet-4-5-20250929',
-  HAIKU_4_5: 'claude-haiku-4-5-20251001',
-};
+// Model IDs, effort levels and prices, shared with the Next.js API routes
+const anthropicModels = require('../src/utils/llm/anthropic-models.json');
 
-// Task-based model selection (mirrors src/utils/llm/config.ts)
-const TASK_MODELS = {
-  PROFILE_EXTRACTION: ANTHROPIC_MODELS.OPUS_4_5,
-  COMPANY_ANALYSIS: ANTHROPIC_MODELS.SONNET_4_5,
-  COMPANY_EXTRACTION: ANTHROPIC_MODELS.SONNET_4_5,
-  API_VALIDATION: ANTHROPIC_MODELS.HAIKU_4_5,
-  DEFAULT: ANTHROPIC_MODELS.SONNET_4_5,
-};
-
-const getModelForTask = (task) => TASK_MODELS[task] || TASK_MODELS.DEFAULT;
+const getTask = (task) => anthropicModels.tasks[task] || anthropicModels.tasks.DEFAULT;
 
 // Middleware
 app.use(cors());
@@ -56,9 +42,10 @@ app.post('/api/llm/anthropic/analyze', async (req, res) => {
         'anthropic-version': '2023-06-01'
       },
       body: JSON.stringify({
-        model: getModelForTask('COMPANY_ANALYSIS'),
-        max_tokens: 1500,
-        temperature: 0.7,
+        model: getTask('COMPANY_ANALYSIS').model,
+        // Current models always think, and thinking counts toward max_tokens
+        max_tokens: 8000,
+        output_config: { effort: getTask('COMPANY_ANALYSIS').effort },
         messages: [
           {
             role: 'user',
@@ -74,7 +61,11 @@ app.post('/api/llm/anthropic/analyze', async (req, res) => {
     }
 
     const data = await response.json();
-    const responseText = data.content[0]?.text;
+    if (data.stop_reason === 'refusal') {
+      throw new Error('Claude declined the request');
+    }
+    // Thinking blocks can come before the answer
+    const responseText = data.content?.find((block) => block.type === 'text')?.text;
 
     if (!responseText) {
       throw new Error('No response content from Claude API');
@@ -89,7 +80,7 @@ app.post('/api/llm/anthropic/analyze', async (req, res) => {
       usage: {
         inputTokens: data.usage?.input_tokens || 0,
         outputTokens: data.usage?.output_tokens || 0,
-        totalCost: calculateAnthropicCost(data.usage?.input_tokens || 0, data.usage?.output_tokens || 0)
+        totalCost: calculateAnthropicCost('COMPANY_ANALYSIS', data.usage)
       }
     });
 
@@ -111,18 +102,12 @@ app.post('/api/llm/anthropic/validate', async (req, res) => {
       return res.json({ valid: false, error: 'API key not configured' });
     }
 
-    const response = await fetch('https://api.anthropic.com/v1/messages', {
-      method: 'POST',
+    // Looking up a model checks the key without spending tokens
+    const response = await fetch(`https://api.anthropic.com/v1/models/${getTask('API_VALIDATION').model}`, {
       headers: {
-        'Content-Type': 'application/json',
         'x-api-key': apiKey,
         'anthropic-version': '2023-06-01'
-      },
-      body: JSON.stringify({
-        model: getModelForTask('API_VALIDATION'),
-        max_tokens: 5,
-        messages: [{ role: 'user', content: 'Hi' }]
-      })
+      }
     });
 
     res.json({ valid: response.ok });
@@ -193,15 +178,10 @@ function parseAnthropicResponse(responseText) {
   }
 }
 
-// Helper function to calculate costs
-function calculateAnthropicCost(inputTokens, outputTokens) {
-  // Claude 3.5 Sonnet pricing
-  const inputPrice = 3; // $3 per 1M tokens
-  const outputPrice = 15; // $15 per 1M tokens
-  
-  const inputCost = (inputTokens / 1000000) * inputPrice;
-  const outputCost = (outputTokens / 1000000) * outputPrice;
-  return inputCost + outputCost;
+// Helper function to calculate costs at the task model's rates
+function calculateAnthropicCost(task, usage) {
+  const { input, output } = anthropicModels.models[getTask(task).model];
+  return ((usage?.input_tokens || 0) * input + (usage?.output_tokens || 0) * output) / 1000000;
 }
 
 app.listen(PORT, () => {

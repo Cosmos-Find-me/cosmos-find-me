@@ -1,0 +1,31 @@
+{
+  "models": {
+    "claude-opus-5-5": {
+      "name": "Claude Opus 5.5",
+      "description": "Most capable - best for complex reasoning and document understanding",
+      "input": 4,
+      "output": 20
+    },
+    "claude-sonnet-5-5": {
+      "name": "Claude Sonnet 5.5",
+      "description": "Balanced speed and capability for everyday tasks",
+      "input": 2,
+      "output": 10
+    },
+    "claude-haiku-5-5": {
+      "name": "Claude Haiku 5.5",
+      "description": "Fastest and cheapest - best for quick, simple tasks",
+      "input": 0.1,
+      "output": 0.5
+    }
+  },
+  "tasks": {
+    "PROFILE_EXTRACTION": { "model": "claude-opus-5-5", "effort": "medium" },
+    "COMPANY_ANALYSIS": { "model": "claude-sonnet-5-5", "effort": "low" },
+    "COMPANY_EXTRACTION": { "model": "claude-sonnet-5-5", "effort": "low" },
+    "BATCH_ENRICHMENT": { "model": "claude-sonnet-5-5", "effort": "low" },
+    "JOB_ROLE_KEYWORDS": { "model": "claude-haiku-5-5", "effort": "low" },
+    "API_VALIDATION": { "model": "claude-haiku-5-5", "effort": "low" },
+    "DEFAULT": { "model": "claude-sonnet-5-5", "effort": "low" }
+  }
+}

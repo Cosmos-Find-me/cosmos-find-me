@@ -65,4 +65,18 @@ describe('Dev LLM server', () => {
     expect(pkg.dependencies['node-fetch']).toBeUndefined()
     expect(readFileSync(join(serverDir, 'server.js'), 'utf8')).not.toContain('node-fetch')
   })
+
+  it('reads model IDs from the shared config instead of hardcoding them', () => {
+    const source = readFileSync(join(serverDir, 'server.js'), 'utf8')
+
+    expect(source).toContain("require('../src/utils/llm/anthropic-models.json')")
+    expect(source).not.toMatch(/['"]claude-[\w.-]+['"]/)
+  })
+
+  it('sends no sampling parameters and reads the text block by type', () => {
+    const source = readFileSync(join(serverDir, 'server.js'), 'utf8')
+
+    expect(source).not.toMatch(/\btemperature\b/)
+    expect(source).not.toContain('content[0]')
+  })
 })

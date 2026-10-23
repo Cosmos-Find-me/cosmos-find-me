@@ -12,7 +12,9 @@ interface LLMSettingsModalProps {
 // Saved settings may name a provider without a model; default to its first model
 const withDefaultModel = (settings: LLMSettings): LLMSettings => {
   const providerConfig = settings.provider !== 'none' ? LLM_PROVIDERS[settings.provider] : null;
-  return providerConfig && !settings.model ? { ...settings, model: providerConfig.models[0].id } : settings;
+  // Also replaces a saved model that is no longer offered (e.g. a retired Claude model)
+  const offered = providerConfig?.models.some((m) => m.id === settings.model);
+  return providerConfig && !offered ? { ...settings, model: providerConfig.models[0].id } : settings;
 };
 
 const LLMSettingsModal: React.FC<LLMSettingsModalProps> = (props) =>

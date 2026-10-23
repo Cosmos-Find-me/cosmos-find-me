@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { getModelForTask } from '@/utils/llm/config';
+import { ANTHROPIC_MESSAGES_URL, claudeRequest, readClaudeText, claudeCost } from '@/utils/llm/anthropic';
 
 export async function POST(request: NextRequest) {
   try {
@@ -18,55 +18,41 @@ export async function POST(request: NextRequest) {
 
     const prompt = buildAnthropicPrompt(analysisRequest);
 
-    const response = await fetch('https://api.anthropic.com/v1/messages', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'x-api-key': apiKey,
-        'anthropic-version': '2023-06-01',
-        'anthropic-beta': 'structured-outputs-2025-11-13'
-      },
-      body: JSON.stringify({
-        model: getModelForTask('COMPANY_ANALYSIS'),
-        max_tokens: 2048,
-        temperature: 0.7,
-        messages: [
-          {
-            role: 'user',
-            content: prompt
-          }
-        ],
-        output_format: {
-          type: 'json_schema',
-          schema: {
-            type: 'object',
-            properties: {
-              name: { type: 'string' },
-              industry: { type: 'string' },
-              stage: { type: 'string' },
-              location: { type: 'string' },
-              employees: { type: 'string' },
-              remote: { type: 'string' },
-              openRoles: { type: 'number' },
-              matchScore: { type: 'number' },
-              matchReasons: {
-                type: 'array',
-                items: { type: 'string' }
-              },
-              connections: {
-                type: 'array',
-                items: { type: 'string' }
-              },
-              description: { type: 'string' },
-              websiteUrl: { type: 'string' },
-              careerUrl: { type: 'string' }
-            },
-            required: ['name', 'industry', 'stage', 'location', 'employees', 'remote', 'openRoles', 'matchScore', 'matchReasons', 'connections', 'description', 'websiteUrl'],
-            additionalProperties: false
-          }
+    const response = await fetch(ANTHROPIC_MESSAGES_URL, claudeRequest(apiKey, 'COMPANY_ANALYSIS', {
+      maxTokens: 8000,
+      messages: [
+        {
+          role: 'user',
+          content: prompt
         }
-      })
-    });
+      ],
+      schema: {
+        type: 'object',
+        properties: {
+          name: { type: 'string' },
+          industry: { type: 'string' },
+          stage: { type: 'string' },
+          location: { type: 'string' },
+          employees: { type: 'string' },
+          remote: { type: 'string' },
+          openRoles: { type: 'number' },
+          matchScore: { type: 'number' },
+          matchReasons: {
+            type: 'array',
+            items: { type: 'string' }
+          },
+          connections: {
+            type: 'array',
+            items: { type: 'string' }
+          },
+          description: { type: 'string' },
+          websiteUrl: { type: 'string' },
+          careerUrl: { type: 'string' }
+        },
+        required: ['name', 'industry', 'stage', 'location', 'employees', 'remote', 'openRoles', 'matchScore', 'matchReasons', 'connections', 'description', 'websiteUrl'],
+        additionalProperties: false
+      }
+    }));
 
     if (!response.ok) {
       const errorData = await response.json().catch(() => ({}));
@@ -74,11 +60,7 @@ export async function POST(request: NextRequest) {
     }
 
     const data = await response.json();
-    const responseText = data.content[0]?.text;
-
-    if (!responseText) {
-      throw new Error('No response content from Claude API');
-    }
+    const responseText = readClaudeText(data);
 
     console.log('📝 Raw Claude response text:', responseText);
     console.log('📏 Response length:', responseText.length, 'characters');
@@ -114,7 +96,7 @@ export async function POST(request: NextRequest) {
       usage: {
         inputTokens: data.usage?.input_tokens || 0,
         outputTokens: data.usage?.output_tokens || 0,
-        totalCost: calculateAnthropicCost(data.usage?.input_tokens || 0, data.usage?.output_tokens || 0)
+        totalCost: claudeCost('COMPANY_ANALYSIS', data.usage)
       }
     });
 
@@ -185,17 +167,6 @@ function parseAnthropicResponse(responseText: string) {
     const errorMsg = error instanceof Error ? error.message : 'Unknown parsing error';
     throw new Error(`Invalid JSON response from Claude API: ${errorMsg}. Response length: ${responseText?.length || 0} chars`);
   }
-}
-
-// Helper function to calculate costs
-function calculateAnthropicCost(inputTokens: number, outputTokens: number): number {
-  // Claude 3.5 Sonnet pricing
-  const inputPrice = 3; // $3 per 1M tokens
-  const outputPrice = 15; // $15 per 1M tokens
-
-  const inputCost = (inputTokens / 1000000) * inputPrice;
-  const outputCost = (outputTokens / 1000000) * outputPrice;
-  return inputCost + outputCost;
 }
 
 // Helper function to generate search URLs for company platforms

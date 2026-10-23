@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { getModelForTask } from '@/utils/llm/config';
+import { ANTHROPIC_MESSAGES_URL, claudeRequest, readClaudeText, claudeCost } from '@/utils/llm/anthropic';
 import { getCMFCombinedText } from '@/types';
 
 interface EnrichmentCompanyInput {
@@ -59,25 +59,11 @@ export async function POST(request: NextRequest) {
 
     const prompt = buildEnrichmentPrompt(cmf, companies);
 
-    const response = await fetch('https://api.anthropic.com/v1/messages', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'x-api-key': apiKey,
-        'anthropic-version': '2023-06-01',
-        'anthropic-beta': 'structured-outputs-2025-11-13'
-      },
-      body: JSON.stringify({
-        model: getModelForTask('BATCH_ENRICHMENT'),
-        max_tokens: 16384,
-        temperature: 0.5,
-        messages: [{ role: 'user', content: prompt }],
-        output_format: {
-          type: 'json_schema',
-          schema: getEnrichmentSchema()
-        }
-      })
-    });
+    const response = await fetch(ANTHROPIC_MESSAGES_URL, claudeRequest(apiKey, 'BATCH_ENRICHMENT', {
+      maxTokens: 16000,
+      messages: [{ role: 'user', content: prompt }],
+      schema: getEnrichmentSchema()
+    }));
 
     if (!response.ok) {
       const errorData = await response.json().catch(() => ({}));
@@ -105,11 +91,7 @@ export async function POST(request: NextRequest) {
     }
 
     const data = await response.json();
-    const responseText = data.content[0]?.text;
-
-    if (!responseText) {
-      throw new Error('No response content from Claude API');
-    }
+    const responseText = readClaudeText(data);
 
     console.log(`📏 Enrichment response: ${responseText.length} characters`);
     console.log(`⏹️  Stop reason: ${data.stop_reason}`);
@@ -141,7 +123,7 @@ export async function POST(request: NextRequest) {
       usage: {
         inputTokens: data.usage?.input_tokens || 0,
         outputTokens: data.usage?.output_tokens || 0,
-        totalCost: calculateCost(data.usage?.input_tokens || 0, data.usage?.output_tokens || 0)
+        totalCost: claudeCost('BATCH_ENRICHMENT', data.usage)
       }
     });
 
@@ -281,11 +263,4 @@ function getEnrichmentSchema() {
     required: ['enrichments'],
     additionalProperties: false
   };
-}
-
-function calculateCost(inputTokens: number, outputTokens: number): number {
-  // Sonnet 4.5 pricing: $3/1M input, $15/1M output
-  const inputCost = (inputTokens / 1_000_000) * 3;
-  const outputCost = (outputTokens / 1_000_000) * 15;
-  return inputCost + outputCost;
 }

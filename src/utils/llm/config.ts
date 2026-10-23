@@ -5,47 +5,31 @@
  */
 
 import { LLMProviderConfig } from './types';
+import anthropicModels from './anthropic-models.json';
+import type { AnthropicTask } from './anthropic';
 
-// Anthropic model constants - single source of truth
+// Model IDs, effort levels and prices live in anthropic-models.json,
+// which server/server.js also reads
 export const ANTHROPIC_MODELS = {
-  OPUS_4_5: 'claude-opus-4-5-20251101',
-  SONNET_4_5: 'claude-sonnet-4-5-20250929',
-  HAIKU_4_5: 'claude-haiku-4-5-20251001',
-  // Legacy models (still available but not recommended)
-  OPUS_4_1: 'claude-opus-4-1-20250805',
-  SONNET_4: 'claude-sonnet-4-20250514',
-  SONNET_3_7: 'claude-3-7-sonnet-20250219',
-  HAIKU_3_5: 'claude-3-5-haiku-20241022'
+  OPUS: 'claude-opus-5-5',
+  SONNET: 'claude-sonnet-5-5',
+  HAIKU: 'claude-haiku-5-5'
 } as const;
 
 // Default model for API calls (general purpose)
-export const DEFAULT_ANTHROPIC_MODEL = ANTHROPIC_MODELS.SONNET_4_5;
+export const DEFAULT_ANTHROPIC_MODEL = ANTHROPIC_MODELS.SONNET;
 
 /**
  * Task-based model selection
  *
- * Centralized configuration for which model to use for each task type.
- * Opus 4.5 is used for complex tasks where token efficiency matters.
- * Sonnet 4.5 is used for simpler tasks where speed/cost is preferred.
- * Haiku 4.5 is used for quick validations and simple lookups.
+ * Opus handles complex document understanding, Sonnet everyday analysis and
+ * extraction, Haiku quick lookups. See anthropic-models.json.
  */
-export const TASK_MODELS = {
-  // Complex document understanding tasks - Opus is more token-efficient
-  PROFILE_EXTRACTION: ANTHROPIC_MODELS.OPUS_4_5,
-  COMPANY_ANALYSIS: ANTHROPIC_MODELS.SONNET_4_5,
-  COMPANY_EXTRACTION: ANTHROPIC_MODELS.SONNET_4_5,
+export const TASK_MODELS = Object.fromEntries(
+  Object.entries(anthropicModels.tasks).map(([task, { model }]) => [task, model])
+) as Record<AnthropicTask, string>;
 
-  // Batch enrichment - scores all discovered companies against user CMF
-  BATCH_ENRICHMENT: ANTHROPIC_MODELS.SONNET_4_5,
-
-  // Quick validation tasks - use faster/cheaper models
-  API_VALIDATION: ANTHROPIC_MODELS.HAIKU_4_5,
-
-  // Default fallback
-  DEFAULT: ANTHROPIC_MODELS.SONNET_4_5,
-} as const;
-
-export type TaskType = keyof typeof TASK_MODELS;
+export type TaskType = AnthropicTask;
 
 /**
  * Get the model ID for a specific task
@@ -58,38 +42,12 @@ export const LLM_PROVIDERS: Record<string, LLMProviderConfig> = {
   anthropic: {
     name: 'anthropic',
     displayName: 'Anthropic Claude',
-    models: [
-      {
-        id: ANTHROPIC_MODELS.OPUS_4_5,
-        name: 'Claude Opus 4.5',
-        description: 'Most capable model - best for coding, agents, and complex tasks',
-        costPer1MTokens: { input: 5, output: 25 }
-      },
-      {
-        id: ANTHROPIC_MODELS.SONNET_4_5,
-        name: 'Claude Sonnet 4.5',
-        description: 'Flagship model with superior reasoning and coding',
-        costPer1MTokens: { input: 3, output: 15 }
-      },
-      {
-        id: ANTHROPIC_MODELS.HAIKU_4_5,
-        name: 'Claude Haiku 4.5',
-        description: 'Fast and cost-effective with strong performance',
-        costPer1MTokens: { input: 1, output: 5 }
-      },
-      {
-        id: ANTHROPIC_MODELS.OPUS_4_1,
-        name: 'Claude Opus 4.1 (Legacy)',
-        description: 'Previous most powerful model',
-        costPer1MTokens: { input: 15, output: 75 }
-      },
-      {
-        id: ANTHROPIC_MODELS.SONNET_4,
-        name: 'Claude Sonnet 4 (Legacy)',
-        description: 'Previous flagship model',
-        costPer1MTokens: { input: 3, output: 15 }
-      }
-    ],
+    models: Object.entries(anthropicModels.models).map(([id, { name, description, input, output }]) => ({
+      id,
+      name,
+      description,
+      costPer1MTokens: { input, output }
+    })),
     apiKeyLabel: 'Anthropic API Key',
     apiKeyPlaceholder: 'sk-ant-api03-...',
     docsUrl: 'https://docs.anthropic.com/en/api/getting-started'

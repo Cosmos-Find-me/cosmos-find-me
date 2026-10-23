@@ -179,16 +179,18 @@ Helper functions in `src/types/index.ts`:
 
 ## Model Selection
 
-Task-based model selection in `src/utils/llm/config.ts`:
+Task-based model selection lives in `src/utils/llm/anthropic-models.json`, shared by the API routes (through `src/utils/llm/anthropic.ts`) and the dev server:
 
-```typescript
-export const TASK_MODELS = {
-  PROFILE_EXTRACTION: 'claude-opus-4-5-20250514',  // Best for nuanced extraction
-  COMPANY_ANALYSIS: 'claude-sonnet-4-20250514',    // Good balance
-  VALIDATION: 'claude-haiku-3-5-20241022',         // Fast, simple tasks
-  DEFAULT: 'claude-sonnet-4-20250514'
+```json
+"tasks": {
+  "PROFILE_EXTRACTION": { "model": "claude-opus-5-5", "effort": "medium" },
+  "COMPANY_ANALYSIS": { "model": "claude-sonnet-5-5", "effort": "low" },
+  "API_VALIDATION": { "model": "claude-haiku-5-5", "effort": "low" },
+  "DEFAULT": { "model": "claude-sonnet-5-5", "effort": "low" }
 }
 ```
+
+Current Claude models always think, so routes set an `effort` level instead of `temperature` (which they reject), and read the answer with `readClaudeText`, which skips thinking blocks.
 
 ## Error Handling
 
