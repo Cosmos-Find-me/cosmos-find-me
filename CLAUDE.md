@@ -21,7 +21,7 @@ See [.github/CONTRIBUTORS.md](.github/CONTRIBUTORS.md) for the full list.
 
 ## Task Management
 
-All tasks are tracked in [GitHub Issues](https://github.com/pagalmes/company-fit-explorer/issues).
+All tasks are tracked in [GitHub Issues](https://github.com/Cosmos-Find-me/cosmos-find-me/issues).
 
 Labels: `mvp`, `feature`, `improvement`, `bug`, `tech-debt`, `supporting`, `minor`, `optional`
 

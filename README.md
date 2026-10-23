@@ -68,7 +68,7 @@ npm run test:e2e
 
 ## 📋 Task Management
 
-All tasks are tracked in [GitHub Issues](https://github.com/pagalmes/company-fit-explorer/issues).
+All tasks are tracked in [GitHub Issues](https://github.com/Cosmos-Find-me/cosmos-find-me/issues).
 
 See [CONTRIBUTORS.md](.github/CONTRIBUTORS.md) for team member GitHub handles.
 
