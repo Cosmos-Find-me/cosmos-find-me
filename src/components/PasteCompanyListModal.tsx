@@ -151,7 +151,7 @@ const PasteCompanyListModalContent: React.FC<Omit<PasteCompanyListModalProps, 'i
         aria-labelledby="modal-title"
       >
         {/* Header */}
-        <div className="flex items-center justify-between p-6 border-b border-gray-200">
+        <div className="flex items-center justify-between p-6 compact:p-5 border-b border-gray-200">
           <div className="flex items-center gap-3">
             <div className="w-10 h-10 bg-blue-100 rounded-full flex items-center justify-center">
               <Clipboard className="w-5 h-5 text-blue-600" />
@@ -167,7 +167,7 @@ const PasteCompanyListModalContent: React.FC<Omit<PasteCompanyListModalProps, 'i
           </div>
           <button
             onClick={onClose}
-            className="w-8 h-8 flex items-center justify-center rounded-full hover:bg-gray-100 transition-colors"
+            className="w-8 h-8 compact:w-7 compact:h-7 flex items-center justify-center rounded-full hover:bg-gray-100 transition-colors"
             aria-label="Close"
           >
             <X className="w-5 h-5 text-gray-500" />
@@ -175,11 +175,11 @@ const PasteCompanyListModalContent: React.FC<Omit<PasteCompanyListModalProps, 'i
         </div>
 
         {/* Content */}
-        <div className="flex-1 overflow-y-auto p-6">
+        <div className="flex-1 overflow-y-auto p-6 compact:p-5">
           {step === 'input' && (
             <div className="space-y-4">
               <div>
-                <label htmlFor="paste-input" className="block text-sm font-medium text-gray-700 mb-2">
+                <label htmlFor="paste-input" className="block text-sm font-medium text-gray-700 mb-2 compact:mb-1.5">
                   Paste your company list
                 </label>
                 <div
@@ -246,7 +246,7 @@ Examples:
         </div>
 
         {/* Footer */}
-        <div className="flex items-center justify-between gap-3 p-6 border-t border-gray-200 bg-gray-50">
+        <div className="flex items-center justify-between gap-3 p-6 compact:p-5 border-t border-gray-200 bg-gray-50">
           {step === 'input' ? (
             <>
               <button

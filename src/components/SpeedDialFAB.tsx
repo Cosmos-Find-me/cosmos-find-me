@@ -136,7 +136,7 @@ export const SpeedDialFAB: React.FC<SpeedDialFABProps> = ({
         {/* Action Buttons - positioned absolutely above the main FAB */}
         {isOpen && (
           <div
-            className="absolute bottom-full mb-3 right-0 flex flex-col-reverse gap-3"
+            className="absolute bottom-full mb-3 compact:mb-2 right-0 flex flex-col-reverse gap-3"
             role="menu"
             aria-orientation="vertical"
           >
@@ -197,7 +197,7 @@ export const SpeedDialFAB: React.FC<SpeedDialFABProps> = ({
           aria-controls={isMobile && isOpen ? "speed-dial-actions" : undefined}
         >
           <Plus
-            className="w-6 h-6 transition-transform duration-200"
+            className="w-6 h-6 compact:w-5 compact:h-5 transition-transform duration-200"
             style={{
               transform: isOpen ? 'rotate(90deg)' : 'rotate(0deg)',
             }}

@@ -88,7 +88,7 @@ export const SettingsFAB: React.FC<SettingsFABProps> = ({
         {/* Export Action Button - positioned absolutely above the main FAB */}
         {isOpen && (
           <div
-            className="absolute bottom-full mb-3 right-0"
+            className="absolute bottom-full mb-3 compact:mb-2 right-0"
             role="menu"
             aria-orientation="vertical"
           >
@@ -137,7 +137,7 @@ export const SettingsFAB: React.FC<SettingsFABProps> = ({
             focus:outline-hidden focus:ring-4 focus:ring-blue-600/50"
           aria-label="Settings"
         >
-          <Settings className="w-6 h-6" />
+          <Settings className="w-6 h-6 compact:w-5 compact:h-5" />
         </button>
       </div>
     </div>

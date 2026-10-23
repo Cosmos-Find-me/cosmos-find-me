@@ -34,7 +34,7 @@ const UserProfileModal: React.FC<UserProfileModalProps> = ({ userCMF, onClose })
         {/* Centered: User Avatar and Name */}
         <div className="flex flex-col items-center pt-5">
           {/* User Avatar - Gradient spark/sun effect matching the center node */}
-          <div className="relative w-20 h-20 mb-3">
+          <div className="relative w-20 h-20 mb-3 compact:mb-2">
             <div className="absolute inset-0 bg-linear-to-br from-orange-300 via-pink-400 to-purple-500 rounded-full shadow-2xl" />
             <div className="absolute inset-1 bg-linear-to-br from-yellow-200 via-orange-300 to-pink-400 rounded-full" />
             <div className="absolute inset-2 bg-linear-to-br from-yellow-100 via-orange-200 to-yellow-300 rounded-full" />
@@ -55,14 +55,14 @@ const UserProfileModal: React.FC<UserProfileModalProps> = ({ userCMF, onClose })
         <div className="space-y-4 max-w-2xl mx-auto">
           {/* Target Role Section */}
           <div className="bg-linear-to-br from-purple-50 to-pink-50 rounded-lg p-4 border border-purple-100/50">
-            <h3 className="text-sm font-semibold text-purple-900 mb-2">Target Role</h3>
+            <h3 className="text-sm font-semibold text-purple-900 mb-2 compact:mb-1.5">Target Role</h3>
             <p className="text-base text-slate-700">{userCMF.targetRole}</p>
           </div>
 
           {/* Target Companies Section */}
           {userCMF.targetCompanies && (
             <div className="bg-white/60 rounded-lg p-4 border border-pink-100/50">
-              <h3 className="text-sm font-semibold text-pink-900 mb-2">Target Companies</h3>
+              <h3 className="text-sm font-semibold text-pink-900 mb-2 compact:mb-1.5">Target Companies</h3>
               <p className="text-base text-slate-700">{userCMF.targetCompanies}</p>
             </div>
           )}
@@ -70,7 +70,7 @@ const UserProfileModal: React.FC<UserProfileModalProps> = ({ userCMF, onClose })
           {/* Must-Haves Section */}
           {userCMF.mustHaves && userCMF.mustHaves.length > 0 && (
             <div className="bg-white/60 rounded-lg p-4 border border-blue-100/50">
-              <h3 className="text-sm font-semibold text-blue-900 mb-3">Must-Haves</h3>
+              <h3 className="text-sm font-semibold text-blue-900 mb-3 compact:mb-2">Must-Haves</h3>
               <ul className="space-y-2">
                 {userCMF.mustHaves.map((item, index) => (
                   <li key={index} className="flex items-start">
@@ -87,7 +87,7 @@ const UserProfileModal: React.FC<UserProfileModalProps> = ({ userCMF, onClose })
           {/* Want-to-Haves Section */}
           {userCMF.wantToHave && userCMF.wantToHave.length > 0 && (
             <div className="bg-white/60 rounded-lg p-4 border border-purple-100/50">
-              <h3 className="text-sm font-semibold text-purple-900 mb-3">Want-to-Haves</h3>
+              <h3 className="text-sm font-semibold text-purple-900 mb-3 compact:mb-2">Want-to-Haves</h3>
               <ul className="space-y-2">
                 {userCMF.wantToHave.map((item, index) => (
                   <li key={index} className="flex items-start">
@@ -104,7 +104,7 @@ const UserProfileModal: React.FC<UserProfileModalProps> = ({ userCMF, onClose })
           {/* Experience Section */}
           {userCMF.experience && userCMF.experience.length > 0 && (
             <div className="bg-white/60 rounded-lg p-4 border border-orange-100/50">
-              <h3 className="text-sm font-semibold text-orange-900 mb-3">Experience</h3>
+              <h3 className="text-sm font-semibold text-orange-900 mb-3 compact:mb-2">Experience</h3>
               <ul className="space-y-2">
                 {userCMF.experience.map((item, index) => (
                   <li key={index} className="flex items-start">

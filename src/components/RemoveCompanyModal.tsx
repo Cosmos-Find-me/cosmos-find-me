@@ -32,7 +32,7 @@ export const RemoveCompanyModal: React.FC<RemoveCompanyModalProps> = ({
     <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-70">
       <div className="bg-linear-to-br from-slate-50 via-blue-50 to-indigo-50 rounded-lg shadow-xl max-w-md w-full mx-4 border border-blue-200/40">
         {/* Header */}
-        <div className="flex items-center justify-between p-6 border-b border-blue-200/30">
+        <div className="flex items-center justify-between p-6 compact:p-5 border-b border-blue-200/30">
           <div className="flex items-center space-x-3">
             <div className="shrink-0 w-10 h-10 bg-linear-to-br from-blue-100 to-indigo-100 rounded-full flex items-center justify-center border border-blue-200/50">
               <svg className="w-5 h-5 text-blue-600" fill="currentColor" viewBox="0 0 20 20">
@@ -54,7 +54,7 @@ export const RemoveCompanyModal: React.FC<RemoveCompanyModalProps> = ({
         </div>
 
         {/* Content */}
-        <div className="p-6">
+        <div className="p-6 compact:p-5">
           <p className="text-slate-700 mb-4">
             Remove{' '}
             <span className="font-semibold">{company.name}</span> from your 
@@ -88,7 +88,7 @@ export const RemoveCompanyModal: React.FC<RemoveCompanyModalProps> = ({
         </div>
 
         {/* Footer */}
-        <div className="flex space-x-3 p-6 border-t border-blue-200/30 bg-white/40 backdrop-blur-xs rounded-b-lg">
+        <div className="flex space-x-3 p-6 compact:p-5 border-t border-blue-200/30 bg-white/40 backdrop-blur-xs rounded-b-lg">
           <button
             onClick={onCancel}
             className="flex-1 px-4 py-2 text-white bg-slate-600 rounded-sm hover:bg-slate-700 transition-colors duration-200 shadow-xs"

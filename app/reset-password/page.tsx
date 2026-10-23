@@ -79,7 +79,7 @@ function ResetPasswordForm() {
       <div className="min-h-screen bg-linear-to-br from-slate-50 via-blue-50 to-indigo-50 flex items-center justify-center">
         <div className="bg-white/60 backdrop-blur-xs rounded-xl shadow-lg border border-blue-200/40 p-8 w-full max-w-md text-center">
           <CheckCircle className="w-16 h-16 text-green-500 mx-auto mb-4" />
-          <h1 className="text-2xl font-bold text-slate-900 mb-2">Password Updated!</h1>
+          <h1 className="text-2xl font-bold text-slate-900 mb-2 compact:mb-1.5">Password Updated!</h1>
           <p className="text-slate-600 mb-4">
             Your password has been successfully updated. You will be redirected to login shortly.
           </p>
@@ -94,7 +94,7 @@ function ResetPasswordForm() {
       <div className="bg-linear-to-br from-white via-blue-50 to-indigo-50 rounded-2xl shadow-xl p-8 w-full max-w-md border border-blue-200/40 backdrop-blur-xs">
         <div className="text-center mb-8">
           <div className="w-16 h-16 bg-linear-to-br from-blue-500 to-indigo-600 rounded-xl flex items-center justify-center mx-auto mb-4">
-            <Lock className="w-8 h-8 text-white" />
+            <Lock className="w-8 h-8 compact:w-7 compact:h-7 text-white" />
           </div>
           <h1 className="text-2xl font-bold text-slate-900">Set New Password</h1>
           <p className="text-slate-600">Choose a strong password for your account</p>
@@ -102,7 +102,7 @@ function ResetPasswordForm() {
 
         <form onSubmit={handlePasswordReset} className="space-y-6">
           <div>
-            <label className="block text-sm font-medium text-slate-700 mb-2">
+            <label className="block text-sm font-medium text-slate-700 mb-2 compact:mb-1.5">
               New Password
             </label>
             <div className="relative">
@@ -120,7 +120,7 @@ function ResetPasswordForm() {
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-slate-700 mb-2">
+            <label className="block text-sm font-medium text-slate-700 mb-2 compact:mb-1.5">
               Confirm Password
             </label>
             <div className="relative">
@@ -171,7 +171,7 @@ export default function ResetPasswordPage() {
     <Suspense fallback={
       <div className="min-h-screen bg-linear-to-br from-slate-50 via-blue-50 to-indigo-50 flex items-center justify-center">
         <div className="bg-white/60 backdrop-blur-xs rounded-xl shadow-lg border border-blue-200/40 p-8 w-full max-w-md text-center">
-          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600 mx-auto mb-4"></div>
+          <div className="animate-spin rounded-full h-8 w-8 compact:w-7 compact:h-7 border-b-2 border-blue-600 mx-auto mb-4"></div>
           <p className="text-slate-600">Loading...</p>
         </div>
       </div>

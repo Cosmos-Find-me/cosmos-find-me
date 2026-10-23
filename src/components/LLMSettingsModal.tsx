@@ -138,9 +138,9 @@ const LLMSettingsModalContent: React.FC<Omit<LLMSettingsModalProps, 'isOpen'>> =
       
       {/* Modal */}
       <div className="flex min-h-full items-center justify-center p-4">
-        <div className="relative bg-linear-to-br from-slate-50 via-blue-50 to-indigo-50 rounded-lg shadow-xl max-w-2xl w-full p-6 border border-blue-200/40">
+        <div className="relative bg-linear-to-br from-slate-50 via-blue-50 to-indigo-50 rounded-lg shadow-xl max-w-2xl w-full p-6 compact:p-5 border border-blue-200/40">
           <div className="mb-6">
-            <h2 className="text-xl font-semibold text-slate-800 mb-2">
+            <h2 className="text-xl font-semibold text-slate-800 mb-2 compact:mb-1.5">
               LLM Settings
             </h2>
             <p className="text-sm text-slate-600">
@@ -167,7 +167,7 @@ const LLMSettingsModalContent: React.FC<Omit<LLMSettingsModalProps, 'isOpen'>> =
           <div className="space-y-6">
             {/* Provider Selection */}
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-3">
+              <label className="block text-sm font-medium text-gray-700 mb-3 compact:mb-2">
                 AI Provider
               </label>
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-3">
@@ -212,7 +212,7 @@ const LLMSettingsModalContent: React.FC<Omit<LLMSettingsModalProps, 'isOpen'>> =
               <>
                 {/* Model Selection */}
                 <div>
-                  <label htmlFor="model" className="block text-sm font-medium text-gray-700 mb-2">
+                  <label htmlFor="model" className="block text-sm font-medium text-gray-700 mb-2 compact:mb-1.5">
                     Model
                   </label>
                   <select
@@ -231,7 +231,7 @@ const LLMSettingsModalContent: React.FC<Omit<LLMSettingsModalProps, 'isOpen'>> =
 
                 {/* Backend Configuration */}
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                  <label className="block text-sm font-medium text-gray-700 mb-2 compact:mb-1.5">
                     API Key Configuration
                   </label>
                   <div className="p-4 bg-gray-50 border border-gray-200 rounded-lg">
@@ -241,7 +241,7 @@ const LLMSettingsModalContent: React.FC<Omit<LLMSettingsModalProps, 'isOpen'>> =
                       </svg>
                       <div className="flex-1">
                         <h4 className="text-sm font-medium text-slate-800 mb-1">Server-Side Configuration</h4>
-                        <p className="text-sm text-slate-600 mb-2">
+                        <p className="text-sm text-slate-600 mb-2 compact:mb-1.5">
                           API keys are securely stored in the backend server environment.
                         </p>
                         <p className="text-xs text-slate-500 font-mono bg-white px-2 py-1 rounded-sm border">
@@ -306,7 +306,7 @@ const LLMSettingsModalContent: React.FC<Omit<LLMSettingsModalProps, 'isOpen'>> =
 
                 {/* Advanced Settings */}
                 <div className="border-t pt-4">
-                  <h3 className="text-sm font-medium text-gray-700 mb-3">Advanced Settings</h3>
+                  <h3 className="text-sm font-medium text-gray-700 mb-3 compact:mb-2">Advanced Settings</h3>
                   <div className="grid grid-cols-2 gap-4">
                     <div>
                       <label htmlFor="maxTokens" className="block text-sm font-medium text-gray-700 mb-1">

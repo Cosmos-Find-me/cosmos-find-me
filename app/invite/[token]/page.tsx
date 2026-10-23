@@ -157,7 +157,7 @@ export default function InvitePage() {
     return (
       <div className="min-h-screen bg-linear-to-br from-slate-50 via-blue-50 to-indigo-50 flex items-center justify-center">
         <div className="text-center">
-          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600 mx-auto mb-4"></div>
+          <div className="animate-spin rounded-full h-8 w-8 compact:w-7 compact:h-7 border-b-2 border-blue-600 mx-auto mb-4"></div>
           <p className="text-slate-600">Verifying invitation...</p>
         </div>
       </div>
@@ -169,7 +169,7 @@ export default function InvitePage() {
       <div className="min-h-screen bg-linear-to-br from-slate-50 via-blue-50 to-indigo-50 flex items-center justify-center">
         <div className="bg-white/60 backdrop-blur-xs rounded-xl shadow-lg border border-blue-200/40 p-8 w-full max-w-md text-center">
           <CheckCircle className="w-16 h-16 text-green-500 mx-auto mb-4" />
-          <h1 className="text-2xl font-bold text-slate-900 mb-2">Account Created!</h1>
+          <h1 className="text-2xl font-bold text-slate-900 mb-2 compact:mb-1.5">Account Created!</h1>
           <p className="text-slate-600 mb-4">
             Your account has been successfully created. You will be redirected to login shortly.
           </p>
@@ -184,7 +184,7 @@ export default function InvitePage() {
       <div className="min-h-screen bg-linear-to-br from-slate-50 via-blue-50 to-indigo-50 flex items-center justify-center">
         <div className="bg-white/60 backdrop-blur-xs rounded-xl shadow-lg border border-red-200/40 p-8 w-full max-w-md text-center">
           <AlertCircle className="w-16 h-16 text-red-500 mx-auto mb-4" />
-          <h1 className="text-2xl font-bold text-slate-900 mb-2">Invalid Invitation</h1>
+          <h1 className="text-2xl font-bold text-slate-900 mb-2 compact:mb-1.5">Invalid Invitation</h1>
           <p className="text-slate-600 mb-4">{error}</p>
           <button
             onClick={() => router.push('/login')}
@@ -201,7 +201,7 @@ export default function InvitePage() {
     <div className="min-h-screen bg-linear-to-br from-slate-50 via-blue-50 to-indigo-50 flex items-center justify-center">
       <div className="bg-white/60 backdrop-blur-xs rounded-xl shadow-lg border border-blue-200/40 p-8 w-full max-w-md">
         <div className="text-center mb-6">
-          <UserPlus className="w-12 h-12 text-blue-600 mx-auto mb-4" />
+          <UserPlus className="w-12 h-12 compact:w-10 compact:h-10 text-blue-600 mx-auto mb-4" />
           <h1 className="text-2xl font-bold text-slate-900">Complete Your Registration</h1>
           <p className="text-slate-600 mt-2">
             You've been invited to join CMF Explorer as <strong>{invitation.full_name}</strong>

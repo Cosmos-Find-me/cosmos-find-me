@@ -74,10 +74,10 @@ export default function LoginPage() {
         <div className="text-center mb-8">
           <div className="relative w-16 h-16 bg-linear-to-br from-orange-400 via-pink-500 to-purple-600 rounded-2xl flex items-center justify-center mx-auto mb-4 animate-pulse" style={{ animationDuration: '6s' }}>
             <div className="absolute inset-0 rounded-2xl bg-linear-to-br from-orange-400 via-pink-500 to-purple-600 opacity-50 blur-sm animate-pulse" style={{ animationDuration: '6s' }} />
-            <LogIn className="w-8 h-8 text-white relative z-10" />
+            <LogIn className="w-8 h-8 compact:w-7 compact:h-7 text-white relative z-10" />
             <Sparkles className="w-4 h-4 text-yellow-200 absolute -top-1 -right-1 animate-bounce" style={{ animationDelay: '0.5s' }} />
           </div>
-          <h1 className="text-3xl font-bold text-white mb-2">
+          <h1 className="text-3xl font-bold text-white mb-2 compact:mb-1.5">
             {resetMode ? 'Reset Password' : 'Welcome Back'}
           </h1>
           <p className="text-blue-200">
@@ -108,7 +108,7 @@ export default function LoginPage() {
           </div>
         ) : (
           <form onSubmit={resetMode ? handlePasswordReset : handleLogin} className="space-y-4">
-            <div className="flex items-center gap-3 w-full px-4 py-3 border border-slate-300 rounded-lg focus-within:ring-2 focus-within:ring-purple-400 focus-within:border-purple-400 bg-white transition-all">
+            <div className="flex items-center gap-3 w-full px-4 py-3 compact:px-3.5 compact:py-2.5 border border-slate-300 rounded-lg focus-within:ring-2 focus-within:ring-purple-400 focus-within:border-purple-400 bg-white transition-all">
               <Mail className="text-slate-400 w-5 h-5 shrink-0" />
               <input
                 type="email"
@@ -121,7 +121,7 @@ export default function LoginPage() {
             </div>
 
             {!resetMode && (
-              <div className="flex items-center gap-3 w-full px-4 py-3 border border-slate-300 rounded-lg focus-within:ring-2 focus-within:ring-purple-400 focus-within:border-purple-400 bg-white transition-all">
+              <div className="flex items-center gap-3 w-full px-4 py-3 compact:px-3.5 compact:py-2.5 border border-slate-300 rounded-lg focus-within:ring-2 focus-within:ring-purple-400 focus-within:border-purple-400 bg-white transition-all">
                 <Lock className="text-slate-400 w-5 h-5 shrink-0" />
                 <input
                   type="password"

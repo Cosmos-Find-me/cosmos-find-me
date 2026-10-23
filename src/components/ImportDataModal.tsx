@@ -94,7 +94,7 @@ const ImportDataModal: React.FC<ImportDataModalProps> = ({
     <div className="fixed inset-0 bg-black/50 backdrop-blur-xs flex items-center justify-center z-50 p-4">
       <div className="bg-white rounded-xl shadow-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto">
         {/* Header */}
-        <div className="flex items-center justify-between p-6 border-b border-slate-200">
+        <div className="flex items-center justify-between p-6 compact:p-5 border-b border-slate-200">
           <div className="flex items-center space-x-3">
             <div className="w-10 h-10 bg-linear-to-br from-blue-500 to-indigo-600 rounded-lg flex items-center justify-center">
               <FileUp className="w-5 h-5 text-white" />
@@ -108,12 +108,12 @@ const ImportDataModal: React.FC<ImportDataModalProps> = ({
             onClick={handleClose}
             className="text-slate-400 hover:text-slate-600 transition-colors"
           >
-            <X className="w-6 h-6" />
+            <X className="w-6 h-6 compact:w-5 compact:h-5" />
           </button>
         </div>
 
         {/* Content */}
-        <form onSubmit={handleImport} className="p-6 space-y-6">
+        <form onSubmit={handleImport} className="p-6 compact:p-5 space-y-6">
           {/* Error Message */}
           {error && (
             <div className="bg-red-50 border border-red-200 text-red-700 p-4 rounded-lg flex items-start space-x-2">
@@ -124,7 +124,7 @@ const ImportDataModal: React.FC<ImportDataModalProps> = ({
 
           {/* File Upload */}
           <div>
-            <label className="block text-sm font-medium text-slate-700 mb-2">
+            <label className="block text-sm font-medium text-slate-700 mb-2 compact:mb-1.5">
               Companies JSON File
             </label>
             <input

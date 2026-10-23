@@ -134,7 +134,7 @@ export default function LandingPage() {
             {/* Zoom hint overlay */}
             <div className="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-colors duration-300 flex items-center justify-center">
               <div className="opacity-0 group-hover:opacity-100 transition-opacity duration-300 bg-black/50 rounded-full p-3">
-                <ZoomIn className="w-6 h-6 text-white" />
+                <ZoomIn className="w-6 h-6 compact:w-5 compact:h-5 text-white" />
               </div>
             </div>
           </div>
@@ -165,12 +165,12 @@ export default function LandingPage() {
               <h2 className="text-4xl md:text-5xl font-bold text-white mb-6 md:mb-8 leading-tight md:leading-none">
                 Welcome to Cosmos! 🚀
               </h2>
-              <p className="text-blue-200 text-lg md:text-xl lg:text-2xl max-w-2xl mx-auto leading-relaxed mb-6 md:leading-7 lg:leading-8">
+              <p className="text-blue-200 text-[1.125rem] md:text-[1.25rem] lg:text-2xl max-w-2xl mx-auto leading-relaxed mb-6 md:leading-7 lg:leading-8">
                 Thank you for joining our waitlist. We'll keep you updated on our progress and let you know when Cosmos is ready for launch.
               </p>
               <button
                 onClick={() => setSubmitted(false)}
-                className="text-purple-300 hover:text-purple-200 text-base md:text-lg font-medium transition-colors"
+                className="text-purple-300 hover:text-purple-200 text-base md:text-[1.125rem]/7 font-medium transition-colors"
               >
                 Join the waitlist with another email
               </button>
@@ -183,13 +183,13 @@ export default function LandingPage() {
               </h2>
 
               {/* Subtitle - Clear size difference from title */}
-              <p className="text-blue-200 text-lg md:text-xl lg:text-2xl max-w-2xl mx-auto leading-relaxed md:leading-7 lg:leading-8" style={{ marginBottom: '1.5rem' }}>
+              <p className="text-blue-200 text-[1.125rem] md:text-[1.25rem] lg:text-2xl max-w-2xl mx-auto leading-relaxed md:leading-7 lg:leading-8" style={{ marginBottom: '1.5rem' }}>
                 Be the first to get access to Cosmos and updates on progress.
               </p>
 
               {/* Form - Wider to match section width better */}
               <form onSubmit={handleSubmit} className="max-w-2xl mx-auto space-y-6">
-                <div className="flex items-center gap-3 w-full px-4 py-3 border border-slate-300 rounded-xl focus-within:ring-2 focus-within:ring-purple-400 focus-within:border-purple-400 bg-white transition-all">
+                <div className="flex items-center gap-3 w-full px-4 py-3 compact:px-3.5 compact:py-2.5 border border-slate-300 rounded-xl focus-within:ring-2 focus-within:ring-purple-400 focus-within:border-purple-400 bg-white transition-all">
                   <Mail className="text-slate-400 w-5 h-5 shrink-0" />
                   <input
                     type="email"
@@ -217,7 +217,7 @@ export default function LandingPage() {
                   <div className="absolute inset-0 bg-linear-to-r from-orange-400 via-pink-500 to-purple-600 opacity-0 group-hover:opacity-100 blur-sm transition-opacity" />
                   <span className="relative z-10 flex items-center gap-2 font-semibold">
                     {loading ? 'Joining...' : 'Join the Waitlist'}
-                    <Sparkles className="w-6 h-6 opacity-0 group-hover:opacity-100 transition-opacity" />
+                    <Sparkles className="w-6 h-6 compact:w-5 compact:h-5 opacity-0 group-hover:opacity-100 transition-opacity" />
                   </span>
                 </button>
               </form>
@@ -247,7 +247,7 @@ export default function LandingPage() {
               className="fixed top-4 right-4 z-10 p-2 text-white/70 hover:text-white hover:bg-white/10 rounded-full transition-colors"
               onClick={() => setImageExpanded(false)}
             >
-              <X className="w-8 h-8" />
+              <X className="w-8 h-8 compact:w-7 compact:h-7" />
             </button>
 
             {/* Expanded image - constrained to 90vh with border */}

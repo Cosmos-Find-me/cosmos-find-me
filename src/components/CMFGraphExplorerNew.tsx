@@ -777,7 +777,7 @@ const CMFGraphExplorer: React.FC<CMFGraphExplorerProps> = ({ userProfile }) => {
               focus:outline-hidden focus:ring-4 focus:ring-blue-600/50"
             aria-label={mobileView === 'list' ? 'Show cosmos view' : 'Show company list'}
           >
-            <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <svg className="w-6 h-6 compact:w-5 compact:h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
             </svg>
           </button>
@@ -793,7 +793,7 @@ const CMFGraphExplorer: React.FC<CMFGraphExplorerProps> = ({ userProfile }) => {
           <div className="flex w-full">
             <button
               onClick={() => handleViewModeChange('explore')}
-              className={`${isMobile ? 'flex-1 px-4 py-3 text-sm' : 'w-56 px-4 py-3 text-base'} font-medium transition-colors flex items-center justify-center space-x-1.5 whitespace-nowrap min-h-[48px] ${
+              className={`${isMobile ? 'flex-1 px-4 py-3 compact:px-3.5 compact:py-2.5 text-sm' : 'w-56 compact:w-48 px-4 py-3 compact:px-3.5 compact:py-2.5 text-base'} font-medium transition-colors flex items-center justify-center space-x-1.5 whitespace-nowrap min-h-[48px] ${
                 viewMode === 'explore'
                   ? 'bg-blue-600 text-white'
                   : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
@@ -804,7 +804,7 @@ const CMFGraphExplorer: React.FC<CMFGraphExplorerProps> = ({ userProfile }) => {
             </button>
             <button
               onClick={() => handleViewModeChange('watchlist')}
-              className={`${isMobile ? 'flex-1 px-4 py-3 text-sm' : 'w-56 px-4 py-3 text-base'} font-medium transition-colors flex items-center justify-center space-x-1.5 whitespace-nowrap min-h-[48px] ${
+              className={`${isMobile ? 'flex-1 px-4 py-3 compact:px-3.5 compact:py-2.5 text-sm' : 'w-56 compact:w-48 px-4 py-3 compact:px-3.5 compact:py-2.5 text-base'} font-medium transition-colors flex items-center justify-center space-x-1.5 whitespace-nowrap min-h-[48px] ${
                 viewMode === 'watchlist'
                   ? 'bg-blue-600 text-white'
                   : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
@@ -869,7 +869,7 @@ const CMFGraphExplorer: React.FC<CMFGraphExplorerProps> = ({ userProfile }) => {
 
       {/* Desktop Side Panel - always visible */}
       {!isMobile && (
-        <div className="w-96 bg-white border-l border-gray-200 overflow-hidden">
+        <div className="w-96 compact:w-80 bg-white border-l border-gray-200 overflow-hidden">
           <CompanyDetailPanel
             ref={companyDetailPanelRef}
             selectedCompany={selectedCompany}

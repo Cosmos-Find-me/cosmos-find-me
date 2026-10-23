@@ -45,7 +45,7 @@ const CosmicUploadZone = ({ type, title, description, icon: Icon, file, color, o
       {file ? (
         <div className="text-center relative z-10">
           <CheckCircle className="w-16 h-16 text-green-300 mx-auto mb-4" />
-          <h3 className="text-lg font-semibold text-green-200 mb-2">{file.name}</h3>
+          <h3 className="text-lg font-semibold text-green-200 mb-2 compact:mb-1.5">{file.name}</h3>
           <p className="text-green-300 mb-4">
             {(file.size / 1024 / 1024).toFixed(2)} MB • Collected successfully
           </p>
@@ -69,7 +69,7 @@ const CosmicUploadZone = ({ type, title, description, icon: Icon, file, color, o
             <Icon className={`w-16 h-16 mx-auto mb-4 ${
               color === 'blue' ? 'text-blue-300' : 'text-purple-300'
             }`} />
-            <h3 className="text-xl font-semibold mb-2 text-white">{title}</h3>
+            <h3 className="text-xl font-semibold mb-2 compact:mb-1.5 text-white">{title}</h3>
             <p className="text-gray-300 mb-6">{description}</p>
             <div className={`inline-flex items-center px-6 py-3 rounded-xl font-medium transition-all hover:scale-105 ${
               color === 'blue' 
@@ -179,7 +179,7 @@ const DreamyFirstContact: React.FC<DreamyFirstContactProps> = ({ onComplete }) =
               <div className="absolute inset-4 bg-linear-to-br from-yellow-100 via-orange-200 to-yellow-300 rounded-full animate-pulse pointer-events-none" style={{ animationDelay: '1s', animationDuration: '4s', transform: 'translateZ(0)', willChange: 'opacity' }} />
               
               <div className="absolute -top-2 left-1/2 transform -translate-x-1/2 pointer-events-none">
-                <Sparkles className="w-6 h-6 text-yellow-200 animate-bounce" style={{ animationDelay: '2s' }} />
+                <Sparkles className="w-6 h-6 compact:w-5 compact:h-5 text-yellow-200 animate-bounce" style={{ animationDelay: '2s' }} />
               </div>
               <div className="absolute -right-2 top-1/3 pointer-events-none">
                 <Sparkles className="w-4 h-4 text-pink-200 animate-bounce" style={{ animationDelay: '1s' }} />
@@ -243,9 +243,9 @@ const DreamyFirstContact: React.FC<DreamyFirstContactProps> = ({ onComplete }) =
           </div>
         </div>
 
-        <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-purple-500 rounded-full opacity-5 blur-3xl animate-pulse" 
+        <div className="absolute top-1/4 left-1/4 w-96 compact:w-80 h-96 bg-purple-500 rounded-full opacity-5 blur-3xl animate-pulse" 
              style={{ animationDuration: '8s' }} />
-        <div className="absolute bottom-1/4 right-1/4 w-80 h-80 bg-blue-500 rounded-full opacity-5 blur-3xl animate-pulse" 
+        <div className="absolute bottom-1/4 right-1/4 w-80 compact:w-72 h-80 bg-blue-500 rounded-full opacity-5 blur-3xl animate-pulse" 
              style={{ animationDelay: '3s', animationDuration: '6s' }} />
         <div className="absolute top-1/3 right-1/3 w-64 h-64 bg-pink-500 rounded-full opacity-5 blur-3xl animate-pulse" 
              style={{ animationDelay: '1s', animationDuration: '10s' }} />
@@ -330,9 +330,9 @@ const DreamyFirstContact: React.FC<DreamyFirstContactProps> = ({ onComplete }) =
         </div>
 
         {/* Copy the exact same ambient effects as welcome screen */}
-        <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-purple-500 rounded-full opacity-5 blur-3xl animate-pulse" 
+        <div className="absolute top-1/4 left-1/4 w-96 compact:w-80 h-96 bg-purple-500 rounded-full opacity-5 blur-3xl animate-pulse" 
              style={{ animationDuration: '8s' }} />
-        <div className="absolute bottom-1/4 right-1/4 w-80 h-80 bg-blue-500 rounded-full opacity-5 blur-3xl animate-pulse" 
+        <div className="absolute bottom-1/4 right-1/4 w-80 compact:w-72 h-80 bg-blue-500 rounded-full opacity-5 blur-3xl animate-pulse" 
              style={{ animationDelay: '3s', animationDuration: '6s' }} />
         <div className="absolute top-1/3 right-1/3 w-64 h-64 bg-pink-500 rounded-full opacity-5 blur-3xl animate-pulse" 
              style={{ animationDelay: '1s', animationDuration: '10s' }} />
@@ -345,9 +345,9 @@ const DreamyFirstContact: React.FC<DreamyFirstContactProps> = ({ onComplete }) =
       <div className="min-h-screen bg-linear-to-br from-slate-900 via-blue-900 to-indigo-900 relative overflow-y-auto" style={{ height: '100dvh', maxHeight: '100dvh' }}>
         <StarField count={12} star={<Star className="w-2 h-2 text-blue-300 fill-current" />} />
         
-        <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-purple-500 rounded-full opacity-5 blur-3xl animate-pulse" 
+        <div className="absolute top-1/4 left-1/4 w-96 compact:w-80 h-96 bg-purple-500 rounded-full opacity-5 blur-3xl animate-pulse" 
              style={{ animationDuration: '8s' }} />
-        <div className="absolute bottom-1/4 right-1/4 w-80 h-80 bg-blue-500 rounded-full opacity-5 blur-3xl animate-pulse" 
+        <div className="absolute bottom-1/4 right-1/4 w-80 compact:w-72 h-80 bg-blue-500 rounded-full opacity-5 blur-3xl animate-pulse" 
              style={{ animationDelay: '3s', animationDuration: '6s' }} />
 
         <div className="relative max-w-6xl mx-auto py-12 px-4">
@@ -367,7 +367,7 @@ const DreamyFirstContact: React.FC<DreamyFirstContactProps> = ({ onComplete }) =
           <div className="grid lg:grid-cols-2 gap-12 mb-16">
             <div className="space-y-6">
               <div className="flex items-center text-blue-300 mb-4">
-                <div className="w-8 h-8 bg-blue-500/20 rounded-full flex items-center justify-center mr-3">
+                <div className="w-8 h-8 compact:w-7 compact:h-7 bg-blue-500/20 rounded-full flex items-center justify-center mr-3">
                   <span className="text-sm font-bold">1</span>
                 </div>
                 <h2 className="text-2xl font-semibold text-white">Your Journey Map</h2>
@@ -391,7 +391,7 @@ const DreamyFirstContact: React.FC<DreamyFirstContactProps> = ({ onComplete }) =
             <div className="space-y-6">
               <div className="flex items-center justify-between text-purple-300 mb-4">
                 <div className="flex items-center">
-                  <div className="w-8 h-8 bg-purple-500/20 rounded-full flex items-center justify-center mr-3">
+                  <div className="w-8 h-8 compact:w-7 compact:h-7 bg-purple-500/20 rounded-full flex items-center justify-center mr-3">
                     <span className="text-sm font-bold">2</span>
                   </div>
                   <h2 className="text-2xl font-semibold text-white">Your North Star</h2>
@@ -429,7 +429,7 @@ const DreamyFirstContact: React.FC<DreamyFirstContactProps> = ({ onComplete }) =
               >
                 <div className="absolute inset-0 rounded-2xl bg-linear-to-r from-orange-400 via-pink-500 to-purple-600 opacity-75 blur-sm group-hover:opacity-100 transition-opacity" />
                 <div className="relative flex items-center">
-                  <Sparkles className="w-8 h-8 mr-3 animate-spin" />
+                  <Sparkles className="w-8 h-8 compact:w-7 compact:h-7 mr-3 animate-spin" />
                   <span>Generate My Universe</span>
                   <div className="ml-3 flex space-x-1">
                     {[...Array(3)].map((_, i) => (
@@ -467,17 +467,17 @@ const DreamyFirstContact: React.FC<DreamyFirstContactProps> = ({ onComplete }) =
         {showCMFGuide && (
           <div className="fixed inset-0 bg-black/75 flex items-center justify-center z-50 p-4">
             <div className="bg-linear-to-br from-slate-800 to-blue-900 rounded-2xl max-w-4xl w-full max-h-[90vh] overflow-y-auto border border-purple-500/30 shadow-2xl">
-              <div className="sticky top-0 bg-linear-to-r from-slate-800 to-blue-900 border-b border-purple-500/20 p-6 flex justify-between items-center">
+              <div className="sticky top-0 bg-linear-to-r from-slate-800 to-blue-900 border-b border-purple-500/20 p-6 compact:p-5 flex justify-between items-center">
                 <h2 className="text-2xl font-bold text-white">✨ Your North Star Guide</h2>
                 <button
                   onClick={() => setShowCMFGuide(false)}
                   className="text-gray-400 hover:text-white transition-colors"
                 >
-                  <X className="w-6 h-6" />
+                  <X className="w-6 h-6 compact:w-5 compact:h-5" />
                 </button>
               </div>
               
-              <div className="p-6 text-white">
+              <div className="p-6 compact:p-5 text-white">
                 <div className="grid lg:grid-cols-2 gap-8">
                   <div>
                     <h3 className="text-lg font-semibold mb-4 text-purple-300">
@@ -489,14 +489,14 @@ const DreamyFirstContact: React.FC<DreamyFirstContactProps> = ({ onComplete }) =
                     
                     <div className="space-y-4">
                       <div className="p-4 bg-red-500/10 rounded-lg border border-red-500/20">
-                        <h4 className="font-semibold text-red-300 mb-2">🔴 Must-Haves</h4>
+                        <h4 className="font-semibold text-red-300 mb-2 compact:mb-1.5">🔴 Must-Haves</h4>
                         <p className="text-red-200 text-sm">
                           Your non-negotiables. Companies missing these won't be good matches.
                         </p>
                       </div>
                       
                       <div className="p-4 bg-green-500/10 rounded-lg border border-green-500/20">
-                        <h4 className="font-semibold text-green-300 mb-2">💚 Want-to-Haves</h4>
+                        <h4 className="font-semibold text-green-300 mb-2 compact:mb-1.5">💚 Want-to-Haves</h4>
                         <p className="text-green-200 text-sm">
                           Strong preferences that make roles exceptional.
                         </p>

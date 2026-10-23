@@ -413,7 +413,7 @@ const AppContainer: React.FC = () => {
 
         {/* View As User Banner */}
         {isViewingAsUser && viewedUserInfo && (
-          <div className="absolute top-0 left-0 right-0 bg-purple-600 text-white px-4 py-3 z-50 shadow-lg">
+          <div className="absolute top-0 left-0 right-0 bg-purple-600 text-white px-4 py-3 compact:px-3.5 compact:py-2.5 z-50 shadow-lg">
             <div className="max-w-7xl mx-auto flex items-center justify-between">
               <div className="flex items-center space-x-3">
                 <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">

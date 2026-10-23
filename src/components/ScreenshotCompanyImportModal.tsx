@@ -278,7 +278,7 @@ const ScreenshotCompanyImportModalContent: React.FC<Omit<ScreenshotCompanyImport
         aria-labelledby="modal-title"
       >
         {/* Header */}
-        <div className="flex items-center justify-between p-6 border-b border-gray-200">
+        <div className="flex items-center justify-between p-6 compact:p-5 border-b border-gray-200">
           <div className="flex items-center gap-3">
             <div className="w-10 h-10 bg-blue-100 rounded-full flex items-center justify-center">
               <Camera className="w-5 h-5 text-blue-600" />
@@ -294,7 +294,7 @@ const ScreenshotCompanyImportModalContent: React.FC<Omit<ScreenshotCompanyImport
           </div>
           <button
             onClick={onClose}
-            className="w-8 h-8 flex items-center justify-center rounded-full hover:bg-gray-100 transition-colors"
+            className="w-8 h-8 compact:w-7 compact:h-7 flex items-center justify-center rounded-full hover:bg-gray-100 transition-colors"
             aria-label="Close"
           >
             <X className="w-5 h-5 text-gray-500" />
@@ -302,7 +302,7 @@ const ScreenshotCompanyImportModalContent: React.FC<Omit<ScreenshotCompanyImport
         </div>
 
         {/* Content */}
-        <div className="flex-1 overflow-y-auto p-6">
+        <div className="flex-1 overflow-y-auto p-6 compact:p-5">
           {/* Upload Step */}
           {step === 'upload' && (
             <div className="space-y-4">
@@ -353,8 +353,8 @@ const ScreenshotCompanyImportModalContent: React.FC<Omit<ScreenshotCompanyImport
                   // Upload Prompt
                   <div className="space-y-4">
                     <div className="flex justify-center gap-4">
-                      <Upload className="w-12 h-12 text-gray-400" />
-                      <Clipboard className="w-12 h-12 text-gray-400" />
+                      <Upload className="w-12 h-12 compact:w-10 compact:h-10 text-gray-400" />
+                      <Clipboard className="w-12 h-12 compact:w-10 compact:h-10 text-gray-400" />
                     </div>
                     <div>
                       <p className="text-lg font-medium text-gray-900">
@@ -414,9 +414,9 @@ const ScreenshotCompanyImportModalContent: React.FC<Omit<ScreenshotCompanyImport
             <div className="space-y-6 py-8">
               <div className="text-center">
                 <div className="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                  <Camera className="w-8 h-8 text-blue-600 animate-pulse" />
+                  <Camera className="w-8 h-8 compact:w-7 compact:h-7 text-blue-600 animate-pulse" />
                 </div>
-                <h3 className="text-lg font-semibold text-gray-900 mb-2">
+                <h3 className="text-lg font-semibold text-gray-900 mb-2 compact:mb-1.5">
                   Processing Image
                 </h3>
                 <p className="text-sm text-gray-600">
@@ -441,7 +441,7 @@ const ScreenshotCompanyImportModalContent: React.FC<Omit<ScreenshotCompanyImport
               {/* Extracted Text Preview (if available) */}
               {extractedText && (
                 <div className="bg-gray-50 rounded-lg p-4 border border-gray-200">
-                  <p className="text-xs font-medium text-gray-700 mb-2">
+                  <p className="text-xs font-medium text-gray-700 mb-2 compact:mb-1.5">
                     Extracted Text:
                   </p>
                   <p className="text-sm text-gray-600 max-h-32 overflow-y-auto">
@@ -464,7 +464,7 @@ const ScreenshotCompanyImportModalContent: React.FC<Omit<ScreenshotCompanyImport
         </div>
 
         {/* Footer */}
-        <div className="flex items-center justify-between gap-3 p-6 border-t border-gray-200 bg-gray-50">
+        <div className="flex items-center justify-between gap-3 p-6 compact:p-5 border-t border-gray-200 bg-gray-50">
           {step === 'upload' ? (
             <>
               <button

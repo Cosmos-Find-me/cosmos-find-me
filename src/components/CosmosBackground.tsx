@@ -66,11 +66,11 @@ export const CosmosBackground: React.FC<CosmosBackgroundProps> = ({
 
       {/* Ambient Orbs - positioned in background layer */}
       <div
-        className="absolute top-1/4 w-96 h-96 bg-purple-500 rounded-full opacity-5 blur-3xl animate-pulse pointer-events-none"
+        className="absolute top-1/4 w-96 compact:w-80 h-96 bg-purple-500 rounded-full opacity-5 blur-3xl animate-pulse pointer-events-none"
         style={{ left: '12%', animationDuration: '8s' }}
       />
       <div
-        className="absolute bottom-1/4 w-80 h-80 bg-blue-500 rounded-full opacity-5 blur-3xl animate-pulse pointer-events-none"
+        className="absolute bottom-1/4 w-80 compact:w-72 h-80 bg-blue-500 rounded-full opacity-5 blur-3xl animate-pulse pointer-events-none"
         style={{ left: '10%', animationDelay: '5s', animationDuration: '15s' }}
       />
       <div

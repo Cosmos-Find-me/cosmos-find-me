@@ -2,9 +2,10 @@ import { test, expect, type Page } from '@playwright/test';
 
 /**
  * @testSuite CSS Cascade Regression
- * @description src/styles/index.css overrides some Tailwind utilities on laptop
- * screens (<= 1920px). These checks catch cascade changes (e.g. Tailwind v3 -> v4)
- * that make those overrides double up spacing or beat responsive variants.
+ * @description The app uses compact sizes on laptop screens (<= 1920px): smaller
+ * text through theme variables in src/styles/index.css, and `compact:` variants
+ * in the markup. These checks catch cascade changes that would double up spacing
+ * or let the compact sizes beat responsive variants.
  */
 
 // Children of space-y-* containers must be spaced from one side only

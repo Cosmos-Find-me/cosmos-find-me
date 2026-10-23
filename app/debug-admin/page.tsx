@@ -76,7 +76,7 @@ export default function DebugAdminPage() {
       <div className="max-w-4xl mx-auto">
         <h1 className="text-3xl font-bold mb-8">Admin Auth Debug</h1>
         
-        <div className="bg-white p-6 rounded-lg shadow-sm">
+        <div className="bg-white p-6 compact:p-5 rounded-lg shadow-sm">
           <h2 className="text-xl font-semibold mb-4">Authentication Debug Info</h2>
           <pre className="bg-gray-100 p-4 rounded-sm text-sm overflow-auto">
             {JSON.stringify(debugInfo, null, 2)}
