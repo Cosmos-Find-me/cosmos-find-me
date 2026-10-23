@@ -9,6 +9,7 @@ import { test, expect } from '@playwright/test';
 const pages = [
   { name: 'landing', path: '/' },
   { name: 'login', path: '/login' },
+  { name: 'reset-password', path: '/reset-password' },
 ];
 
 test.describe('Public Page Visual Regression', () => {
