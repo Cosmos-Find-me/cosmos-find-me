@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useRef, useState, useLayoutEffect } from 'react';
 import cytoscape from 'cytoscape';
 import { CompanyGraphProps, Company } from '../types';
 import { transformToGraphData, getCytoscapeStyles } from '../utils/graphDataTransform';
@@ -133,11 +133,14 @@ const CompanyGraph: React.FC<CompanyGraphProps> = ({
   const [isProfileModalOpen, setIsProfileModalOpen] = useState(false);
   const isMobile = useIsMobile();
 
-  // Keep refs updated
-  onCompanySelectRef.current = onCompanySelect;
-  onCompanyHoverRef.current = onCompanyHover;
-  onCMFToggleRef.current = onCMFToggle;
-  selectedCompanyRef.current = selectedCompany;
+  // Keep refs pointing at the latest props for the cytoscape event handlers.
+  // Layout effect: updated after commit, before the graph effect below runs.
+  useLayoutEffect(() => {
+    onCompanySelectRef.current = onCompanySelect;
+    onCompanyHoverRef.current = onCompanyHover;
+    onCMFToggleRef.current = onCMFToggle;
+    selectedCompanyRef.current = selectedCompany;
+  });
 
   useEffect(() => {
     if (!cyRef.current) return;

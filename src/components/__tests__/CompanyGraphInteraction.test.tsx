@@ -109,6 +109,24 @@ describe('CompanyGraph Interaction Regression Tests', () => {
     vi.clearAllMocks();
   });
 
+  test('graph tap handlers call the latest onCompanySelect after a re-render', async () => {
+    const cytoscape = (await import('cytoscape')).default as unknown as () => { on: ReturnType<typeof vi.fn> };
+    const cy = cytoscape();
+    const first = vi.fn();
+    const latest = vi.fn();
+
+    const { rerender } = render(<CompanyGraph {...defaultProps} onCompanySelect={first} />);
+    const tapCall = cy.on.mock.calls.find(([event, selector]) => event === 'tap' && selector === 'node[type="company"]');
+    expect(tapCall).toBeDefined();
+    const tapHandler = tapCall![2] as (event: unknown) => void;
+
+    rerender(<CompanyGraph {...defaultProps} onCompanySelect={latest} />);
+    tapHandler({ target: { data: () => mockCompanies[0] } });
+
+    expect(latest).toHaveBeenCalledWith(mockCompanies[0]);
+    expect(first).not.toHaveBeenCalled();
+  });
+
   test('should maintain selection state when companies array changes', async () => {
     const onCompanySelect = vi.fn();
     

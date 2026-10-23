@@ -9,50 +9,37 @@ interface LLMSettingsModalProps {
   onSettingsUpdated?: () => void;
 }
 
-const LLMSettingsModal: React.FC<LLMSettingsModalProps> = ({
-  isOpen,
+// Saved settings may name a provider without a model; default to its first model
+const withDefaultModel = (settings: LLMSettings): LLMSettings => {
+  const providerConfig = settings.provider !== 'none' ? LLM_PROVIDERS[settings.provider] : null;
+  return providerConfig && !settings.model ? { ...settings, model: providerConfig.models[0].id } : settings;
+};
+
+const LLMSettingsModal: React.FC<LLMSettingsModalProps> = (props) =>
+  // Content only mounts while open, so it loads the saved settings on every open
+  props.isOpen ? <LLMSettingsModalContent {...props} /> : null;
+
+const LLMSettingsModalContent: React.FC<Omit<LLMSettingsModalProps, 'isOpen'>> = ({
   onClose,
   onSettingsUpdated
 }) => {
-  const [settings, setSettings] = useState<LLMSettings>(llmService.getSettings());
+  const [settings, setSettings] = useState<LLMSettings>(() => withDefaultModel(llmService.getSettings()));
   const [isValidating, setIsValidating] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
   const [error, setError] = useState('');
   const [validationResult, setValidationResult] = useState<'valid' | 'invalid' | null>(null);
 
-  // Load current settings when modal opens
-  useEffect(() => {
-    if (isOpen) {
-      setSettings(llmService.getSettings());
-      setError('');
-      setValidationResult(null);
-    }
-  }, [isOpen]);
-
   // Handle Escape key to close modal
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
-      if (e.key === 'Escape' && isOpen) {
+      if (e.key === 'Escape') {
         onClose();
       }
     };
 
     document.addEventListener('keydown', handleKeyDown);
     return () => document.removeEventListener('keydown', handleKeyDown);
-  }, [isOpen, onClose]);
-
-  // Update model when provider changes
-  useEffect(() => {
-    if (settings.provider !== 'none') {
-      const providerConfig = LLM_PROVIDERS[settings.provider];
-      if (providerConfig && !settings.model) {
-        setSettings(prev => ({
-          ...prev,
-          model: providerConfig.models[0].id
-        }));
-      }
-    }
-  }, [settings.provider, settings.model]);
+  }, [onClose]);
 
   const handleProviderChange = (provider: LLMProvider) => {
     const providerConfig = provider !== 'none' ? LLM_PROVIDERS[provider] : null;
@@ -136,8 +123,6 @@ const LLMSettingsModal: React.FC<LLMSettingsModalProps> = ({
     setError('');
     onSettingsUpdated?.();
   };
-
-  if (!isOpen) return null;
 
   const selectedProvider = settings.provider !== 'none' ? LLM_PROVIDERS[settings.provider] : null;
 

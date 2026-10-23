@@ -69,41 +69,46 @@ function generateAlertQueries(company: Company, keyTerms: string[]): AlertQuery[
   return queries;
 }
 
-const JobAlertsModal: React.FC<JobAlertsModalProps> = ({
-  isOpen,
+const JobAlertsModal: React.FC<JobAlertsModalProps> = (props) =>
+  // Content only mounts while open
+  props.isOpen ? <JobAlertsModalContent {...props} /> : null;
+
+const JobAlertsModalContent: React.FC<Omit<JobAlertsModalProps, 'isOpen'>> = ({
   onClose,
   company,
   targetRole
 }) => {
   const [copiedIndex, setCopiedIndex] = useState<number | null>(null);
-  const [alertQueries, setAlertQueries] = useState<AlertQuery[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
+  // Queries are stored with the company/role they were generated for, so a
+  // change of company shows the loader and late responses are ignored
+  const [loaded, setLoaded] = useState<{ company: Company; targetRole: string; queries: AlertQuery[] } | null>(null);
+  const isLoading = loaded?.company !== company || loaded?.targetRole !== targetRole;
+  const alertQueries = isLoading ? [] : loaded.queries;
 
-  // Extract key role variations and generate queries when modal opens
+  // Extract key role variations and generate queries for the current company
   React.useEffect(() => {
-    if (isOpen) {
-      setIsLoading(true);
-      extractKeyRoleVariations(targetRole).then((keyTerms) => {
-        const queries = generateAlertQueries(company, keyTerms);
-        setAlertQueries(queries);
-        setIsLoading(false);
-      });
-    }
-  }, [isOpen, company, targetRole]);
+    let cancelled = false;
+    extractKeyRoleVariations(targetRole).then((keyTerms) => {
+      if (!cancelled) {
+        setLoaded({ company, targetRole, queries: generateAlertQueries(company, keyTerms) });
+      }
+    });
+    return () => {
+      cancelled = true;
+    };
+  }, [company, targetRole]);
 
   // Handle Escape key to close modal
   React.useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
-      if (e.key === 'Escape' && isOpen) {
+      if (e.key === 'Escape') {
         onClose();
       }
     };
 
     document.addEventListener('keydown', handleKeyDown);
     return () => document.removeEventListener('keydown', handleKeyDown);
-  }, [isOpen, onClose]);
-
-  if (!isOpen) return null;
+  }, [onClose]);
 
   const copyToClipboard = async (text: string, index: number) => {
     try {

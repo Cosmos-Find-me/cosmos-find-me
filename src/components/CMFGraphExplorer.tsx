@@ -29,6 +29,23 @@ import { loadRemovedCompaniesFromStorage, saveRemovedCompaniesToStorage } from '
 import { loadPanelState, savePanelState } from '../utils/panelStorage';
 import CollapsibleCMFPanel from './CollapsibleCMFPanel';
 
+// Drop companies that repeat an id or name (case-insensitive)
+const removeDuplicateCompanies = (companies: Company[]): Company[] => {
+  const unique = companies.reduce((acc, company) => {
+    const exists = acc.some(c => c.id === company.id || c.name.toLowerCase() === company.name.toLowerCase());
+    if (!exists) {
+      acc.push(company);
+    }
+    return acc;
+  }, [] as Company[]);
+
+  if (unique.length !== companies.length) {
+    console.log(`Cleaned up ${companies.length - unique.length} duplicate companies`);
+  }
+
+  return unique;
+};
+
 const CMFGraphExplorer: React.FC<CMFGraphExplorerProps> = ({ userCMF, companies: initialCompanies }) => {
   // Mobile detection
   const isMobile = useIsMobile();
@@ -58,17 +75,17 @@ const CMFGraphExplorer: React.FC<CMFGraphExplorerProps> = ({ userCMF, companies:
   const [llmConfigured, setLLMConfigured] = useState(llmService.isConfigured());
   
   // Companies state with persistence (includes initial + custom companies)
-  const [companies, setCompanies] = useState<Company[]>(initialCompanies);
+  const [companies, setCompanies] = useState<Company[]>(() => removeDuplicateCompanies(initialCompanies));
   const [customCompanies, setCustomCompanies] = useState<Company[]>([]);
   const [_isLoadingCustomCompanies, setIsLoadingCustomCompanies] = useState(true);
   
   // Removed companies state
-  const [removedCompanyIds, setRemovedCompanyIds] = useState<Set<number>>(new Set());
+  const [removedCompanyIds, setRemovedCompanyIds] = useState<Set<number>>(() => loadRemovedCompaniesFromStorage());
   const [showRemoveConfirmation, setShowRemoveConfirmation] = useState(false);
   const [companyToRemove, setCompanyToRemove] = useState<Company | null>(null);
   
   // CMF Panel collapse state
-  const [isCMFPanelCollapsed, setIsCMFPanelCollapsed] = useState<boolean>(false);
+  const [isCMFPanelCollapsed, setIsCMFPanelCollapsed] = useState<boolean>(() => loadPanelState().cmfCollapsed);
   
   // Company selection state
   const {
@@ -263,41 +280,6 @@ const CMFGraphExplorer: React.FC<CMFGraphExplorerProps> = ({ userCMF, companies:
     setCompanyToRemove(null);
   }, []);
 
-  // Clean up duplicates function
-  const cleanupDuplicates = useCallback(() => {
-    setCompanies(prev => {
-      const uniqueCompanies = prev.reduce((acc, company) => {
-        const exists = acc.some(c => c.id === company.id || c.name.toLowerCase() === company.name.toLowerCase());
-        if (!exists) {
-          acc.push(company);
-        }
-        return acc;
-      }, [] as Company[]);
-      
-      if (uniqueCompanies.length !== prev.length) {
-        console.log(`Cleaned up ${prev.length - uniqueCompanies.length} duplicate companies`);
-      }
-      
-      return uniqueCompanies;
-    });
-  }, []);
-
-  // Run cleanup on mount
-  useEffect(() => {
-    cleanupDuplicates();
-  }, [cleanupDuplicates]);
-
-  // Load removed companies on mount
-  useEffect(() => {
-    const savedRemovedCompanies = loadRemovedCompaniesFromStorage();
-    setRemovedCompanyIds(savedRemovedCompanies);
-  }, []);
-
-  // Load CMF panel collapse state on mount
-  useEffect(() => {
-    const panelState = loadPanelState();
-    setIsCMFPanelCollapsed(panelState.cmfCollapsed);
-  }, []);
 
   // Toggle CMF panel collapse state
   const toggleCMFPanel = useCallback(() => {

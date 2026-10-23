@@ -8,6 +8,7 @@ import LLMSettingsModal from '../../src/components/LLMSettingsModal'
 import ImportDataModal from '../../src/components/ImportDataModal'
 import { DeleteUserConfirmationModal } from '../../src/components/DeleteUserConfirmationModal'
 import { llmService } from '../../src/utils/llm/service'
+import { useLLMConfigured } from '../../src/hooks/useLLMConfigured'
 
 // Force dynamic rendering for admin pages
 export const dynamic = 'force-dynamic'
@@ -61,8 +62,21 @@ function getOnboardingStatus(profileStatus: ProfileStatus, hasData: boolean): {
   }
 }
 
+type UsersResult = { users: any[] } | { error: string }
+
+// Fetching is kept free of component state so the mount effect can apply the result asynchronously
+async function loadUsers(): Promise<UsersResult> {
+  try {
+    const response = await fetch('/api/admin/users')
+    const data = await response.json()
+    return response.ok ? { users: data.users } : { error: data.error }
+  } catch {
+    return { error: 'Failed to fetch users' }
+  }
+}
+
 export default function AdminPage() {
-  const [users, setUsers] = useState([])
+  const [users, setUsers] = useState<any[]>([])
   const [loading, setLoading] = useState(true)
   const [inviteEmail, setInviteEmail] = useState('')
   const [inviteName, setInviteName] = useState('')
@@ -70,7 +84,6 @@ export default function AdminPage() {
   const [message, setMessage] = useState('')
   const [messageType, setMessageType] = useState<'success' | 'error'>('success')
   const [showLLMSettings, setShowLLMSettings] = useState(false)
-  const [llmConfigured, setLLMConfigured] = useState(false)
   const [showImportModal, setShowImportModal] = useState(false)
   const [selectedUser, setSelectedUser] = useState<{ id: string; email: string } | null>(null)
   const [showDeleteModal, setShowDeleteModal] = useState(false)
@@ -79,28 +92,24 @@ export default function AdminPage() {
 
   const router = useRouter()
 
+  const llmConfigured = useLLMConfigured()
+
+  const applyUsersResult = (result: UsersResult) => {
+    if ('users' in result) {
+      setUsers(result.users)
+    } else {
+      setMessage(result.error)
+      setMessageType('error')
+    }
+    setLoading(false)
+  }
+
   useEffect(() => {
-    fetchUsers()
-    setLLMConfigured(llmService.isConfigured())
+    loadUsers().then(applyUsersResult)
   }, [])
 
   const fetchUsers = async () => {
-    try {
-      const response = await fetch('/api/admin/users')
-      const data = await response.json()
-      
-      if (response.ok) {
-        setUsers(data.users)
-      } else {
-        setMessage(data.error)
-        setMessageType('error')
-      }
-    } catch (error) {
-      setMessage('Failed to fetch users')
-      setMessageType('error')
-    } finally {
-      setLoading(false)
-    }
+    applyUsersResult(await loadUsers())
   }
 
   const handleInviteUser = async (e: React.FormEvent) => {
@@ -524,7 +533,6 @@ export default function AdminPage() {
             isOpen={showLLMSettings}
             onClose={() => setShowLLMSettings(false)}
             onSettingsUpdated={() => {
-              setLLMConfigured(llmService.isConfigured())
               setMessage('LLM settings updated successfully')
               setMessageType('success')
             }}

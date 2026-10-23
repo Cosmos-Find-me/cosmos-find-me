@@ -14,9 +14,24 @@ export class LLMService {
   private static readonly STORAGE_KEY = 'cmf-llm-settings';
   private provider: BaseLLMProvider | null = null;
   private settings: LLMSettings = DEFAULT_LLM_SETTINGS;
+  private listeners = new Set<() => void>();
 
   constructor() {
     this.loadSettings();
+  }
+
+  /**
+   * Listen for settings changes (for useSyncExternalStore); returns an unsubscribe function
+   */
+  subscribe = (listener: () => void): (() => void) => {
+    this.listeners.add(listener);
+    return () => {
+      this.listeners.delete(listener);
+    };
+  };
+
+  private notify(): void {
+    this.listeners.forEach((listener) => listener());
   }
 
   /**
@@ -48,6 +63,7 @@ export class LLMService {
       
       // Reinitialize provider
       this.initializeProvider();
+      this.notify();
       
       return true;
     } catch (error) {
@@ -168,6 +184,7 @@ export class LLMService {
     if (typeof window !== 'undefined' && localStorage) {
       localStorage.removeItem(LLMService.STORAGE_KEY);
     }
+    this.notify();
   }
 
   private loadSettings(): void {
