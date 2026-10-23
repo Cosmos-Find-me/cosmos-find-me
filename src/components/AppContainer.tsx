@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import DreamyFirstContact from './DreamyFirstContact';
+import { StarField } from './StarField';
 import CMFGraphExplorerNew from './CMFGraphExplorerNew';
 import { createUserProfileFromFiles } from '../utils/fileProcessing';
 import { UserExplorationState } from '../types';
@@ -193,9 +194,11 @@ const AppContainer: React.FC = () => {
     }
   }, []);
 
-  // Initial data load on mount
+  // Initial data load on mount. checkAuthAndLoadData only sets state after its
+  // first await; starting it from a promise keeps the effect body itself free
+  // of synchronous state updates.
   useEffect(() => {
-    checkAuthAndLoadData();
+    void Promise.resolve().then(checkAuthAndLoadData);
   }, [checkAuthAndLoadData]);
 
   // Sync data when returning to the app (visibility change)
@@ -310,22 +313,7 @@ const AppContainer: React.FC = () => {
     return (
       <div className="bg-linear-to-br from-slate-900 via-blue-900 to-indigo-900 flex items-center justify-center relative overflow-hidden" style={{ minHeight: '100vh' }}>
         {/* Floating cosmic particles */}
-        <div className="absolute inset-0 overflow-hidden pointer-events-none">
-          {[...Array(20)].map((_, i) => (
-            <div
-              key={i}
-              className="absolute animate-pulse opacity-30"
-              style={{
-                left: `${Math.random() * 100}%`,
-                top: `${Math.random() * 100}%`,
-                animationDelay: `${Math.random() * 3}s`,
-                animationDuration: `${2 + Math.random() * 2}s`
-              }}
-            >
-              <div className="w-1 h-1 bg-blue-300 rounded-full" />
-            </div>
-          ))}
-        </div>
+        <StarField count={20} seed={2} />
         
         <div className="text-center px-4">
           <div className="relative mb-8">
@@ -390,25 +378,6 @@ const AppContainer: React.FC = () => {
     );
   }
 
-  // Floating stars component for cosmic background
-  const FloatingStars = () => (
-    <div className="absolute inset-0 overflow-hidden pointer-events-none">
-      {[...Array(12)].map((_, i) => (
-        <div
-          key={i}
-          className="absolute animate-pulse opacity-30"
-          style={{
-            left: `${Math.random() * 100}%`,
-            top: `${Math.random() * 100}%`,
-            animationDelay: `${Math.random() * 3}s`,
-            animationDuration: `${2 + Math.random() * 2}s`
-          }}
-        >
-          <div className="w-1 h-1 bg-blue-300 rounded-full" />
-        </div>
-      ))}
-    </div>
-  );
 
   // Show loading screen while checking authentication
   if (authLoading) {
@@ -426,7 +395,7 @@ const AppContainer: React.FC = () => {
   if (userProfile && hasCompletedDataCheck && !authLoading) {
     return (
       <div className="bg-linear-to-br from-slate-900 via-blue-900 to-indigo-900 relative overflow-hidden transition-all duration-1000" style={{ height: '100dvh', maxHeight: '100dvh' }}>
-        <FloatingStars />
+        <StarField count={12} />
 
         <div className="absolute inset-0 opacity-10">
           <div className="absolute inset-0" style={{

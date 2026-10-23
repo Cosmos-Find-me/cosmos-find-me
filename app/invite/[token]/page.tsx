@@ -1,11 +1,23 @@
 'use client'
-import { useState, useEffect, useCallback } from 'react'
+import { useState, useEffect } from 'react'
 import { useParams, useRouter } from 'next/navigation'
 import { createClientComponentClient } from '../../../src/lib/supabase'
 import { UserPlus, CheckCircle, AlertCircle } from 'lucide-react'
 
 // Force dynamic rendering for invite pages
 export const dynamic = 'force-dynamic'
+
+type InvitationResult = { invitation: any } | { error: string }
+
+async function verifyInvitation(token: string): Promise<InvitationResult> {
+  try {
+    const response = await fetch(`/api/invite/${token}`)
+    const data = await response.json()
+    return response.ok ? { invitation: data.invitation } : { error: data.error || 'Invalid or expired invitation' }
+  } catch {
+    return { error: 'Failed to verify invitation' }
+  }
+}
 
 export default function InvitePage() {
   const [loading, setLoading] = useState(true)
@@ -20,26 +32,21 @@ export default function InvitePage() {
   const router = useRouter()
   const token = params.token as string
 
-  const checkInvitation = useCallback(async () => {
-    try {
-      const response = await fetch(`/api/invite/${token}`)
-      const data = await response.json()
-
-      if (response.ok) {
-        setInvitation(data.invitation)
+  useEffect(() => {
+    let cancelled = false
+    verifyInvitation(token).then((result) => {
+      if (cancelled) return
+      if ('invitation' in result) {
+        setInvitation(result.invitation)
       } else {
-        setError(data.error || 'Invalid or expired invitation')
+        setError(result.error)
       }
-    } catch (error) {
-      setError('Failed to verify invitation')
-    } finally {
       setLoading(false)
+    })
+    return () => {
+      cancelled = true
     }
   }, [token])
-
-  useEffect(() => {
-    checkInvitation()
-  }, [token, checkInvitation])
 
   const handleSignup = async (e: React.FormEvent) => {
     e.preventDefault()
