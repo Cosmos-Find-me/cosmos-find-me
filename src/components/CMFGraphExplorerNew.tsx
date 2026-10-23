@@ -29,6 +29,7 @@ const ExportModal = dynamic(() => import('./ExportModal'));
 import { SpeedDialFAB } from './SpeedDialFAB';
 import { SettingsFAB } from './SettingsFAB';
 import { llmService } from '../utils/llm/service';
+import { useLLMConfigured } from '../hooks/useLLMConfigured';
 import { loadPanelState, savePanelState } from '../utils/panelStorage';
 import CollapsibleCMFPanel from './CollapsibleCMFPanel';
 import { useKeyboardShortcuts } from '../hooks/useKeyboardShortcuts';
@@ -66,23 +67,26 @@ const CMFGraphExplorer: React.FC<CMFGraphExplorerProps> = ({ userProfile }) => {
   // Initialize state manager from provided profile or default
   const [stateManager, setStateManager] = useState(() => new ExplorationStateManager(userProfile || activeUserProfile, 'teeKProfile'));
 
-  // Update state manager when userProfile changes
-  useEffect(() => {
-    if (userProfile) {
-      console.log('🔄 Updating state manager with new user profile:', userProfile);
-      setStateManager(new ExplorationStateManager(userProfile, 'teeKProfile'));
-    }
-  }, [userProfile]);
-
-  // UI state
-  const [selectedCompany, setSelectedCompany] = useState<Company | null>(null);
+  // UI state - selection and view mode are restored from the exploration state
+  const [selectedCompany, setSelectedCompany] = useState<Company | null>(() => stateManager.getSelectedCompany());
   const [hoveredCompany, setHoveredCompany] = useState<Company | null>(null);
-  const [viewMode, setViewMode] = useState<ViewMode>('explore');
+  const [viewMode, setViewMode] = useState<ViewMode>(() => stateManager.getViewMode());
+
+  // Rebuild the state manager when a new userProfile arrives (adjusting state
+  // during render, so the new profile is shown without an extra effect pass)
+  const [managerProfile, setManagerProfile] = useState(userProfile);
+  if (userProfile && userProfile !== managerProfile) {
+    console.log('🔄 Updating state manager with new user profile:', userProfile);
+    const nextManager = new ExplorationStateManager(userProfile, 'teeKProfile');
+    setManagerProfile(userProfile);
+    setStateManager(nextManager);
+    setSelectedCompany(nextManager.getSelectedCompany());
+    setViewMode(nextManager.getViewMode());
+  }
   const [mobileView, setMobileView] = useState<'cosmos' | 'list' | 'detail'>('cosmos');
   const [previousMobileView, setPreviousMobileView] = useState<'cosmos' | 'list'>('cosmos');
   const [isDetailClosing, setIsDetailClosing] = useState(false);
   const [isListClosing, setIsListClosing] = useState(false);
-  const [isLoading, setIsLoading] = useState(true);
   
   // Modal states
   const [showAddCompanyModal, setShowAddCompanyModal] = useState(false);
@@ -91,12 +95,12 @@ const CMFGraphExplorer: React.FC<CMFGraphExplorerProps> = ({ userProfile }) => {
   const [showLLMSettings, setShowLLMSettings] = useState(false);
   const [showKeyboardShortcuts, setShowKeyboardShortcuts] = useState(false);
   const [showExportModal, setShowExportModal] = useState(false);
-  const [llmConfigured, setLLMConfigured] = useState(llmService.isConfigured());
+  const llmConfigured = useLLMConfigured();
   const [showRemoveConfirmation, setShowRemoveConfirmation] = useState(false);
   const [companyToRemove, setCompanyToRemove] = useState<Company | null>(null);
   
   // Panel state - default to collapsed for cleaner UI
-  const [isCMFPanelCollapsed, setIsCMFPanelCollapsed] = useState<boolean>(true);
+  const [isCMFPanelCollapsed, setIsCMFPanelCollapsed] = useState<boolean>(() => loadPanelState().cmfCollapsed);
 
   // Force re-render trigger for state changes
   const [stateVersion, setStateVersion] = useState(0);
@@ -186,35 +190,6 @@ const CMFGraphExplorer: React.FC<CMFGraphExplorerProps> = ({ userProfile }) => {
       },
     ],
   });
-
-  // Initialize state from companies.ts on mount
-  useEffect(() => {
-    setIsLoading(true);
-
-    // Restore last selected company
-    const lastSelected = stateManager.getSelectedCompany();
-    setSelectedCompany(lastSelected);
-
-    // Restore view mode
-    const lastViewMode = stateManager.getViewMode();
-    setViewMode(lastViewMode);
-
-    // Load panel state
-    const panelState = loadPanelState();
-    setIsCMFPanelCollapsed(panelState.cmfCollapsed);
-
-    setIsLoading(false);
-
-    // Development logging commented out to reduce console noise
-    // console.log('🚀 Loaded exploration state from companies.ts:', {
-    //   userId: activeUserProfile.id,
-    //   userName: activeUserProfile.name,
-    //   stats: stateManager.getExplorationStats(),
-    //   watchlistStats: stateManager.getWatchlistStats(),
-    //   lastSelected: lastSelected?.name,
-    //   viewMode: lastViewMode
-    // });
-  }, [stateManager]);
 
   const allCompanies = useMemo(() => {
     return stateManager.getAllCompanies();
@@ -773,22 +748,7 @@ const CMFGraphExplorer: React.FC<CMFGraphExplorerProps> = ({ userProfile }) => {
     savePanelState({ cmfCollapsed: newState });
   }, [isCMFPanelCollapsed]);
 
-  // ===== LLM SETTINGS =====
-
-  // Update LLM configured status on mount and periodically
-  useEffect(() => {
-    setLLMConfigured(llmService.isConfigured());
-  }, []);
-
   // ===== RENDER =====
-
-  if (isLoading) {
-    return (
-      <div className="flex items-center justify-center h-screen">
-        <div className="text-lg">Loading exploration state...</div>
-      </div>
-    );
-  }
 
   const userCMF = stateManager.getUserCMF();
 
