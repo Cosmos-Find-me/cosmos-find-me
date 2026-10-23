@@ -1,3 +1,4 @@
+import { StrictMode } from 'react';
 import { render, act } from '@testing-library/react';
 import { vi } from 'vitest';
 import AppContainer from '../AppContainer';
@@ -83,6 +84,20 @@ describe('API Call Monitoring Tests', () => {
 
     // Should still be only 1 call
     expect(fetchSpy).toHaveBeenCalledTimes(1);
+  });
+
+  test('loads user data once under Strict Mode, which runs mount effects twice in dev', async () => {
+    render(
+      <StrictMode>
+        <AppContainer />
+      </StrictMode>
+    );
+
+    await act(async () => {
+      vi.advanceTimersByTime(1000);
+    });
+
+    expect(fetchSpy.mock.calls.filter((call: any[]) => call[0] === '/api/user/data')).toHaveLength(1);
   });
 
   test('should detect excessive API calls (regression test)', async () => {
