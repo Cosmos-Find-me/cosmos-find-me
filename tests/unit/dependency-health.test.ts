@@ -64,6 +64,22 @@ describe('Dependency Health', () => {
     expect(major(installedVersion(types))).toBe(major(installedVersion('react')))
   })
 
+  it('has no @types package for a library that ships its own types', () => {
+    const typesPackages = Object.keys({ ...pkg.dependencies, ...pkg.devDependencies }).filter((name) =>
+      name.startsWith('@types/')
+    )
+    const redundant = typesPackages.filter((name) => {
+      const lib = name.slice('@types/'.length).replace('__', '/')
+      try {
+        const libPkg = JSON.parse(readFileSync(join(root, 'node_modules', lib, 'package.json'), 'utf8'))
+        return Boolean(libPkg.types || libPkg.typings)
+      } catch {
+        return false
+      }
+    })
+    expect(redundant).toEqual([])
+  })
+
   it('every runtime dependency is imported somewhere', () => {
     // Required by Next.js itself rather than imported by app code
     const implicit = new Set(['react-dom'])
