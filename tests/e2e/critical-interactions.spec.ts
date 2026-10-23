@@ -168,4 +168,25 @@ test.describe('Critical User Interactions', () => {
     });
     expect(isResponsive).toBe(true);
   });
+
+  // next/image only optimizes local URLs with a query string that match
+  // images.localPatterns; /api/logo?domain=... crashed the page in dev and
+  // returned 400 in production until next.config.js allowed it
+  for (const button of ['Settings', 'Add Company']) {
+    test(`opens ${button} with its logos loaded`, async ({ page }) => {
+      const pageErrors: string[] = [];
+      page.on('pageerror', (error) => pageErrors.push(error.message));
+      await setupPage(page);
+      await page.addStyleTag({ content: 'nextjs-portal { display: none !important; }' });
+
+      await page.getByRole('button', { name: button, exact: true }).first().click();
+
+      const logos = page.locator('img[src*="api%2Flogo"], img[src*="/api/logo"]');
+      await expect(logos.first()).toBeVisible();
+      await expect.poll(() =>
+        logos.evaluateAll((imgs) => imgs.every((img) => (img as HTMLImageElement).naturalWidth > 0))
+      ).toBe(true);
+      expect(pageErrors).toEqual([]);
+    });
+  }
 });
