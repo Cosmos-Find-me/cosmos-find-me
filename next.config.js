@@ -43,6 +43,12 @@ const nextConfig = {
         hostname: 'logo.clearbit.com', // Temporary - for migrating old data
       },
     ],
+    localPatterns: [
+      // Next's default: local images without a query string
+      { pathname: '**', search: '' },
+      // The logo proxy takes the company as ?domain=
+      { pathname: '/api/logo' },
+    ],
     dangerouslyAllowSVG: true,
     contentSecurityPolicy: "default-src 'self'; script-src 'none'; sandbox;",
   },
