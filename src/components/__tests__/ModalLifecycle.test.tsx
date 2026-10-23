@@ -130,6 +130,20 @@ describe('LLMSettingsModal', () => {
     expect(modelSelect.value).not.toBe('')
   })
 
+  it('replaces a saved model that is no longer offered', async () => {
+    llmSettings.current = { ...llmSettings.current, model: 'claude-3-5-haiku-20241022' }
+    const { llmService } = await import('../../utils/llm/service')
+    vi.mocked(llmService.updateSettings).mockResolvedValue(true)
+
+    render(ui(true))
+    fireEvent.click(screen.getByText('Save Settings'))
+
+    await waitFor(() =>
+      expect(llmService.updateSettings).toHaveBeenCalledWith(expect.objectContaining({ model: 'claude-opus-5-5' }))
+    )
+    llmSettings.current = { ...llmSettings.current, model: '' }
+  })
+
   it('discards unsaved edits when reopened', () => {
     const { closeAndReopen } = reopen(ui)
     const maxTokens = () => screen.getByDisplayValue(/^\d+$/) as HTMLInputElement

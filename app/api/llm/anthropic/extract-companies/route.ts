@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { getModelForTask } from '@/utils/llm/config';
+import { ANTHROPIC_MESSAGES_URL, claudeRequest, readClaudeText } from '@/utils/llm/anthropic';
 import { processCareerUrl } from './urlProcessors';
 
 interface ExtractedCompany {
@@ -101,19 +101,19 @@ Instructions for "careerUrl":
 IMPORTANT: Determine from context and URL patterns if a link is truly a company career page.
 
 You will see many types of URLs that are NOT career pages:
-- Job board links (LinkedIn, Glassdoor, Indeed)
+- Job aggregator links (LinkedIn, Glassdoor, Indeed)
 - Specific job postings (single role, not company careers page)
 - Email tracking redirects (long URLs with tracking parameters)
 - Marketing redirects (click trackers, analytics wrappers)
 
 ONLY include careerUrl if:
-1. The URL is clearly a company's own careers/jobs page (e.g., "company.com/careers", "careers.company.com")
+1. The URL is the company's careers/jobs page, either on its own site (e.g., "company.com/careers", "careers.company.com") or the page listing all its openings on a hiring platform (e.g., "job-boards.greenhouse.io/company", "jobs.ashbyhq.com/company", "jobs.lever.co/company", a Notion "Work at Company" page, "ycombinator.com/companies/company/jobs")
 2. The link text or context indicates it's a careers page (e.g., "View all jobs at Company")
-3. It's NOT a third-party job board or single job posting
+3. It's NOT a job aggregator or single job posting
 
 Do NOT include careerUrl if:
 - It's the company's main website without /careers path
-- It's a job board URL (even if it links to company's jobs)
+- It's a job aggregator URL like LinkedIn, Glassdoor or Indeed (even if it links to company's jobs)
 - It's a specific job posting (not the general careers page)
 - It's a tracking/redirect URL
 - You're uncertain - when in doubt, omit this field
@@ -121,7 +121,8 @@ Do NOT include careerUrl if:
 Examples:
   * "Webflow" + link "webflow.com/careers" → careerUrl: "https://webflow.com/careers" ✓
   * "Webflow" + link "jobs.webflow.com" → careerUrl: "https://jobs.webflow.com" ✓
-  * "Webflow" + link "linkedin.com/company/webflow/jobs" → careerUrl: omitted (job board) ✓
+  * "Webflow" + link "job-boards.greenhouse.io/webflow" → careerUrl: "https://job-boards.greenhouse.io/webflow" ✓
+  * "Webflow" + link "linkedin.com/company/webflow/jobs" → careerUrl: omitted (job aggregator) ✓
   * "Webflow" + link "webflow.com/careers/senior-engineer" → careerUrl: omitted (specific job) ✓
   * "Webflow" + link "webflow.com" → careerUrl: omitted (main site, not careers) ✓
   * "Webflow" + no links → careerUrl: omitted ✓
@@ -134,49 +135,35 @@ Rules:
 Text to analyze:
 ${contentToAnalyze}${extractedLinks.length > 0 ? `\n\nHyperlinks found in the text (these are mostly career pages):\n${extractedLinks.map(link => `- "${link.text}" -> ${link.url}`).join('\n')}` : ''}`;
 
-    const response = await fetch('https://api.anthropic.com/v1/messages', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'x-api-key': apiKey,
-        'anthropic-version': '2023-06-01',
-        'anthropic-beta': 'structured-outputs-2025-11-13'
-      },
-      body: JSON.stringify({
-        model: getModelForTask('COMPANY_EXTRACTION'),
-        max_tokens: 2048, // Reduced from 4096 - URLs are pre-processed before sending to LLM
-        temperature: 0.1, // Low temperature for consistent extraction
-        messages: [
-          {
-            role: 'user',
-            content: prompt
-          }
-        ],
-        output_format: {
-          type: 'json_schema',
-          schema: {
-            type: 'object',
-            properties: {
-              companies: {
-                type: 'array',
-                items: {
-                  type: 'object',
-                  properties: {
-                    name: { type: 'string' },
-                    url: { type: 'string' },
-                    careerUrl: { type: 'string' }
-                  },
-                  required: ['name'],
-                  additionalProperties: false
-                }
-              }
-            },
-            required: ['companies'],
-            additionalProperties: false
-          }
+    const response = await fetch(ANTHROPIC_MESSAGES_URL, claudeRequest(apiKey, 'COMPANY_EXTRACTION', {
+      maxTokens: 8000,
+      messages: [
+        {
+          role: 'user',
+          content: prompt
         }
-      })
-    });
+      ],
+      schema: {
+        type: 'object',
+        properties: {
+          companies: {
+            type: 'array',
+            items: {
+              type: 'object',
+              properties: {
+                name: { type: 'string' },
+                url: { type: 'string' },
+                careerUrl: { type: 'string' }
+              },
+              required: ['name'],
+              additionalProperties: false
+            }
+          }
+        },
+        required: ['companies'],
+        additionalProperties: false
+      }
+    }));
 
     if (!response.ok) {
       const errorData = await response.json().catch(() => ({}));
@@ -184,11 +171,7 @@ ${contentToAnalyze}${extractedLinks.length > 0 ? `\n\nHyperlinks found in the te
     }
 
     const data = await response.json();
-    const content = data.content?.[0]?.text;
-
-    if (!content) {
-      throw new Error('No content in response');
-    }
+    const content = readClaudeText(data);
 
     // Parse the JSON response (with structured outputs, it's guaranteed valid JSON)
     let result: { companies: ExtractedCompany[] };

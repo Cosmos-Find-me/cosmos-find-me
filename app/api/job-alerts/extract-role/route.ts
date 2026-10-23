@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { ANTHROPIC_MESSAGES_URL, claudeRequest, readClaudeText } from '@/utils/llm/anthropic';
 
 export async function POST(request: NextRequest) {
   let targetRole = '';
@@ -18,20 +19,11 @@ export async function POST(request: NextRequest) {
       });
     }
 
-    const response = await fetch('https://api.anthropic.com/v1/messages', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'x-api-key': apiKey,
-        'anthropic-version': '2023-06-01',
-        'anthropic-beta': 'structured-outputs-2025-11-13'
-      },
-      body: JSON.stringify({
-        model: 'claude-3-5-haiku-20241022',
-        max_tokens: 100,
-        messages: [{
-          role: 'user',
-          content: `Extract 1-2 VERY COMMON and BROAD search keywords for Google Alert job searches. Use only single words or 2-word phrases that are widely used.
+    const response = await fetch(ANTHROPIC_MESSAGES_URL, claudeRequest(apiKey, 'JOB_ROLE_KEYWORDS', {
+      maxTokens: 1024,
+      messages: [{
+        role: 'user',
+        content: `Extract 1-2 VERY COMMON and BROAD search keywords for Google Alert job searches. Use only single words or 2-word phrases that are widely used.
 
 Examples:
 - "Senior Technical Product Manager" → ["Product"]
@@ -39,25 +31,21 @@ Examples:
 - "Staff Software Engineer" → ["Engineer", "Software"]
 
 Job role: "${targetRole}"`
-        }],
-        output_format: {
-          type: 'json_schema',
-          schema: {
-            type: 'object',
-            properties: {
-              keyTerms: {
-                type: 'array',
-                items: { type: 'string' },
-                minItems: 1,
-                maxItems: 2
-              }
-            },
-            required: ['keyTerms'],
-            additionalProperties: false
+      }],
+      schema: {
+        type: 'object',
+        properties: {
+          keyTerms: {
+            type: 'array',
+            items: { type: 'string' },
+            // Structured outputs rejects maxItems; the 2-term limit is applied below
+            minItems: 1
           }
-        }
-      })
-    });
+        },
+        required: ['keyTerms'],
+        additionalProperties: false
+      }
+    }));
 
     if (!response.ok) {
       console.error('Anthropic API error:', response.status);
@@ -67,12 +55,12 @@ Job role: "${targetRole}"`
     }
 
     const data = await response.json();
-    const responseText = data.content[0]?.text?.trim() || '';
+    const responseText = readClaudeText(data).trim();
 
     // With structured outputs, parse JSON response directly
     try {
       const parsed = JSON.parse(responseText);
-      const keyTerms = parsed.keyTerms || [];
+      const keyTerms = (parsed.keyTerms || []).slice(0, 2);
 
       // Fallback if no valid terms extracted
       if (keyTerms.length === 0) {

@@ -32,8 +32,8 @@ export default async function handler(req, res) {
       'anthropic-version': '2023-06-01'
     },
     body: JSON.stringify({
-      model: 'claude-sonnet-4-5-20250929', // Latest Claude Sonnet 4.5
-      max_tokens: 1500,
+      model: 'claude-sonnet-5-5',
+      max_tokens: 8000, // thinking counts toward max_tokens
       messages: [{ role: 'user', content: buildPrompt(request) }]
     })
   });
