@@ -22,8 +22,11 @@ type ModalStep = 'input' | 'results';
  * Allows users to paste a list of company names and batch import them.
  * Supports various formats: comma-separated, line-separated, embedded in text, etc.
  */
-export const PasteCompanyListModal: React.FC<PasteCompanyListModalProps> = ({
-  isOpen,
+export const PasteCompanyListModal: React.FC<PasteCompanyListModalProps> = (props) =>
+  // Content only mounts while open, so its state starts fresh on every open
+  props.isOpen ? <PasteCompanyListModalContent {...props} /> : null;
+
+const PasteCompanyListModalContent: React.FC<Omit<PasteCompanyListModalProps, 'isOpen'>> = ({
   onClose,
   onImportCompanies,
   existingCompanies,
@@ -33,7 +36,6 @@ export const PasteCompanyListModal: React.FC<PasteCompanyListModalProps> = ({
   const [step, setStep] = useState<ModalStep>('input');
   const [pastedText, setPastedText] = useState('');
   const [pastedHtml, setPastedHtml] = useState('');
-  const [isImporting, setIsImporting] = useState(false);
   const editableRef = useRef<HTMLDivElement>(null);
 
   // Use shared company detection hook
@@ -45,26 +47,17 @@ export const PasteCompanyListModal: React.FC<PasteCompanyListModalProps> = ({
     toggleCompanySelection,
     toggleSelectAll,
     prepareCompaniesForImport,
-    reset: resetDetection,
   } = useCompanyDetection({
     existingCompanies,
     onShowLLMSettings,
     onClose,
   });
 
-  // Reset modal when closed
+  // Focus editable div when opened
   useEffect(() => {
-    if (!isOpen) {
-      setStep('input');
-      setPastedText('');
-      setPastedHtml('');
-      resetDetection();
-      setIsImporting(false);
-    } else {
-      // Focus editable div when opened
-      setTimeout(() => editableRef.current?.focus(), 100);
-    }
-  }, [isOpen, resetDetection]);
+    const timer = setTimeout(() => editableRef.current?.focus(), 100);
+    return () => clearTimeout(timer);
+  }, []);
 
   // Handle paste event to capture both text and HTML
   const handlePaste = useCallback((e: React.ClipboardEvent) => {
@@ -137,8 +130,6 @@ export const PasteCompanyListModal: React.FC<PasteCompanyListModalProps> = ({
       });
     }
   }, [prepareCompaniesForImport, onImportCompanies, onClose]);
-
-  if (!isOpen) return null;
 
   const selectedCount = detectedCompanies.filter((c) => c.selected).length;
 
@@ -287,15 +278,12 @@ Examples:
               </button>
               <button
                 onClick={handleImport}
-                disabled={selectedCount === 0 || isImporting}
+                disabled={selectedCount === 0}
                 className="px-6 py-2 bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-lg
                   transition-colors disabled:bg-gray-300 disabled:cursor-not-allowed
                   flex items-center gap-2"
               >
-                {isImporting && (
-                  <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
-                )}
-                {isImporting ? 'Importing...' : `Import ${selectedCount} ${selectedCount === 1 ? 'Company' : 'Companies'}`}
+                {`Import ${selectedCount} ${selectedCount === 1 ? 'Company' : 'Companies'}`}
               </button>
             </>
           )}

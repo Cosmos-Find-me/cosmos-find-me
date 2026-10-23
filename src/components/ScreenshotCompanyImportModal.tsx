@@ -25,8 +25,12 @@ type ModalStep = 'upload' | 'processing' | 'results';
  * Uses OCR (Tesseract.js) to extract text, then LLM to detect companies.
  * Supports drag & drop, file upload, and clipboard paste (including mobile).
  */
-export const ScreenshotCompanyImportModal: React.FC<ScreenshotCompanyImportModalProps> = ({
-  isOpen,
+export const ScreenshotCompanyImportModal: React.FC<ScreenshotCompanyImportModalProps> = (props) =>
+  // Content only mounts while open, so its state starts fresh on every open
+  // (and the preview URL is revoked by the cleanup effect on unmount)
+  props.isOpen ? <ScreenshotCompanyImportModalContent {...props} /> : null;
+
+const ScreenshotCompanyImportModalContent: React.FC<Omit<ScreenshotCompanyImportModalProps, 'isOpen'>> = ({
   onClose,
   onImportCompanies,
   existingCompanies,
@@ -39,7 +43,6 @@ export const ScreenshotCompanyImportModal: React.FC<ScreenshotCompanyImportModal
   const [ocrProgress, setOcrProgress] = useState(0);
   const [extractedText, setExtractedText] = useState('');
   const [isProcessing, setIsProcessing] = useState(false);
-  const [isImporting, setIsImporting] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const dropZoneRef = useRef<HTMLDivElement>(null);
 
@@ -57,20 +60,6 @@ export const ScreenshotCompanyImportModal: React.FC<ScreenshotCompanyImportModal
     onShowLLMSettings,
     onClose,
   });
-
-  // Reset modal when closed
-  useEffect(() => {
-    if (!isOpen) {
-      setStep('upload');
-      setSelectedImage(null);
-      setImagePreviewUrl('');
-      setOcrProgress(0);
-      setExtractedText('');
-      resetDetection();
-      setIsProcessing(false);
-      setIsImporting(false);
-    }
-  }, [isOpen, resetDetection]);
 
   // Clean up preview URL
   useEffect(() => {
@@ -160,7 +149,7 @@ export const ScreenshotCompanyImportModal: React.FC<ScreenshotCompanyImportModal
 
   // Listen for paste events globally when modal is open
   useEffect(() => {
-    if (isOpen && step === 'upload') {
+    if (step === 'upload') {
       const handleGlobalPaste = (e: ClipboardEvent) => {
         handlePaste(e);
       };
@@ -168,7 +157,7 @@ export const ScreenshotCompanyImportModal: React.FC<ScreenshotCompanyImportModal
       document.addEventListener('paste', handleGlobalPaste);
       return () => document.removeEventListener('paste', handleGlobalPaste);
     }
-  }, [isOpen, step, handlePaste]);
+  }, [step, handlePaste]);
 
   // Process image: OCR → LLM extraction → Show results
   const handleProcessImage = useCallback(async () => {
@@ -268,8 +257,6 @@ export const ScreenshotCompanyImportModal: React.FC<ScreenshotCompanyImportModal
       });
     }
   }, [prepareCompaniesForImport, onImportCompanies, onClose]);
-
-  if (!isOpen) return null;
 
   const selectedCount = detectedCompanies.filter((c) => c.selected).length;
 
@@ -521,17 +508,12 @@ export const ScreenshotCompanyImportModal: React.FC<ScreenshotCompanyImportModal
               </button>
               <button
                 onClick={handleImport}
-                disabled={selectedCount === 0 || isImporting}
+                disabled={selectedCount === 0}
                 className="px-6 py-2 bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-lg
                   transition-colors disabled:bg-gray-300 disabled:cursor-not-allowed
                   flex items-center gap-2"
               >
-                {isImporting && (
-                  <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
-                )}
-                {isImporting
-                  ? 'Importing...'
-                  : `Import ${selectedCount} ${selectedCount === 1 ? 'Company' : 'Companies'}`}
+                {`Import ${selectedCount} ${selectedCount === 1 ? 'Company' : 'Companies'}`}
               </button>
             </>
           )}
