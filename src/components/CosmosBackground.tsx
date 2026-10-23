@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 import { Star } from 'lucide-react';
 
 interface CosmosBackgroundProps {
@@ -32,33 +32,25 @@ export const CosmosBackground: React.FC<CosmosBackgroundProps> = ({
   children,
   className = '',
 }) => {
-  const [mounted, setMounted] = useState(false);
-
-  useEffect(() => {
-    setMounted(true);
-  }, []);
-
   return (
     <div className={`min-h-screen bg-linear-to-br from-slate-900 via-blue-900 to-indigo-900 relative overflow-y-auto ${className}`}>
-      {/* Floating Stars - only render after mount to avoid hydration issues */}
-      {mounted && (
-        <div className="absolute inset-0 overflow-hidden pointer-events-none">
-          {STAR_POSITIONS.map((star, i) => (
-            <div
-              key={i}
-              className="absolute animate-pulse opacity-30"
-              style={{
-                left: `${star.left}%`,
-                top: `${star.top}%`,
-                animationDelay: `${star.delay}s`,
-                animationDuration: `${star.duration}s`,
-              }}
-            >
-              <Star className="w-2 h-2 text-blue-300 fill-current" />
-            </div>
-          ))}
-        </div>
-      )}
+      {/* Floating Stars - positions are deterministic, so server and client render match */}
+      <div className="absolute inset-0 overflow-hidden pointer-events-none">
+        {STAR_POSITIONS.map((star, i) => (
+          <div
+            key={i}
+            className="absolute animate-pulse opacity-30"
+            style={{
+              left: `${star.left}%`,
+              top: `${star.top}%`,
+              animationDelay: `${star.delay}s`,
+              animationDuration: `${star.duration}s`,
+            }}
+          >
+            <Star className="w-2 h-2 text-blue-300 fill-current" />
+          </div>
+        ))}
+      </div>
 
       {/* Dotted Grid Overlay */}
       <div className="absolute inset-0 opacity-10 pointer-events-none">

@@ -40,7 +40,10 @@ export const useWatchlist = (options: UseWatchlistOptions): UseWatchlistReturn =
   
   // Use ref to avoid dependency issues with onError callback
   const onErrorRef = useRef(onError);
-  onErrorRef.current = onError;
+  // Declared before the load effect so it runs first
+  useEffect(() => {
+    onErrorRef.current = onError;
+  });
 
   // Handle storage errors consistently
   const handleError = useCallback((storageError: StorageError) => {

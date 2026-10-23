@@ -1,9 +1,90 @@
 import React, { useState, useEffect } from 'react';
 import { Sparkles, Star, FileText, Target, Upload, CheckCircle, Eye, X } from 'lucide-react';
+import { ParticleBurst, StarField } from './StarField';
 
 interface DreamyFirstContactProps {
   onComplete: (resumeFile: File, cmfFile: File) => void;
 }
+
+// Defined at module level so the file inputs are not remounted on every parent render
+const CosmicUploadZone = ({ type, title, description, icon: Icon, file, color, onFileChange }: {
+  type: 'resume' | 'cmf';
+  title: string;
+  description: string;
+  icon: React.ComponentType<React.ComponentProps<'svg'>>;
+  file: File | null;
+  color: 'blue' | 'purple';
+  onFileChange: (file: File | null) => void;
+}) => {
+  const colorClasses = {
+    blue: 'from-blue-500/20 to-cyan-500/20 border-blue-400/30',
+    purple: 'from-purple-500/20 to-pink-500/20 border-purple-400/30'
+  };
+  
+  return (
+    <div className={`
+      relative p-8 rounded-2xl backdrop-blur-lg border-2 border-dashed transition-all duration-300 hover:scale-105
+      ${file ? 'bg-linear-to-br from-green-500/20 to-emerald-500/20 border-green-400/40' : 
+       `bg-linear-to-br ${colorClasses[color]}`}
+    `}>
+      <div className="absolute inset-0 overflow-hidden rounded-2xl pointer-events-none">
+        {[...Array(6)].map((_, i) => (
+          <div
+            key={i}
+            className="absolute w-1 h-1 bg-white rounded-full opacity-40 animate-pulse"
+            style={{
+              left: `${10 + i * 15}%`,
+              top: `${10 + (i % 3) * 30}%`,
+              animationDelay: `${i * 0.5}s`,
+              animationDuration: `${2 + i * 0.3}s`
+            }}
+          />
+        ))}
+      </div>
+
+      {file ? (
+        <div className="text-center relative z-10">
+          <CheckCircle className="w-16 h-16 text-green-300 mx-auto mb-4" />
+          <h3 className="text-lg font-semibold text-green-200 mb-2">{file.name}</h3>
+          <p className="text-green-300 mb-4">
+            {(file.size / 1024 / 1024).toFixed(2)} MB • Collected successfully
+          </p>
+          <button
+            onClick={() => onFileChange(null)}
+            className="text-red-400 hover:text-red-300 font-medium transition-colors"
+          >
+            Remove from universe
+          </button>
+        </div>
+      ) : (
+        <div className="text-center relative z-10">
+          <input
+            id={`file-${type}`}
+            type="file"
+            className="hidden"
+            accept={type === 'resume' ? '.pdf,.doc,.docx' : '.pdf,.doc,.docx,.md,.txt'}
+            onChange={(e) => e.target.files?.[0] && onFileChange(e.target.files[0])}
+          />
+          <label htmlFor={`file-${type}`} className="cursor-pointer">
+            <Icon className={`w-16 h-16 mx-auto mb-4 ${
+              color === 'blue' ? 'text-blue-300' : 'text-purple-300'
+            }`} />
+            <h3 className="text-xl font-semibold mb-2 text-white">{title}</h3>
+            <p className="text-gray-300 mb-6">{description}</p>
+            <div className={`inline-flex items-center px-6 py-3 rounded-xl font-medium transition-all hover:scale-105 ${
+              color === 'blue' 
+                ? 'bg-linear-to-r from-blue-500 to-cyan-500 text-white'
+                : 'bg-linear-to-r from-purple-500 to-pink-500 text-white'
+            }`}>
+              <Upload className="w-5 h-5 mr-2" />
+              Gather this element
+            </div>
+          </label>
+        </div>
+      )}
+    </div>
+  );
+};
 
 const DreamyFirstContact: React.FC<DreamyFirstContactProps> = ({ onComplete }) => {
   const [step, setStep] = useState('welcome');
@@ -44,29 +125,10 @@ const DreamyFirstContact: React.FC<DreamyFirstContactProps> = ({ onComplete }) =
     }
   };
 
-  const FloatingStars = () => (
-    <div className="absolute inset-0 overflow-hidden pointer-events-none">
-      {[...Array(12)].map((_, i) => (
-        <div
-          key={i}
-          className="absolute animate-pulse opacity-30"
-          style={{
-            left: `${Math.random() * 100}%`,
-            top: `${Math.random() * 100}%`,
-            animationDelay: `${Math.random() * 3}s`,
-            animationDuration: `${2 + Math.random() * 2}s`
-          }}
-        >
-          <Star className="w-2 h-2 text-blue-300 fill-current" />
-        </div>
-      ))}
-    </div>
-  );
-
   if (step === 'welcome') {
     return (
       <div className="min-h-screen bg-linear-to-br from-slate-900 via-blue-900 to-indigo-900 relative overflow-y-auto" style={{ height: '100dvh', maxHeight: '100dvh' }}>
-        <FloatingStars />
+        <StarField count={12} star={<Star className="w-2 h-2 text-blue-300 fill-current" />} />
         
         <div className="absolute inset-0 opacity-10">
           <div className="absolute inset-0" style={{
@@ -132,25 +194,7 @@ const DreamyFirstContact: React.FC<DreamyFirstContactProps> = ({ onComplete }) =
             )}
             
             {/* Explosion particles - shown on the same screen */}
-            {sparkClicked && [...Array(20)].map((_, i) => {
-              const angle = Math.random() * 2 * Math.PI;
-              const distance = 50 + Math.random() * 150;
-              const x = Math.cos(angle) * distance;
-              const y = Math.sin(angle) * distance;
-              return (
-                <div
-                  key={`particle-${i}`}
-                  className="absolute w-1 h-1 bg-yellow-300 rounded-full animate-bounce pointer-events-none"
-                  style={{
-                    left: '50%',
-                    top: '50%',
-                    transform: `translate(${x - 2}px, ${y - 2}px)`,
-                    animationDelay: `${Math.random() * 1}s`,
-                    animationDuration: `${1 + Math.random()}s`
-                  }}
-                />
-              );
-            })}
+            {sparkClicked && <ParticleBurst count={20} />}
           </div>
 
           <div className={`text-center transition-opacity duration-1000 ${
@@ -212,7 +256,7 @@ const DreamyFirstContact: React.FC<DreamyFirstContactProps> = ({ onComplete }) =
   if (step === 'transition') {
     return (
       <div className="min-h-screen bg-linear-to-br from-slate-900 via-blue-900 to-indigo-900 relative overflow-y-auto" style={{ height: '100dvh', maxHeight: '100dvh' }}>
-        <FloatingStars />
+        <StarField count={12} star={<Star className="w-2 h-2 text-blue-300 fill-current" />} />
         
         {/* Copy the exact same background elements as welcome screen */}
         <div className="absolute inset-0 opacity-10">
@@ -263,25 +307,7 @@ const DreamyFirstContact: React.FC<DreamyFirstContactProps> = ({ onComplete }) =
             })}
             
             {/* Particles positioned outside the hidden spark */}
-            {[...Array(20)].map((_, i) => {
-              const angle = Math.random() * 2 * Math.PI;
-              const distance = 50 + Math.random() * 150;
-              const x = Math.cos(angle) * distance;
-              const y = Math.sin(angle) * distance;
-              return (
-                <div
-                  key={`particle-${i}`}
-                  className="absolute w-1 h-1 bg-yellow-300 rounded-full animate-bounce pointer-events-none"
-                  style={{
-                    left: '50%',
-                    top: '50%',
-                    transform: `translate(${x - 2}px, ${y - 2}px)`, // -2px to center the 1px dot
-                    animationDelay: `${Math.random() * 1}s`,
-                    animationDuration: `${1 + Math.random()}s`
-                  }}
-                />
-              );
-            })}
+            <ParticleBurst count={20} />
           </div>
 
           <div className={`text-center transition-all duration-1000 opacity-0 transform translate-y-4`}>
@@ -315,87 +341,9 @@ const DreamyFirstContact: React.FC<DreamyFirstContactProps> = ({ onComplete }) =
   }
 
   if (step === 'upload') {
-    const CosmicUploadZone = ({ type, title, description, icon: Icon, file, color }: {
-      type: 'resume' | 'cmf';
-      title: string;
-      description: string;
-      icon: React.ComponentType<React.ComponentProps<'svg'>>;
-      file: File | null;
-      color: 'blue' | 'purple';
-    }) => {
-      const colorClasses = {
-        blue: 'from-blue-500/20 to-cyan-500/20 border-blue-400/30',
-        purple: 'from-purple-500/20 to-pink-500/20 border-purple-400/30'
-      };
-      
-      return (
-        <div className={`
-          relative p-8 rounded-2xl backdrop-blur-lg border-2 border-dashed transition-all duration-300 hover:scale-105
-          ${file ? 'bg-linear-to-br from-green-500/20 to-emerald-500/20 border-green-400/40' : 
-           `bg-linear-to-br ${colorClasses[color]}`}
-        `}>
-          <div className="absolute inset-0 overflow-hidden rounded-2xl pointer-events-none">
-            {[...Array(6)].map((_, i) => (
-              <div
-                key={i}
-                className="absolute w-1 h-1 bg-white rounded-full opacity-40 animate-pulse"
-                style={{
-                  left: `${10 + i * 15}%`,
-                  top: `${10 + (i % 3) * 30}%`,
-                  animationDelay: `${i * 0.5}s`,
-                  animationDuration: `${2 + i * 0.3}s`
-                }}
-              />
-            ))}
-          </div>
-
-          {file ? (
-            <div className="text-center relative z-10">
-              <CheckCircle className="w-16 h-16 text-green-300 mx-auto mb-4" />
-              <h3 className="text-lg font-semibold text-green-200 mb-2">{file.name}</h3>
-              <p className="text-green-300 mb-4">
-                {(file.size / 1024 / 1024).toFixed(2)} MB • Collected successfully
-              </p>
-              <button
-                onClick={() => handleFileUpload(null, type)}
-                className="text-red-400 hover:text-red-300 font-medium transition-colors"
-              >
-                Remove from universe
-              </button>
-            </div>
-          ) : (
-            <div className="text-center relative z-10">
-              <input
-                id={`file-${type}`}
-                type="file"
-                className="hidden"
-                accept={type === 'resume' ? '.pdf,.doc,.docx' : '.pdf,.doc,.docx,.md,.txt'}
-                onChange={(e) => e.target.files?.[0] && handleFileUpload(e.target.files[0], type)}
-              />
-              <label htmlFor={`file-${type}`} className="cursor-pointer">
-                <Icon className={`w-16 h-16 mx-auto mb-4 ${
-                  color === 'blue' ? 'text-blue-300' : 'text-purple-300'
-                }`} />
-                <h3 className="text-xl font-semibold mb-2 text-white">{title}</h3>
-                <p className="text-gray-300 mb-6">{description}</p>
-                <div className={`inline-flex items-center px-6 py-3 rounded-xl font-medium transition-all hover:scale-105 ${
-                  color === 'blue' 
-                    ? 'bg-linear-to-r from-blue-500 to-cyan-500 text-white'
-                    : 'bg-linear-to-r from-purple-500 to-pink-500 text-white'
-                }`}>
-                  <Upload className="w-5 h-5 mr-2" />
-                  Gather this element
-                </div>
-              </label>
-            </div>
-          )}
-        </div>
-      );
-    };
-
     return (
       <div className="min-h-screen bg-linear-to-br from-slate-900 via-blue-900 to-indigo-900 relative overflow-y-auto" style={{ height: '100dvh', maxHeight: '100dvh' }}>
-        <FloatingStars />
+        <StarField count={12} star={<Star className="w-2 h-2 text-blue-300 fill-current" />} />
         
         <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-purple-500 rounded-full opacity-5 blur-3xl animate-pulse" 
              style={{ animationDuration: '8s' }} />
@@ -432,6 +380,7 @@ const DreamyFirstContact: React.FC<DreamyFirstContactProps> = ({ onComplete }) =
                 icon={FileText}
                 file={resumeFile}
                 color="blue"
+                onFileChange={(f) => handleFileUpload(f, 'resume')}
               />
               
               <p className="text-blue-300 text-sm text-center">
@@ -463,6 +412,7 @@ const DreamyFirstContact: React.FC<DreamyFirstContactProps> = ({ onComplete }) =
                 icon={Target}
                 file={cmfFile}
                 color="purple"
+                onFileChange={(f) => handleFileUpload(f, 'cmf')}
               />
               
               <p className="text-purple-300 text-sm text-center">
