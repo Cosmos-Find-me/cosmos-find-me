@@ -1,6 +1,6 @@
 # Onboarding Refactoring Test Plan
 
-**Epic:** [#103](https://github.com/pagalmes/company-fit-explorer/issues/103) - Onboarding Flow Refactoring
+**Epic:** [#103](https://github.com/Cosmos-Find-me/cosmos-find-me/issues/103) - Onboarding Flow Refactoring
 **Date:** 2026-01-30
 **Scope:** Issues #95, #96, #97, #99, #100, #101
 
