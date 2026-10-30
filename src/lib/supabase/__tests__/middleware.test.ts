@@ -18,12 +18,16 @@ type CookieAdapter = {
   setAll?: (cookies: CookieToSet[]) => void
 }
 
+const fakeClient = () => ({
+  auth: { getSession: vi.fn().mockResolvedValue({ data: { session: null }, error: null }) },
+})
+
 let captured: { url: string; key: string; cookies: CookieAdapter } | null = null
 
 vi.mock('@supabase/ssr', () => ({
   createServerClient: vi.fn((url: string, key: string, options: { cookies: CookieAdapter }) => {
     captured = { url, key, cookies: options.cookies }
-    return { auth: { getUser: vi.fn().mockResolvedValue({ data: { user: null }, error: null }) } }
+    return fakeClient()
   }),
 }))
 
@@ -85,7 +89,7 @@ describe('updateSession', () => {
     vi.mocked(createServerClient).mockImplementationOnce(((url: string, key: string, options: { cookies: CookieAdapter }) => {
       captured = { url, key, cookies: options.cookies }
       writeCookies(options.cookies, [{ name: 'sb-refresh', value: 'new-token', options: { path: '/' } }])
-      return { auth: { getUser: vi.fn().mockResolvedValue({ data: { user: null }, error: null }) } }
+      return fakeClient()
     }) as never)
 
     const response = await updateSession(request)

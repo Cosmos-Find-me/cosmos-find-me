@@ -8,9 +8,7 @@ export async function updateSession(request: NextRequest) {
     },
   })
 
-  // Create Supabase client - this handles cookie management
-  // The variable is intentionally not used directly, but creating it sets up cookie handlers
-  createServerClient(
+  const supabase = createServerClient(
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
     process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
     {
@@ -30,6 +28,14 @@ export async function updateSession(request: NextRequest) {
       },
     }
   )
+
+  // Refresh an expired session here: the API routes can't write cookies, and a
+  // refresh token only works once, so a refresh there would be lost. getSession()
+  // only calls the Auth server when the token has expired. The proxy doesn't
+  // gate anything on the result; routes still verify the user with getUser().
+  // (getClaims() would call the Auth server on every request until the project
+  // moves to asymmetric JWT signing keys.)
+  await supabase.auth.getSession()
 
   return response
 }
