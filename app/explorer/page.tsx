@@ -10,7 +10,7 @@ import ExplorerLoading from './loading'
  * 2. Redirects to /login if the user is not authenticated
  *
  * This avoids a redundant getUser() call that would add ~200-500ms latency.
- * The proxy (proxy.ts) handles cookie/session refresh without requiring getUser().
+ * The proxy (proxy.ts) refreshes an expired session before the request gets here.
  */
 export default function ExplorePage() {
   // Following async-suspense-boundaries: Wrap App in Suspense for streaming
